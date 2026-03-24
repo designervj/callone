@@ -1,6 +1,7 @@
 import type {LucideIcon} from "lucide-react";
 import {
   BookCopy,
+  FileSpreadsheet,
   FileUp,
   FolderTree,
   LayoutDashboard,
@@ -100,6 +101,15 @@ export const ADMIN_NAV_ITEMS: AdminCommandItem[] = [
     icon: FileUp,
     group: "Operations",
     keywords: ["migration", "upload", "seed"],
+  },
+  {
+    id: "sheet-calibration",
+    label: "Sheet Calibration",
+    description: "CSV intake, calibration mapping, and saved sheet datasets.",
+    href: "/admin/imports/sheet-calibration",
+    icon: FileSpreadsheet,
+    group: "Operations",
+    keywords: ["csv", "sheet", "upload", "calibration", "mapping"],
   },
   {
     id: "catalogs",
