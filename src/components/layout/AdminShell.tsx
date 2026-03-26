@@ -533,7 +533,7 @@ export function AdminShell({children, user}: AdminShellProps) {
               </AnimatePresence>
             </div>
 
-            <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto hide-scrollbar">
+            <nav className="flex min-w-0 flex-1 items-center gap-1 overflow-visible hide-scrollbar">
               {visibleNavItems.map((item) => {
                 const submenuItems = getSectionItems(item.id, viewRole);
                 const isActive = matchesPath(pathname, item.href);
@@ -544,6 +544,8 @@ export function AdminShell({children, user}: AdminShellProps) {
                       key={item.id}
                       ref={openNavMenu === item.id ? navMenuRef : undefined}
                       className="relative"
+                      onMouseEnter={() => setOpenNavMenu(item.id)}
+                      onMouseLeave={() => setOpenNavMenu((current) => (current === item.id ? null : current))}
                     >
                       <button
                         onClick={() =>
@@ -588,6 +590,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                                   <Link
                                     key={submenuItem.id}
                                     href={submenuItem.href}
+                                    onClick={() => setOpenNavMenu(null)}
                                     className={clsx(
                                       "flex items-start gap-3 rounded-[20px] border px-3 py-3 transition",
                                       childActive

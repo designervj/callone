@@ -30,6 +30,7 @@ export const CATALOG_SECTIONS: CatalogSection[] = [
     description: "Lifestyle apparel and layers from Travis Mathew.",
     brandCodes: ["TM"],
   },
+
 ];
 
 export function getCatalogSection(slug: string) {
