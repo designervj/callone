@@ -18,7 +18,7 @@ const GetAllTravisMethew = () => {
       }else{
         isApiCall.current=false
       }
-    }, [isFetchedTravismathew])
+    }, [dispatch, isFetchedTravismathew])
   return (
    null
   )
