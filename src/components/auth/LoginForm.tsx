@@ -29,7 +29,6 @@ export function LoginForm({
         password,
         redirect: false,
       });
-
       if (response?.error) {
         setError("Invalid email or password.");
         return;

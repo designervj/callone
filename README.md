@@ -559,19 +559,22 @@ Create `.env.local`:
 
 ```bash
 MONGODB_URI=your-mongodb-uri
+MONGODB_DB_NAME=callone
 NEXTAUTH_SECRET=your-nextauth-secret
-NEXTAUTH_URL=https://your-domain.com
+NEXTAUTH_URL=https://darkseagreen-badger-376276.hostingersite.com
 CALLONE_BOOTSTRAP_ADMIN_EMAIL=admin@callone.local
 CALLONE_BOOTSTRAP_ADMIN_PASSWORD=CalloneAdmin@123
 MONGODB_AUTH_SOURCE=admin
+CALLONE_RUNTIME_BOOTSTRAP=false
 ```
 
 Important:
 
 - `MONGODB_URI` is required at runtime.
+- `MONGODB_DB_NAME` should match the database name inside your Mongo cluster.
 - `NEXTAUTH_URL` must be the full https URL for the deployed site.
 - Build is safe without DB only because admin/login routes are force-dynamic.
-- The login bootstrap only refreshes the seeded auth accounts, so the bootstrap admin password follows `CALLONE_BOOTSTRAP_ADMIN_PASSWORD`.
+- The login bootstrap only refreshes the seeded auth accounts when `CALLONE_RUNTIME_BOOTSTRAP=true`, so the bootstrap admin password follows `CALLONE_BOOTSTRAP_ADMIN_PASSWORD`.
 - If you need the full demo dataset in production, run `npm run seed` against the target database once.
 - If your MongoDB user was created in Atlas, `MONGODB_AUTH_SOURCE=admin` is the safest setting.
 

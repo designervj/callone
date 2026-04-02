@@ -67,12 +67,14 @@ export const authOptions: NextAuthOptions = {
           bootstrapEmails.has(normalizedEmail) &&
           credentials.password === bootstrapPassword
         ) {
-          void ensureSystemBootstrap().catch((error) => {
-            console.warn(
-              "BOOTSTRAP_WARN: Background bootstrap refresh failed:",
-              error instanceof Error ? error.message : error
-            );
-          });
+          if (process.env.CALLONE_RUNTIME_BOOTSTRAP === "true") {
+            void ensureSystemBootstrap().catch((error) => {
+              console.warn(
+                "BOOTSTRAP_WARN: Background bootstrap refresh failed:",
+                error instanceof Error ? error.message : error
+              );
+            });
+          }
 
           const bootstrapRole: RoleKey =
             normalizedEmail === bootstrapEmail
