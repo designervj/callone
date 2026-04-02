@@ -569,7 +569,9 @@ Important:
 
 - `NEXTAUTH_MONGODB_URI` is required at runtime.
 - Build is safe without DB only because admin/login routes are force-dynamic.
-- Runtime bootstrap is disabled in production by default so a slow or unreachable MongoDB does not surface as a Hostinger 503. If you need first-run seeding in production, set `CALLONE_RUNTIME_BOOTSTRAP=true` temporarily or run `npm run seed` against the target database once.
+- The heavier workspace seed is disabled in production by default so a slow or unreachable MongoDB does not surface as a Hostinger 503.
+- The seeded login accounts can still be refreshed on demand through the credentials flow, so the bootstrap admin password follows `CALLONE_BOOTSTRAP_ADMIN_PASSWORD`.
+- If you need the full demo dataset in production, run `npm run seed` against the target database once or set `CALLONE_RUNTIME_BOOTSTRAP=true` temporarily.
 
 ## Scripts
 

@@ -22,10 +22,25 @@ export const authOptions: NextAuthOptions = {
         }
 
         await dbConnect();
-        await ensureSystemBootstrap();
+        const normalizedEmail = credentials.email.toLowerCase().trim();
+        const bootstrapEmail = (
+          process.env.CALLONE_BOOTSTRAP_ADMIN_EMAIL ?? "admin@callone.local"
+        )
+          .toLowerCase()
+          .trim();
+        const bootstrapEmails = new Set([
+          bootstrapEmail,
+          "manager@callone.local",
+          "sales@callone.local",
+          "retailer@callone.local",
+        ]);
+
+        if (bootstrapEmails.has(normalizedEmail)) {
+          await ensureSystemBootstrap();
+        }
 
         const user = await User.findOne({
-          email: credentials.email.toLowerCase().trim(),
+          email: normalizedEmail,
           status: "active",
         }).lean();
 
