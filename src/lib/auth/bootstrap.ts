@@ -1,5 +1,4 @@
 import bcrypt from "bcryptjs";
-import {shouldRunRuntimeBootstrap} from "@/lib/auth/runtime-bootstrap";
 import dbConnect from "@/lib/db/connection";
 import {Brand} from "@/lib/db/models/Brand";
 import {Role} from "@/lib/db/models/Role";
@@ -17,7 +16,7 @@ const ROLE_LABELS: Record<RoleKey, string> = {
 };
 
 export async function ensureSystemBootstrap() {
-  if (!shouldRunRuntimeBootstrap()) {
+  if (process.env.CALLONE_DISABLE_SYSTEM_BOOTSTRAP === "true") {
     return;
   }
 
@@ -49,6 +48,7 @@ export async function ensureSystemBootstrap() {
       process.env.CALLONE_BOOTSTRAP_ADMIN_EMAIL ?? "admin@callone.local";
     const adminPassword =
       process.env.CALLONE_BOOTSTRAP_ADMIN_PASSWORD ?? "CalloneAdmin@123";
+    const bootstrapPasswordHash = await bcrypt.hash(adminPassword, 10);
 
     // Phase 2: Super Admin
     console.log("BOOTSTRAP_INFO: Checking super admin user...");
@@ -61,16 +61,23 @@ export async function ensureSystemBootstrap() {
 
     if (!existingUser) {
       console.log(`BOOTSTRAP_INFO: Creating bootstrap admin ${adminEmail}...`);
-      const passwordHash = await bcrypt.hash(adminPassword, 10);
-
       await User.create({
         name: "CallawayOne Super Admin",
         email: adminEmail.toLowerCase(),
-        passwordHash,
+        passwordHash: bootstrapPasswordHash,
         roleId: superAdminRole._id,
         roleKey: superAdminRole.key,
         designation: "Bootstrap Admin",
         status: "active",
+      });
+    } else {
+      await User.findByIdAndUpdate(existingUser._id, {
+        $set: {
+          passwordHash: bootstrapPasswordHash,
+          roleId: superAdminRole._id,
+          roleKey: superAdminRole.key,
+          status: "active",
+        },
       });
     }
 
@@ -157,19 +164,26 @@ export async function ensureSystemBootstrap() {
 
       const present = await User.findOne({email: candidate.email});
       if (present) {
-        continue;
+        await User.findByIdAndUpdate(present._id, {
+          $set: {
+            passwordHash: bootstrapPasswordHash,
+            roleId: candidate.role._id,
+            roleKey: candidate.role.key,
+            designation: candidate.designation,
+            status: "active",
+          },
+        });
+      } else {
+        await User.create({
+          name: candidate.name,
+          email: candidate.email,
+          passwordHash: bootstrapPasswordHash,
+          roleId: candidate.role._id,
+          roleKey: candidate.role.key,
+          designation: candidate.designation,
+          status: "active",
+        });
       }
-
-      const passwordHash = await bcrypt.hash(adminPassword, 10);
-      await User.create({
-        name: candidate.name,
-        email: candidate.email,
-        passwordHash,
-        roleId: candidate.role._id,
-        roleKey: candidate.role.key,
-        designation: candidate.designation,
-        status: "active",
-      });
     }
     console.log("BOOTSTRAP_SUCCESS: System bootstrap completed successfully.");
   } catch (error: any) {

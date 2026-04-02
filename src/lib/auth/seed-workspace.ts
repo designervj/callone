@@ -1,5 +1,5 @@
 import bcrypt from "bcryptjs";
-import {shouldRunRuntimeBootstrap} from "@/lib/auth/runtime-bootstrap";
+import {shouldRunWorkspaceSeedData} from "@/lib/auth/runtime-bootstrap";
 import dbConnect from "@/lib/db/connection";
 import {AttributeSet} from "@/lib/db/models/AttributeSet";
 import {BlockedStock} from "@/lib/db/models/BlockedStock";
@@ -411,7 +411,7 @@ async function repairLegacyProductIndexes() {
 }
 
 export async function ensureWorkspaceSeedData() {
-  if (!shouldRunRuntimeBootstrap()) {
+  if (!shouldRunWorkspaceSeedData()) {
     return;
   }
 
