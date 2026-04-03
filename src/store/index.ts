@@ -4,6 +4,7 @@ import attributeReducer from './slices/attributeSlice/attributeSlice';
 
 import travisMathewReducer from './slices/travisMathewSlice/travisMathewSlice';
 import ogioReducer from './slices/ogioSlice/ogioSlice';
+import hardgoodReducer from './slices/hardgoodSlice/hardgoodSlice';
 
 export const store = configureStore({
   reducer: {
@@ -11,6 +12,7 @@ export const store = configureStore({
     attribute: attributeReducer,
     travisMathew: travisMathewReducer,
     ogio: ogioReducer,
+    hardgoods: hardgoodReducer,
   },
 });
 
