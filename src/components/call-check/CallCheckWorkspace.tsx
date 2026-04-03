@@ -20,6 +20,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { setTravisMathew } from "@/store/slices/travisMathewSlice/travisMathewSlice";
 import { createTravisMathew } from "@/store/slices/travisMathewSlice/travisMathewThunks";
+import { setOgio } from "@/store/slices/ogioSlice/ogioSlice";
+import { createOgio } from "@/store/slices/ogioSlice/ogioThunks";
+import { setHardGoods } from "@/store/slices/hardgoodSlice/hardgoodSlice";
+import { createHardGood } from "@/store/slices/hardgoodSlice/hardgoodThunks";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -82,6 +86,8 @@ export function CallCheckWorkspace({
   const { currentBrand } = useSelector((state: RootState) => state.brand);
   const { currentAttribute } = useSelector((state: RootState) => state.attribute);
   const { travismathew } = useSelector((state: RootState) => state.travisMathew);
+  const { ogio } = useSelector((state: RootState) => state.ogio);
+  const { hardgoods } = useSelector((state: RootState) => state.hardgoods);
 
 
   const syncSheetParam = useCallback(
@@ -388,7 +394,6 @@ export function CallCheckWorkspace({
     },
     [processFile, urlInput]
   );
-
   const handleFileUpload = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -401,105 +406,301 @@ export function CallCheckWorkspace({
   );
 
   const handleTravisImport = useCallback(async () => {
-      if (!rowData.length) return;
-        setStatus('uploading');
-        setProgress(0);
-        setProgressLabel('Preparing import...');
-    
-        const chunkSize = 100;
-        const totalRows = rowData.length;
-        let insertedCount = 0;
-        let updatedCount = 0;
-        let failedCount = 0;
-        const rowErrors: ImportIssue[] = [];
+    if (!rowData.length) return;
+    setStatus('uploading');
+    setProgress(0);
+    setProgressLabel('Preparing Travis Mathew import...');
 
-        const mappedData = rowData.map((item: any) => ({
-          ...item,
-          attributeSetId: currentAttribute?._id,
-          brandId: currentBrand?._id,
-          createdAt: new Date().toISOString(),
-          metaData: {
-            section: ""
+    const chunkSize = 100;
+    const totalRows = rowData.length;
+    let insertedCount = 0;
+    let updatedCount = 0;
+    let failedCount = 0;
+    const rowErrors: ImportIssue[] = [];
+
+    const mappedData = rowData.map((item: any) => ({
+      ...item,
+      attributeSetId: currentAttribute?._id,
+      brandId: currentBrand?._id,
+      createdAt: new Date().toISOString(),
+      metaData: {
+        section: ""
+      }
+    }));
+
+    const runImport = async () => {
+      try {
+        for (let index = 0; index < mappedData.length; index += chunkSize) {
+          const chunk = mappedData.slice(index, index + chunkSize);
+          const chunkNumber = Math.floor(index / chunkSize) + 1;
+          const totalChunks = Math.ceil(mappedData.length / chunkSize);
+          setProgressLabel(`Importing Travis Mathew chunk ${chunkNumber} of ${totalChunks}`);
+
+          const action = await dispatch(createTravisMathew(chunk));
+          const result = action.payload as any;
+
+          const chunkSummary = result?.summary as ImportSummary | undefined;
+
+          if (chunkSummary) {
+            insertedCount += chunkSummary.insertedCount || 0;
+            updatedCount += chunkSummary.updatedCount || 0;
+            failedCount += chunkSummary.failedCount || 0;
+            rowErrors.push(...(chunkSummary.rowErrors || []).map((issue) => ({
+              ...issue,
+              rowIndex: issue.rowIndex + index,
+            })));
+          } else if (createTravisMathew.rejected.match(action)) {
+            failedCount += chunk.length;
+            rowErrors.push(
+              ...chunk.map((item, rowIndex) => ({
+                rowIndex: index + rowIndex,
+                sku: item.sku || '',
+                reason: (action.payload as string) || 'Import failed',
+              }))
+            );
           }
-        }));
-    
-        const runImport = async () => {
-          try {
-            for (let index = 0; index < mappedData.length; index += chunkSize) {
-              const chunk = mappedData.slice(index, index + chunkSize);
-              const chunkNumber = Math.floor(index / chunkSize) + 1;
-              const totalChunks = Math.ceil(mappedData.length / chunkSize);
-              setProgressLabel(`Importing chunk ${chunkNumber} of ${totalChunks}`);
-    
-              const action = await dispatch(createTravisMathew(chunk));
-              const result = action.payload as any;
-        
-              const chunkSummary = result?.summary as ImportSummary | undefined;
-    
-              if (chunkSummary) {
-                insertedCount += chunkSummary.insertedCount || 0;
-                updatedCount += chunkSummary.updatedCount || 0;
-                failedCount += chunkSummary.failedCount || 0;
-                rowErrors.push(...(chunkSummary.rowErrors || []).map((issue) => ({
-                  ...issue,
-                  rowIndex: issue.rowIndex + index,
-                })));
-              } else if (createTravisMathew.rejected.match(action)) {
-                failedCount += chunk.length;
-                rowErrors.push(
-                  ...chunk.map((item, rowIndex) => ({
-                    rowIndex: index + rowIndex,
-                    sku: item.sku || '',
-                    reason: (action.payload as string) || 'Import failed',
-                  }))
-                );
-              }
-             console.log("insertedCount",insertedCount)
-             console.log("updatedCount",updatedCount)
-             
-              setProgress(Math.min(100, Math.round(((index + chunk.length) / totalRows) * 100)));
-              setSummary({
-                totalRows,
-                insertedCount,
-                updatedCount,
-                failedCount,
-                savedCount: insertedCount + updatedCount,
-                rowErrors,
-              });
-            }
-    
-            const merged = [...travismathew];
-            mappedData.forEach((item) => {
-              const key = item.sku || '';
-              const existingIndex = merged.findIndex((product) => product.sku === key);
-              if (existingIndex >= 0) {
-                merged[existingIndex] = item;
-              } else {
-                merged.push(item);
-              }
-            });
-            dispatch(setTravisMathew(merged));
-    
-            if (insertedCount + updatedCount > 0 && failedCount === 0) {
-              setStatus('success');
-              setProgressLabel('Import completed successfully.');
-            } else {
-              setStatus(insertedCount + updatedCount > 0 ? 'success' : 'error');
-              setProgressLabel(
-                insertedCount + updatedCount > 0
-                  ? 'Import completed with some failed rows.'
-                  : 'No data was saved to the database.'
-              );
-            }
-          } catch (error: any) {
-            console.error('Import failed:', error);
-            setStatus('error');
-            setProgressLabel(error?.message || 'Import failed');
+          
+          setProgress(Math.min(100, Math.round(((index + chunk.length) / totalRows) * 100)));
+          setSummary({
+            totalRows,
+            insertedCount,
+            updatedCount,
+            failedCount,
+            savedCount: insertedCount + updatedCount,
+            rowErrors,
+          });
+        }
+
+        const merged = [...travismathew];
+        mappedData.forEach((item) => {
+          const key = item.sku || '';
+          const existingIndex = merged.findIndex((product) => product.sku === key);
+          if (existingIndex >= 0) {
+            merged[existingIndex] = item;
+          } else {
+            merged.push(item);
           }
-        };
-    
-        void runImport();
+        });
+        dispatch(setTravisMathew(merged));
+
+        if (insertedCount + updatedCount > 0 && failedCount === 0) {
+          setStatus('success');
+          setProgressLabel('Travis Mathew import completed successfully.');
+        } else {
+          setStatus(insertedCount + updatedCount > 0 ? 'success' : 'error');
+          setProgressLabel(
+            insertedCount + updatedCount > 0
+              ? 'Travis Mathew import completed with some failed rows.'
+              : 'No Travis Mathew data was saved to the database.'
+          );
+        }
+      } catch (error: any) {
+        console.error('Travis Mathew import failed:', error);
+        setStatus('error');
+        setProgressLabel(error?.message || 'Travis Mathew import failed');
+      }
+    };
+
+    void runImport();
   }, [currentAttribute?._id, currentBrand?._id, dispatch, rowData, travismathew]);
+
+  const handleOgioImport = useCallback(async () => {
+    if (!rowData.length) return;
+    setStatus('uploading');
+    setProgress(0);
+    setProgressLabel('Preparing Ogio import...');
+
+    const chunkSize = 100;
+    const totalRows = rowData.length;
+    let insertedCount = 0;
+    let updatedCount = 0;
+    let failedCount = 0;
+    const rowErrors: ImportIssue[] = [];
+
+    const mappedData = rowData.map((item: any) => ({
+      ...item,
+      attributeSetId: currentAttribute?._id,
+      brandId: currentBrand?._id,
+      createdAt: new Date().toISOString(),
+      metaData: {
+        section: ""
+      }
+    }));
+
+    const runImport = async () => {
+      try {
+        for (let index = 0; index < mappedData.length; index += chunkSize) {
+          const chunk = mappedData.slice(index, index + chunkSize);
+          const chunkNumber = Math.floor(index / chunkSize) + 1;
+          const totalChunks = Math.ceil(mappedData.length / chunkSize);
+          setProgressLabel(`Importing Ogio chunk ${chunkNumber} of ${totalChunks}`);
+
+          const action = await dispatch(createOgio(chunk));
+          const result = action.payload as any;
+
+          const chunkSummary = result?.summary as ImportSummary | undefined;
+
+          if (chunkSummary) {
+            insertedCount += chunkSummary.insertedCount || 0;
+            updatedCount += chunkSummary.updatedCount || 0;
+            failedCount += chunkSummary.failedCount || 0;
+            rowErrors.push(...(chunkSummary.rowErrors || []).map((issue) => ({
+              ...issue,
+              rowIndex: issue.rowIndex + index,
+            })));
+          } else if (createOgio.rejected.match(action)) {
+            failedCount += chunk.length;
+            rowErrors.push(
+              ...chunk.map((item, rowIndex) => ({
+                rowIndex: index + rowIndex,
+                sku: item.sku || '',
+                reason: (action.payload as string) || 'Import failed',
+              }))
+            );
+          }
+          
+          setProgress(Math.min(100, Math.round(((index + chunk.length) / totalRows) * 100)));
+          setSummary({
+            totalRows,
+            insertedCount,
+            updatedCount,
+            failedCount,
+            savedCount: insertedCount + updatedCount,
+            rowErrors,
+          });
+        }
+
+        const merged = [...ogio];
+        mappedData.forEach((item) => {
+          const key = item.sku || '';
+          const existingIndex = merged.findIndex((product) => product.sku === key);
+          if (existingIndex >= 0) {
+            merged[existingIndex] = item;
+          } else {
+            merged.push(item);
+          }
+        });
+        dispatch(setOgio(merged));
+
+        if (insertedCount + updatedCount > 0 && failedCount === 0) {
+          setStatus('success');
+          setProgressLabel('Ogio import completed successfully.');
+        } else {
+          setStatus(insertedCount + updatedCount > 0 ? 'success' : 'error');
+          setProgressLabel(
+            insertedCount + updatedCount > 0
+              ? 'Ogio import completed with some failed rows.'
+              : 'No Ogio data was saved to the database.'
+          );
+        }
+      } catch (error: any) {
+        console.error('Ogio import failed:', error);
+        setStatus('error');
+        setProgressLabel(error?.message || 'Ogio import failed');
+      }
+    };
+
+    void runImport();
+  }, [currentAttribute?._id, currentBrand?._id, dispatch, rowData, ogio]);
+
+  const handleHardGoodImport = useCallback(async () => {
+    if (!rowData.length) return;
+    setStatus('uploading');
+    setProgress(0);
+    setProgressLabel('Preparing HardGood import...');
+
+    const chunkSize = 100;
+    const totalRows = rowData.length;
+    let insertedCount = 0;
+    let updatedCount = 0;
+    let failedCount = 0;
+    const rowErrors: ImportIssue[] = [];
+
+    const mappedData = rowData.map((item: any) => ({
+      ...item,
+      attributeSetId: currentAttribute?._id,
+      brandId: currentBrand?._id,
+      createdAt: new Date().toISOString(),
+      metaData: {
+        section: ""
+      }
+    }));
+
+    const runImport = async () => {
+      try {
+        for (let index = 0; index < mappedData.length; index += chunkSize) {
+          const chunk = mappedData.slice(index, index + chunkSize);
+          const chunkNumber = Math.floor(index / chunkSize) + 1;
+          const totalChunks = Math.ceil(mappedData.length / chunkSize);
+          setProgressLabel(`Importing HardGood chunk ${chunkNumber} of ${totalChunks}`);
+
+          const action = await dispatch(createHardGood(chunk));
+          const result = action.payload as any;
+
+          const chunkSummary = result?.summary as ImportSummary | undefined;
+
+          if (chunkSummary) {
+            insertedCount += chunkSummary.insertedCount || 0;
+            updatedCount += chunkSummary.updatedCount || 0;
+            failedCount += chunkSummary.failedCount || 0;
+            rowErrors.push(...(chunkSummary.rowErrors || []).map((issue) => ({
+              ...issue,
+              rowIndex: issue.rowIndex + index,
+            })));
+          } else if (createHardGood.rejected.match(action)) {
+            failedCount += chunk.length;
+            rowErrors.push(
+              ...chunk.map((item, rowIndex) => ({
+                rowIndex: index + rowIndex,
+                sku: item.sku || '',
+                reason: (action.payload as string) || 'Import failed',
+              }))
+            );
+          }
+          
+          setProgress(Math.min(100, Math.round(((index + chunk.length) / totalRows) * 100)));
+          setSummary({
+            totalRows,
+            insertedCount,
+            updatedCount,
+            failedCount,
+            savedCount: insertedCount + updatedCount,
+            rowErrors,
+          });
+        }
+
+        const merged = [...hardgoods];
+        mappedData.forEach((item) => {
+          const key = item.sku || '';
+          const existingIndex = merged.findIndex((product) => product.sku === key);
+          if (existingIndex >= 0) {
+            merged[existingIndex] = item;
+          } else {
+            merged.push(item);
+          }
+        });
+        dispatch(setHardGoods(merged));
+
+        if (insertedCount + updatedCount > 0 && failedCount === 0) {
+          setStatus('success');
+          setProgressLabel('HardGood import completed successfully.');
+        } else {
+          setStatus(insertedCount + updatedCount > 0 ? 'success' : 'error');
+          setProgressLabel(
+            insertedCount + updatedCount > 0
+              ? 'HardGood import completed with some failed rows.'
+              : 'No HardGood data was saved to the database.'
+          );
+        }
+      } catch (error: any) {
+        console.error('HardGood import failed:', error);
+        setStatus('error');
+        setProgressLabel(error?.message || 'HardGood import failed');
+      }
+    };
+
+    void runImport();
+  }, [currentAttribute?._id, currentBrand?._id, dispatch, rowData, hardgoods]);
 
   const saveToDb = useCallback(async (selectedCollections: string[] = []) => {
     if (!rowData.length) {
@@ -511,6 +712,15 @@ export function CallCheckWorkspace({
         case "product_travis":  
             void handleTravisImport();
             break;
+
+        case "product_ogio":  
+            void handleOgioImport();
+            break;
+
+        case "product_hardgoods":
+            void handleHardGoodImport();
+            break;
+                
       }
           
     // setIsSaving(true);
@@ -559,7 +769,7 @@ export function CallCheckWorkspace({
     // } finally {
     //   setIsSaving(false);
     // }
-  }, [handleTravisImport, rowData]);
+  }, [handleTravisImport, handleOgioImport, handleHardGoodImport, rowData]);
   const autoSizeAll = useCallback(() => {
     const allColumnIds: string[] = [];
     gridRef.current?.api?.getColumns()?.forEach((column) => {

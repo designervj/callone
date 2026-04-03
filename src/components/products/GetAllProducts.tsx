@@ -4,6 +4,7 @@ import GetAllTravisMethew from "./travismethew/GetAllTravisMethew"
 import GetAllBrands from "../brands/GetAllBrands"
 import GetAllAtributeSet from "../attributeSet/GetAllAtributeSet"
 import GetAllOgio from "./Ogio/GetAllOgio"
+import GetAllHardGood from "./HardGood/GetAllHardGood"
 
 
 const GetAllProducts = () => {
@@ -14,6 +15,7 @@ const GetAllProducts = () => {
         <GetAllBrands/>
         <GetAllTravisMethew/>
         <GetAllOgio/>
+        <GetAllHardGood/>
         </>
     )
 }
