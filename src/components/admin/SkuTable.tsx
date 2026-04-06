@@ -1,12 +1,14 @@
 'use client';
 
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { Package2, Trash2 } from "lucide-react";
 import { setCurrentAttribute } from "@/store/slices/attributeSlice/attributeSlice";
 import { ProductImage } from "./ProductImage";
+import { SkuQuantityInput } from "./SkuQuantityInput";
+import { CartItem } from "@/store/slices/cart/cartSlice";
 
 interface SkuTableProps {
   visibleRows: any[];
@@ -17,6 +19,8 @@ interface SkuTableProps {
   handleDelete: (id: string) => void;
   deletingId: string;
   statusClasses: (status: string) => string;
+  skuQuantities: Record<string, CartItem>;
+  setSkuQuantities: React.Dispatch<React.SetStateAction<Record<string, CartItem>>>;
 }
 
 export function SkuTable({
@@ -28,15 +32,19 @@ export function SkuTable({
   handleDelete,
   deletingId,
   statusClasses,
+  skuQuantities,
+  setSkuQuantities,
 }: SkuTableProps) {
   // Pull data from Redux to show "data on redux" as requested
 
-  console.log("visibleRows", visibleRows[0], visibleRows.length);
+ 
   const { travismathew } = useSelector((state: RootState) => state.travisMathew);
   const { ogio } = useSelector((state: RootState) => state.ogio);
   const { hardgoods } = useSelector((state: RootState) => state.hardgoods);
   const {currentAttribute,allAttribute} = useSelector((state: RootState) => state.attribute);
   const dispatch = useDispatch<AppDispatch>()
+
+  const [selectedData, setSelectedData] = useState<CartItem[]>([])
 
   // update the current attaribute 
   useEffect(()=>{
@@ -63,7 +71,6 @@ export function SkuTable({
   }, [currentAttribute, travismathew, ogio, hardgoods]);
 
  
-
 
   return (
     <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
@@ -201,6 +208,58 @@ export function SkuTable({
                       val = 0;
                     }
 
+                    if (key.toLowerCase() === "stock_88") {
+                      return (
+                        <td key={key} className="border-b border-border/60 px-4 py-4 align-top">
+                          <SkuQuantityInput
+                            value={skuQuantities[rowId]?.qty88 || 0}
+                            maxStock={Number(row.stock_88) || 0}
+                            onChange={(val) => {
+                              setSkuQuantities(prev => ({
+                                ...prev,
+                                [rowId]: { 
+                                  ...prev[rowId], 
+                                  qty88: val,
+                                  // Ensure other fields are initialized if this is the first update
+                                  primaryImage: row?.primary_image_url??"",
+                                  sku: row.sku || row.baseSku,
+                                  description: row.description,
+                                  amount: Number(row.amount) || 0,
+                                  gst: Number(row.gst) || 0,
+                                  mrp: Number(row.mrp) || 0,
+                                }
+                              }));
+                            }}
+                          />
+                        </td>
+                      );
+                    }
+
+                    if (key.toLowerCase() === "stock_90") {
+                      return (
+                        <td key={key} className="border-b border-border/60 px-4 py-4 align-top">
+                          <SkuQuantityInput
+                            value={skuQuantities[rowId]?.qty90 || 0}
+                            maxStock={Number(row.stock_90) || 0}
+                            onChange={(val) => {
+                              setSkuQuantities(prev => ({
+                                ...prev,
+                                [rowId]: { 
+                                  ...prev[rowId], 
+                                  qty90: val,
+                                  // Ensure other fields are initialized if this is the first update
+                                  id: rowId,
+                                  sku: row.sku || row.baseSku,
+                                  mrp: Number(row.mrp) || 0,
+                                }
+                              }));
+                            }
+                          }
+                          />
+                        </td>
+                      );
+                    }
+
                     return (
                       <td key={key} className="border-b border-border/60 px-4 py-4 align-top">
                         {val !== undefined && val !== null ? (
@@ -245,10 +304,6 @@ export function SkuTable({
                     <td className="border-b border-border/60 px-4 py-4 align-top">
                       <p className="font-medium text-foreground">{row.category || "Uncategorized"}</p>
                       <p className="mt-1 text-xs text-foreground/52">{displayFamily || row.subcategory || "No subcategory"}</p>
-                    </td>
-                    <td className="border-b border-border/60 px-4 py-4 align-top">
-                      <div className="flex flex-wrap gap-2">
-                      </div>
                     </td>
                     <td className="border-b border-border/60 px-4 py-4 align-top">
                       <div className="space-y-1">
@@ -330,3 +385,4 @@ function StickyHeading({
     </th>
   );
 }
+

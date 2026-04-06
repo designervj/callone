@@ -13,7 +13,7 @@ import './TravisPdf.css';
 export interface OtherSku{
   sku?:string;
   qty?:number;
-  
+  size?:string;
 }
 // Local interface definition based on provided code
 export interface TravisPdfPrint {
@@ -51,62 +51,11 @@ const TravisPdf: React.FC<Props> = ({
   // Get all products from Redux store
   const getProduct = useSelector((state: RootState) => state.travisMathew.travismathew);
 
-  // useEffect(() => {
-  //   if (selectedRow && selectedRow.length > 0 && getProduct && getProduct.length > 0) {
-  //     if (isduplicateMrp) {
-  //       const allp: TravisPdfPrint[] = [];
-  //       selectedRow.forEach((callout) => {
-  //         // In this project, 'family' or 'sku' or 'baseSku' might be what matches
-  //         // Based on provided code, callout.family === product.sku
-  //         getProduct.forEach((product: any) => {
-  //           if (callout.family === product.sku || callout.sku === product.sku) {
-  //             const data: TravisPdfPrint = {
-  //               family: callout.family || product.sku,
-  //               primary_image_url: callout.primary_image_url || product.primary_image_url,
-  //               gallery_images_url: callout.gallery_images_url || product.gallery_images_url,
-  //               name: callout.name || product.name || product.description,
-  //               description: callout.description || product.description,
-  //               variation_sku: callout.variation_sku || product.variation_sku,
-  //               otherInfo: {
-  //                 color: callout.otherInfo?.color || product.color,
-  //                 style_code: callout.otherInfo?.style_code || product.style_code,
-  //                 category: callout.otherInfo?.category || product.category,
-  //                 gender: callout.otherInfo?.gender || product.gender,
-  //                 season: callout.otherInfo?.season || product.season || product.season_code,
-  //                 isShowDublicateMrp: product?.isShowDublicateMrp || false,
-  //                 dublicateMrp: product?.dublicateMrp || 0,
-  //                 mrp: callout.otherInfo?.mrp || product.mrp,
-  //               },
-  //               variation_sku_data: callout.variation_sku_data || [], // Map if possible
-  //             };
-  //             allp.push(data);
-  //           }
-  //         });
-  //       });
-  //       setTravisPdf(allp);
-  //     } else {
-  //       // Map selectedRow to TravisPdfPrint if not in duplicate mode
-  //       const mapped = selectedRow.map(row => ({
-  //           family: row.family || row.sku,
-  //           primary_image_url: row.primary_image_url || row.image_url,
-  //           gallery_images_url: row.gallery_images_url || "",
-  //           name: row.name || row.description,
-  //           description: row.description,
-  //           variation_sku: row.variation_sku,
-  //           otherInfo: {
-  //               color: row.color,
-  //               style_code: row.style_code,
-  //               category: row.category,
-  //               gender: row.gender,
-  //               season: row.season,
-  //               mrp: row.mrp
-  //           },
-  //           variation_sku_data: []
-  //       } as TravisPdfPrint));
-  //       setTravisPdf(mapped);
-  //     }
-  //   }
-  // }, [selectedRow, getProduct, isduplicateMrp]);
+  useEffect(() => {
+    if (selectedRow && selectedRow.length > 0) {
+      setTravisPdf(selectedRow);
+    }
+  }, [selectedRow]);
 
   useEffect(() => {
     if (travisPdf.length > 0) {
@@ -163,38 +112,32 @@ const TravisPdf: React.FC<Props> = ({
                       </div>
 
                       <div className='col-5'>
-                        {/* <VarationSkuInfo variation_sku_data={callout.variation_sku_data || []} />
+                        <VarationSkuInfo variation_sku_data={callout.otherSku || []} />
 
                         <table className='pro-data-table mt-3'>
                           <tbody>
                             <tr>
                               <th>Category</th>
-                              <td className='ps-4'>{callout?.otherInfo?.category}</td>
+                              <td className='ps-4'>{callout?.category}</td>
                             </tr>
                             <tr>
                               <th>Season</th>
-                              <td className='ps-4'>{callout.otherInfo.season}</td>
+                              <td className='ps-4'>{callout?.season}</td>
                             </tr>
                             <tr>
                               <th>Color</th>
-                              <td className='ps-4'>{callout.otherInfo.color}</td>
+                              <td className='ps-4'>{callout?.color}</td>
                             </tr>
                             <tr>
                               <th>Style Code</th>
-                              <td className='ps-4'>{callout.otherInfo.style_code}</td>
+                              <td className='ps-4'>{callout?.style_code}</td>
                             </tr>
                             <tr>
                               <th>MRP</th>
-                              <td className='ps-4'>₹{callout.otherInfo.mrp}</td>
+                              <td className='ps-4'>₹{callout?.mrp}</td>
                             </tr>
-                            {callout.otherInfo.isShowDublicateMrp && (
-                              <tr>
-                                <th>Offer Price</th>
-                                <td className='ps-4'>₹{callout.otherInfo.dublicateMrp}</td>
-                              </tr>
-                            )}
                           </tbody>
-                        </table> */}
+                        </table>
                       </div>
                     </div>
 

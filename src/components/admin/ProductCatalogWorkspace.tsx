@@ -1,9 +1,9 @@
 'use client';
 
 import Link from "next/link";
-import React, {useDeferredValue, useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import {motion} from "framer-motion";
+import React, { useDeferredValue, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import {
   ArrowDownUp,
   Check,
@@ -31,15 +31,19 @@ import { CatalogHeader } from "./CatalogHeader";
 import { CatalogTable } from "./CatalogTable";
 import { ProductExportActions } from "./ProductExportActions";
 import UpdateCurrentBrand from "../brands/UpdateCurrentBrand";
+import { SelectRetailerModal } from "./SelectRetailerModal";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import { addToCart, CartItem } from "@/store/slices/cart/cartSlice";
 
 
 
 const SORT_OPTIONS = [
-  {value: "latest", label: "Latest updated"},
-  {value: "name-asc", label: "Name A-Z"},
-  {value: "stock-desc", label: "Stock high to low"},
-  {value: "variants-desc", label: "Most variants"},
-  {value: "brand-asc", label: "Brand A-Z"},
+  { value: "latest", label: "Latest updated" },
+  { value: "name-asc", label: "Name A-Z" },
+  { value: "stock-desc", label: "Stock high to low" },
+  { value: "variants-desc", label: "Most variants" },
+  { value: "brand-asc", label: "Brand A-Z" },
 ] as const;
 
 const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
@@ -93,6 +97,13 @@ export function ProductCatalogWorkspace({
   const [typeFilters, setTypeFilters] = useState<string[]>([]);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [attributeFilters, setAttributeFilters] = useState<Record<string, string[]>>({});
+  const [skuQuantities, setSkuQuantities] = useState<Record<string, CartItem>>({});
+  const [retailerModalOpen, setRetailerModalOpen] = useState(false);
+
+
+  console.log("skuQuantities--->", skuQuantities)
+  const dispatch = useDispatch();
+  const cart = useSelector((state: RootState) => state.cart);
   const deferredQuery = useDeferredValue(query.trim().toLowerCase());
 
 
@@ -115,12 +126,12 @@ export function ProductCatalogWorkspace({
   const attributeCatalog = Array.from(
     products.reduce((map, product) => {
       product.attributeGroups.forEach((group) => {
-        const existing = map.get(group.key) ?? {key: group.key, label: group.label, values: new Set<string>()};
+        const existing = map.get(group.key) ?? { key: group.key, label: group.label, values: new Set<string>() };
         group.values.forEach((value) => existing.values.add(value));
         map.set(group.key, existing);
       });
       return map;
-    }, new Map<string, {key: string; label: string; values: Set<string>}>())
+    }, new Map<string, { key: string; label: string; values: Set<string> }>())
       .values()
   )
     .map((group) => ({
@@ -212,17 +223,19 @@ export function ProductCatalogWorkspace({
   const pageStart = (currentPage - 1) * pageSize;
 
   // SKU View flattening logic
-  const normalizedRows = viewMode === "sku" 
+  const normalizedRows = viewMode === "sku"
     ? sortedProducts.flatMap(p => p.variants.map(v => ({
-        ...p,
-        sku: v.sku,
-        variantTitle: v.title,
-        variantStock: v.availableStock,
-        variantId: v.id,
-        // Create a unique key for selection/rendering that is specific to the SKU
-        rowKey: `${p.id}-${v.sku}`
-      })))
-    : sortedProducts.map(p => ({ ...p, rowKey: p.id }));
+      ...p,
+      sku: v.sku,
+      variantTitle: v.title,
+      variantStock: v.availableStock,
+      variantId: v.id,
+      description: p.name, // Fallback if no specific description
+      mrp: (p as any).mrp || (v as any).mrp || 0,
+      // Create a unique key for selection/rendering that is specific to the SKU
+      rowKey: `${p.id}-${v.sku}`
+    })))
+    : sortedProducts.map(p => ({ ...p, rowKey: p.id, description: p.name, mrp: (p as any).mrp || 0 }));
 
   const finalPageCount = Math.max(1, Math.ceil(normalizedRows.length / pageSize));
   const finalCurrentPage = Math.min(page, finalPageCount);
@@ -295,12 +308,12 @@ export function ProductCatalogWorkspace({
     ),
     ...(availableOnly
       ? [
-          {
-            key: "available-only",
-            label: "Available only",
-            onRemove: () => setAvailableOnly(false),
-          },
-        ]
+        {
+          key: "available-only",
+          label: "Available only",
+          onRemove: () => setAvailableOnly(false),
+        },
+      ]
       : []),
   ];
 
@@ -322,7 +335,7 @@ export function ProductCatalogWorkspace({
     setDeletingId(productId);
 
     try {
-      const response = await fetch(`/api/admin/products/${productId}`, {method: "DELETE"});
+      const response = await fetch(`/api/admin/products/${productId}`, { method: "DELETE" });
       if (!response.ok) {
         throw new Error("Failed to delete product");
       }
@@ -355,8 +368,8 @@ export function ProductCatalogWorkspace({
     downloadCsv("products-selected.csv", buildExportRows(selectedProducts as any));
   }
 
-  const [isOpen,setIsOpen] = useState(false);
-   const handleImport = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const handleImport = () => {
     if (isSourceReadonly) {
       router.push(importHref);
       return;
@@ -365,6 +378,90 @@ export function ProductCatalogWorkspace({
     setIsOpen(true);
   }
 
+  const hasQuantities = Object.values(skuQuantities).some(q => (q.qty88 ?? 0) > 0 || (q.qty90 ?? 0) > 0);
+
+
+
+  // Commenting out the automatic sync to cart as it conflicts with the incremental addToCart logic.
+  // If live-sync is desired, a different "syncCart" action should be used to avoid double-counting.
+ 
+  useEffect(( ) => {
+      if(Object.values(skuQuantities).length > 0){
+
+          const dataItem:CartItem[]=[]
+        Object.entries(skuQuantities).forEach(([rowKey, qtys]) => {
+             console.log(rowKey,qtys)
+             const data={
+              id:rowKey,
+              sku:qtys.sku    ,
+              brand:qtys.brand,
+              description:qtys.description,
+              image:qtys.image,
+              qty88:qtys.qty88,
+              qty90:qtys.qty90,
+              mrp:qtys.mrp,
+              gst:qtys.gst??0,
+              amount:qtys.amount??0,
+              discount:qtys.discount??0,
+              lessDiscount:qtys.lessDiscount??0,
+              netBilling:qtys.netBilling??0,
+              finalAmount:qtys.finalAmount??0,
+             }
+             dataItem.push(data)
+        })
+        console.log("dataItem---->",dataItem)
+        // dispatch(addToCart(dataItem))
+      }
+  }, [skuQuantities])
+  
+
+  const handleAddToCart = () => {
+    if (!cart.selectedRetailer) {
+      setRetailerModalOpen(true);
+      return;
+    }
+
+    const itemsToAdd: CartItem[] = [];
+
+    // Process SKU quantities and add to cart
+    Object.entries(skuQuantities).forEach(([rowKey, qtys]) => {
+      if ((qtys.qty88 ?? 0) > 0 || (qtys.qty90 ?? 0) > 0) {
+        // Find the variant/product info for this rowKey
+        // rowKey is productId-sku in SKU mode, or productId in product mode
+        const row = normalizedRows.find(r => r.rowKey === rowKey);
+        if (row) {
+          const qtyTotal = (qtys.qty88 || 0) + (qtys.qty90 || 0);
+          const itemMrp = (row as any).mrp || 0;
+          const amount = qtyTotal * itemMrp;
+          
+          itemsToAdd.push({
+            id: (row as any).variantId || row.id,
+            sku: row.sku || row.baseSku,
+            brand: row.brand.name,
+            description: (row as any).description,
+            image: row.primary_url?.[0],
+            qty88: qtys.qty88,
+            qty90: qtys.qty90,
+            qty: qtyTotal,
+            mrp: itemMrp,
+            gst: 18,
+            amount: amount,
+            finalAmount: amount * 1.18, // 18% GST estimate
+            netBilling: amount,
+          });
+        }
+      }
+    });
+
+    if (itemsToAdd.length > 0) {
+      dispatch(addToCart(itemsToAdd));
+    }
+
+    // Clear quantities after adding to cart
+    setSkuQuantities({});
+    router.push('/admin/cart/new');
+  };
+
   return (
     <>
       {!isSourceReadonly ? (
@@ -372,12 +469,12 @@ export function ProductCatalogWorkspace({
           <GetAllAtributeSet />
           <GetAllBrands />
           <UpdateBrandAttribute />
-         
+
         </>
       ) : null}
 
       <div className="space-y-4">
-       <UpdateCurrentBrand/>
+        <UpdateCurrentBrand />
 
         <CatalogHeader
           badgeLabel={badgeLabel}
@@ -426,7 +523,7 @@ export function ProductCatalogWorkspace({
           appliedFilters={appliedFilters}
           clearAllFilters={clearAllFilters}
         />
-    
+
         <CatalogTable
           visibleRows={visibleRows}
           viewMode={viewMode}
@@ -443,44 +540,74 @@ export function ProductCatalogWorkspace({
           deletingId={deletingId}
           sortedProductsCount={normalizedRows.length}
           statusClasses={statusClasses}
+          skuQuantities={skuQuantities}
+          setSkuQuantities={setSkuQuantities}
         />
 
         {selectedIds.length ? (
-        <motion.div
-          initial={{opacity: 0, y: 16}}
-          animate={{opacity: 1, y: 0}}
-          className="sticky bottom-4 z-30 mx-auto flex w-full max-w-[900px] flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-[#111111] px-4 py-3 text-white shadow-[0_30px_60px_rgba(0,0,0,0.26)]"
-        >
-          <div className="flex items-center gap-3">
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/75">
-              {selectedIds.length} selected
-            </span>
-            <p className="text-sm text-white/72">
-              Select an action to apply to the checked products.
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-2">
-            <ProductExportActions
-              selectedProducts={selectedProducts}
-              selectedIds={selectedIds}
-              setSelectedIds={setSelectedIds}
-              viewMode={viewMode}
-              brandName={selectedProducts.length > 0 && selectedProducts.every(p => p.brand.name === "Travis Mathew") ? "Travis Mathew" : undefined}
-            />
-            <button
-              onClick={() => setSelectedIds([])}
-              className="rounded-2xl border border-white/10 bg-transparent px-4 py-2.5 text-sm font-semibold text-white/70"
-            >
-              Clear selection
-            </button>
-          </div>
-        </motion.div>
-      ) : null}
-    </div>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="sticky bottom-4 z-30 mx-auto flex w-full max-w-[900px] flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-[#111111] px-4 py-3 text-white shadow-[0_30px_60px_rgba(0,0,0,0.26)]"
+          >
+            <div className="flex items-center gap-3">
+              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/75">
+                {selectedIds.length} selected
+              </span>
+              <p className="text-sm text-white/72">
+                Select an action to apply to the checked products.
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <ProductExportActions
+                selectedProducts={selectedProducts}
+                selectedIds={selectedIds}
+                setSelectedIds={setSelectedIds}
+                viewMode={viewMode}
+                brandName={selectedProducts.length > 0 && selectedProducts.every(p => p.brand.name === "Travis Mathew") ? "Travis Mathew" : undefined}
+              />
+              <button
+                onClick={() => setSelectedIds([])}
+                className="rounded-2xl border border-white/10 bg-transparent px-4 py-2.5 text-sm font-semibold text-white/70"
+              >
+                Clear selection
+              </button>
+            </div>
+          </motion.div>
+        ) : null}
 
-    {!isSourceReadonly ? (
-      <ImportFile isOpen={isOpen} onClose={() => setIsOpen(false)} />
-    ) : null}
+        {hasQuantities && !selectedIds.length ? (
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="sticky bottom-4 z-30 mx-auto flex w-full max-w-[400px] items-center justify-between gap-3 rounded-[24px] border border-primary/20 bg-primary px-6 py-4 text-white shadow-[0_20px_50px_rgba(15,132,255,0.3)]"
+          >
+            <div className="flex flex-col">
+              <span className="text-xs font-bold uppercase tracking-wider opacity-80">Ready to add</span>
+              <span className="text-sm font-semibold">
+                {Object.values(skuQuantities).filter(q => (q.qty88 ?? 0) > 0 || (q.qty90 ?? 0) > 0).length} items selected
+              </span>
+            </div>
+            <button
+              onClick={handleAddToCart}
+              className="rounded-xl bg-white px-5 py-2 text-sm font-bold text-primary shadow-sm hover:bg-white/90 transition-colors"
+            >
+              Add to Cart
+            </button>
+          </motion.div>
+        ) : null}
+      </div>
+
+      {!isSourceReadonly ? (
+        <>
+          <ImportFile isOpen={isOpen} onClose={() => setIsOpen(false)} />
+          <SelectRetailerModal
+            isOpen={retailerModalOpen}
+            onClose={() => setRetailerModalOpen(false)}
+            onConfirm={handleAddToCart}
+          />
+        </>
+      ) : null}
     </>
   );
 }

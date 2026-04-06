@@ -31,5 +31,5 @@ export default function CartPage({
 }: {
   searchParams: Record<string, string | string[] | undefined>;
 }) {
-  redirect(`/admin/orders/new${toQueryString(searchParams)}`);
+  redirect(`/admin/cart/new${toQueryString(searchParams)}`);
 }

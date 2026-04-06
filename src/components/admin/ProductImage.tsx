@@ -20,7 +20,7 @@ export function ProductImage({ brandName, rowData,  alt = "Product Image", class
   const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
   const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
   
-  console.log("rowData-- pperpe",rowData)
+  
   useEffect(() => {
     // Get the raw image source and filename
     const rawUrl = rowData?.primary_url || rowData?.primary_image_url;

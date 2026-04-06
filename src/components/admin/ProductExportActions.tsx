@@ -33,36 +33,81 @@ export function ProductExportActions({
     const {hardgoods}=useSelector((state:RootState)=>state.hardgoods)
     const {currentBrand}=useSelector((state:RootState)=>state.brand)
 
-    const [travisPdf, setTravisPdf] = useState<TravisMathewType[]>([]);
+    const [travisPdf, setTravisPdf] = useState<TravisPdfPrint[]>([]);
       // const fam = record.primary_image_url.replace(/_[^_]*$/, '');
-      console.log("selectedIds---->",selectedIds)
-    const allTravisItems=useMemo(()=>{
-      if(currentBrand?.name==="Travis Mathew" && viewMode==="product" && selectedIds.length>0){
-        const result = selectedIds.map(item => item.split(':')[1]);
+ 
+    const allTravisItems = useMemo(() => {
+      if (currentBrand?.name !== "Travis Mathew" || selectedIds.length === 0) return [];
 
-        const filteredTravis = travismathew.filter((item: TravisMathewType) => result.includes(item?.style_code??""));
-        console.log("filteredTravis---->",filteredTravis)
-        return filteredTravis
-      }else if(viewMode==="sku" && selectedIds.length>0 && currentBrand?.name==="Travis Mathew" && selectedIds.length>0){
-         const data:TravisPdfPrint[]=[]
-        const filteredTravis = travismathew.filter((item: TravisMathewType) => selectedIds.includes(item?._id??""));
-        // console.log("filteredTravis----> sku mode",filteredTravis)
-        //    filteredTravis.map(fliteredItem=>{
-        //     const filterOther:OtherSku[]=[]
-        //     const variationSku= fliteredItem.variation_sku;
-        //         variationSku?.map((fliteredSku:string)=>{
-        //             const data= travismathew.find((item:TravisMathewType)=>item.sku===fliteredSku)
-        //             const datas={
-        //               sku:data?.sku,
-        //               qty:data?.stock_88 +data?.stock_90,
-        //             }
-                    
-        //         })
-        //    })
-        setTravisPdf(filteredTravis)
-        return filteredTravis
+      if (viewMode === "product") {
+        const styleCodes = selectedIds.map(item => item.split(':')[1]);
+        const filteredTravis = travismathew.filter((item: TravisMathewType) => 
+          styleCodes.includes(item?.style_code ?? "")
+        );
+
+        return filteredTravis.map(item => ({
+          sku: item.sku,
+          description: item.description,
+          primary_image_url: item.primary_image_url,
+          gallery_images_url: item.gallery_images_url,
+          category: item.category,
+          gender: item.gender,
+          season: item.season,
+          color: item.color,
+          style_code: item.style_code,
+          mrp: Number(item.mrp),
+          otherSku: []
+        } as TravisPdfPrint));
+      } else if (viewMode === "sku") {
+        const filteredTravis = travismathew.filter((item: TravisMathewType) => 
+          selectedIds.includes(item?._id ?? "")
+        );
+
+        return filteredTravis.map(fliteredItem => {
+          const filterOther: OtherSku[] = [];
+          const variationSkuStr = fliteredItem.variation_sku;
+          
+          // Handle variation_sku if it's a string or array
+          const variationSkuArray = Array.isArray(variationSkuStr) 
+            ? variationSkuStr 
+            : typeof variationSkuStr === 'string' 
+              ? variationSkuStr.split(',').map(s => s.trim()) 
+              : [];
+
+          variationSkuArray.forEach((fliteredSku: string) => {
+            const variant = travismathew.find((item: TravisMathewType) => item.sku === fliteredSku);
+            if (variant) {
+              filterOther.push({
+                sku: variant.sku,
+                qty: Number(variant.stock_88 || 0) + Number(variant.stock_90 || 0),
+                size: variant.size,
+              });
+            }
+          });
+
+          return {
+            sku: fliteredItem.sku,
+            description: fliteredItem.description,
+            primary_image_url: fliteredItem.primary_image_url,
+            gallery_images_url: fliteredItem.gallery_images_url,
+            category: fliteredItem.category,
+            gender: fliteredItem.gender,
+            season: fliteredItem.season,
+            color: fliteredItem.color,
+            style_code: fliteredItem.style_code,
+            mrp: Number(fliteredItem.mrp),
+            otherSku: filterOther,
+          } as TravisPdfPrint;
+        });
       }
-    },[currentBrand,travismathew,viewMode,selectedIds])
+      return [];
+    }, [currentBrand, travismathew, viewMode, selectedIds]);
+
+    React.useEffect(() => {
+      if (allTravisItems && allTravisItems.length > 0) {
+        setTravisPdf(allTravisItems);
+      }
+    }, [allTravisItems]);
 
   const handleExportExcel = () => {
     downloadCsv("products-selected.csv", buildExportRows(selectedProducts as any));
