@@ -81,3 +81,8 @@ export async function deleteUser(formData: FormData) {
   revalidatePath(redirectTo);
   redirect(redirectTo);
 }
+
+export async function getUsersByRole(roleKey: string) {
+  await dbConnect();
+  return User.find({ roleKey, status: "active" }).select("_id name email managerId").lean();
+}

@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { AuthProvider } from "@/components/auth/AuthProvider";
 import { ReduxProvider } from "@/components/providers/ReduxProvider";
+import SessionSync from "@/components/auth/SessionSync";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -32,6 +33,7 @@ export default function RootLayout({
       <body className={geistSans.className}>
         <ReduxProvider>
           <AuthProvider>
+            <SessionSync />
             <ThemeProvider>{children}</ThemeProvider>
           </AuthProvider>
         </ReduxProvider>

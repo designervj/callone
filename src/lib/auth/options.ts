@@ -47,7 +47,7 @@ export const authOptions: NextAuthOptions = {
         if (!credentials?.email || !credentials?.password) {
           return null;
         }
-
+     
         const normalizedEmail = credentials.email.toLowerCase().trim();
         const bootstrapEmail = (
           process.env.CALLONE_BOOTSTRAP_ADMIN_EMAIL ?? "admin@callone.local"
@@ -56,11 +56,27 @@ export const authOptions: NextAuthOptions = {
           .trim();
         const bootstrapPassword =
           process.env.CALLONE_BOOTSTRAP_ADMIN_PASSWORD ?? "CalloneAdmin@123";
+        const bootstrapManagerEmail = (
+          process.env.CALLONE_BOOTSTRAP_MANAGER_EMAIL ?? "manager@callone.local"
+        )
+          .toLowerCase()
+          .trim();
+        const bootstrapSalesEmail = (
+          process.env.CALLONE_BOOTSTRAP_SALES_EMAIL ?? "sales@callone.local"
+        )
+          .toLowerCase()
+          .trim();
+        const bootstrapRetailerEmail = (
+          process.env.CALLONE_BOOTSTRAP_RETAILER_EMAIL ?? "retailer@callone.local"
+        )
+          .toLowerCase()
+          .trim();
+
         const bootstrapEmails = new Set([
           bootstrapEmail,
-          "manager@callone.local",
-          "sales@callone.local",
-          "retailer@callone.local",
+          bootstrapManagerEmail,
+          bootstrapSalesEmail,
+          bootstrapRetailerEmail,
         ]);
 
         if (
@@ -79,9 +95,9 @@ export const authOptions: NextAuthOptions = {
           const bootstrapRole: RoleKey =
             normalizedEmail === bootstrapEmail
               ? "super_admin"
-              : normalizedEmail === "manager@callone.local"
+              : normalizedEmail === bootstrapManagerEmail
                 ? "manager"
-                : normalizedEmail === "sales@callone.local"
+                : normalizedEmail === bootstrapSalesEmail
                   ? "sales_rep"
                   : "retailer";
 

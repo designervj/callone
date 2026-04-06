@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ProductTable } from "./ProductTable";
 import { SkuTable } from "./SkuTable";
 import { EmptyState } from "./EmptyState";
+import { CartItem } from "@/store/slices/cart/cartSlice";
 
 interface CatalogTableProps {
   visibleRows: any[];
@@ -22,6 +23,8 @@ interface CatalogTableProps {
   deletingId: string;
   sortedProductsCount: number;
   statusClasses: (status: string) => string;
+  skuQuantities: Record<string, CartItem>;
+  setSkuQuantities: React.Dispatch<React.SetStateAction<Record<string, CartItem>>>;
 }
 
 export function CatalogTable({
@@ -40,6 +43,8 @@ export function CatalogTable({
   deletingId,
   sortedProductsCount,
   statusClasses,
+  skuQuantities,
+  setSkuQuantities,
 }: CatalogTableProps) {
   return (
     <section className="premium-card overflow-clip rounded-[28px]">
@@ -89,6 +94,8 @@ export function CatalogTable({
             handleDelete={handleDelete}
             deletingId={deletingId}
             statusClasses={statusClasses}
+            skuQuantities={skuQuantities}
+            setSkuQuantities={setSkuQuantities}
           />
         )}
       </div>

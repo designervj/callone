@@ -136,21 +136,25 @@ export async function ensureSystemBootstrap() {
     const salesRepRole = await Role.findOne({key: "sales_rep"});
     const retailerRole = await Role.findOne({key: "retailer"});
 
+    const managerEmail = process.env.CALLONE_BOOTSTRAP_MANAGER_EMAIL ?? "manager@callone.local";
+    const salesEmail = process.env.CALLONE_BOOTSTRAP_SALES_EMAIL ?? "sales@callone.local";
+    const retailerEmail = process.env.CALLONE_BOOTSTRAP_RETAILER_EMAIL ?? "retailer@callone.local";
+
     const seedUsers = [
       {
-        email: "manager@callone.local",
+        email: managerEmail,
         name: "Regional Manager",
         role: managerRole,
         designation: "Regional Sales Manager",
       },
       {
-        email: "sales@callone.local",
+        email: salesEmail,
         name: "Field Sales Rep",
         role: salesRepRole,
         designation: "Sales Executive",
       },
       {
-        email: "retailer@callone.local",
+        email: retailerEmail,
         name: "Partner Retailer",
         role: retailerRole,
         designation: "Retail Partner",
