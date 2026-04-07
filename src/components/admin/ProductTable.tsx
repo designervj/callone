@@ -14,6 +14,7 @@ interface ProductTableProps {
   handleDelete: (id: string) => void;
   deletingId: string;
   statusClasses: (status: string) => string;
+  onOpenPreview: (images: string[], index: number) => void;
 }
 
 export function ProductTable({
@@ -25,6 +26,7 @@ export function ProductTable({
   handleDelete,
   deletingId,
   statusClasses,
+  onOpenPreview,
 }: ProductTableProps) {
 
 
@@ -89,6 +91,31 @@ export function ProductTable({
                       rowData={row}
                       alt={row.name} 
                       className="h-11 w-11 shrink-0" 
+                      onClick={() => {
+                        const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+                        const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
+                        const skuValue = row.sku || row.baseSku;
+                        
+                        const resolveUrl = (url: string) => {
+                          if (!url) return '';
+                          if (url.startsWith('http') || url.startsWith('/')) return url;
+                          
+                          if (row.brand.name === "Travis Mathew") {
+                            const fam = skuValue?.replace(/_[^_]*$/, '') || '';
+                            return `${s3_url}/${fam}/${url}`;
+                          } else if (row.brand.name === "Ogio") {
+                            return `${s3_url_ogio}/${skuValue}/${url}`;
+                          }
+                          return url.startsWith('/') ? url : `/${url}`;
+                        };
+
+                        const primary = resolveUrl(row.primary_url || row.primary_image_url);
+                        const gallery = row.gallery_images_url 
+                          ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim())) 
+                          : [];
+                        
+                        onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+                      }}
                     />
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">

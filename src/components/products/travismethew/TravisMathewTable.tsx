@@ -2,6 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import { Package2, Trash2 } from 'lucide-react';
 import { TravisMathewType } from './TravisMethewType';
+import { ProductImage } from '../../admin/ProductImage';
 
 export interface TravisMathewTableProps {
   products: TravisMathewType[];
@@ -10,6 +11,7 @@ export interface TravisMathewTableProps {
   onSelectOne: (id: string, checked: boolean) => void;
   onDelete: (id: string) => void;
   deletingId?: string;
+  onOpenPreview: (images: string[], index: number) => void;
 }
 
 export function TravisMathewTable({
@@ -18,12 +20,33 @@ export function TravisMathewTable({
   onSelectAll,
   onSelectOne,
   onDelete,
-  deletingId
+  deletingId,
+  onOpenPreview
 }: TravisMathewTableProps) {
   const allSelected = products.length > 0 && products.every((p) => {
     const id = p.sku || p._id;
     return id ? selectedIds.includes(id) : false;
   });
+
+  const handleProductClick = (product: TravisMathewType) => {
+    const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+    const skuValue = product.sku;
+    const fam = skuValue?.replace(/_[^_]*$/, '') || '';
+    
+    const resolveUrl = (url: string) => {
+      if (!url) return '';
+      if (url.startsWith('http') || url.startsWith('/')) return url;
+      return `${s3_url}/${fam}/${url}`;
+    };
+
+    const primary = resolveUrl(product.primary_image_url || '');
+    const gallery = product.gallery_images_url 
+      ? product.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim())) 
+      : [];
+    
+    onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+  };
+
   //const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
   return (
     <div className="w-full max-h-[calc(100vh-250px)] overflow-auto rounded-b-[24px]">
@@ -68,14 +91,22 @@ export function TravisMathewTable({
 
                   {/* show image  */}
 
-                  <td className="border-b border-white/5 px-4 py-4 align-top">
+                  <td 
+                    className="border-b border-white/5 px-4 py-4 align-top cursor-pointer group hover:bg-white/5 transition-colors"
+                    onClick={() => handleProductClick(product)}
+                  >
                     <div className="flex gap-3">
-                      {/* <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#1a1a1a] text-xs font-semibold uppercase tracking-[0.14em] text-white">
-                        TM
-                      </div> */}
+                      <ProductImage 
+                        brandName="Travis Mathew"
+                        rowData={product}
+                        alt={product.description}
+                        className="h-11 w-11 shrink-0"
+                      />
                       <div className="min-w-0">
                         <div className="flex flex-wrap items-center gap-2">
-                          {/* <p className="truncate font-semibold text-foreground">{product.description || 'Untitled product'}</p> */}
+                           <p className="truncate font-semibold text-foreground group-hover:text-[#4b8df8] transition-colors">
+                            {product.description || 'Untitled product'}
+                          </p>
                           <span className="rounded-full border border-border/70 bg-background/50 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground/48">
                             {product.sku || 'N/A'}
                           </span>
@@ -83,7 +114,7 @@ export function TravisMathewTable({
                         <p className="mt-1 text-xs text-foreground/52">
                           {product.gender || 'Mens'} · {product.line || 'apparel'}
                         </p>
-                        <p className="mt-2 line-clamp-1 text-xs text-foreground/45">
+                        <p className="mt-2 line-clamp-1 text-xs text-foreground/45 group-hover:text-foreground/60">
                           {product.variation_sku || ''}
                         </p>
                       </div>

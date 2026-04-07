@@ -11,6 +11,7 @@ import { TravisMathewFilterBar } from "./TravisMathewFilterBar";
 import { TravisMathewStats } from "./TravisMathewStats";
 import { TravisMathewTable } from "./TravisMathewTable";
 import { TravisMathewPagination } from "./TravisMathewPagination";
+import { ImageSliderModal } from "../../admin/ImageSliderModal";
 
 export function TravisMathewCatalogWorkspace() {
   const dispatch = useDispatch<AppDispatch>();
@@ -25,6 +26,9 @@ export function TravisMathewCatalogWorkspace() {
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [deletingId, setDeletingId] = useState("");
   const [isImportOpen, setIsImportOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [previewIndex, setPreviewIndex] = useState(0);
 
   useEffect(() => {
     if (!isFetchedTravismathew) {
@@ -102,6 +106,12 @@ export function TravisMathewCatalogWorkspace() {
     }
   };
 
+  const handleOpenPreview = (images: string[], index: number = 0) => {
+    setPreviewImages(images);
+    setPreviewIndex(index);
+    setPreviewOpen(true);
+  };
+
   return (
     <>
       <div className="space-y-4">
@@ -159,6 +169,7 @@ export function TravisMathewCatalogWorkspace() {
               onSelectOne={handleSelectOne}
               onDelete={handleDelete}
               deletingId={deletingId}
+              onOpenPreview={handleOpenPreview}
             />
 
             <TravisMathewPagination 
@@ -172,6 +183,14 @@ export function TravisMathewCatalogWorkspace() {
       </div>
 
       <ImportFile isOpen={isImportOpen} onClose={() => setIsImportOpen(false)} />
+
+      <ImageSliderModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        images={previewImages}
+        currentIndex={previewIndex}
+        onIndexChange={setPreviewIndex}
+      />
     </>
   );
 }

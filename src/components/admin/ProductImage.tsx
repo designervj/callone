@@ -7,20 +7,18 @@ import Image from 'next/image';
 interface ProductImageProps {
   brandName: string;
   rowData: any;
-
   alt?: string;
   className?: string;
+  onClick?: () => void;
 }
 
-export function ProductImage({ brandName, rowData,  alt = "Product Image", className = "" }: ProductImageProps) {
+export function ProductImage({ brandName, rowData, alt = "Product Image", className = "", onClick }: ProductImageProps) {
   const [error, setError] = useState(false);
   const [primaryImage, setPrimaryImage] = useState<string | null>(null);
-  const [imagePaths, setImagePaths] = useState<string[]>([]);
-  const [family, setFamily] = useState<string>();
+
   const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
   const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
-  
-  
+
   useEffect(() => {
     // Get the raw image source and filename
     const rawUrl = rowData?.primary_url || rowData?.primary_image_url;
@@ -47,7 +45,7 @@ export function ProductImage({ brandName, rowData,  alt = "Product Image", class
     }
   }, [brandName, rowData, s3_url, s3_url_ogio]);
 
-  const displaySrc = primaryImage 
+  const displaySrc = primaryImage;
 
   if (!displaySrc || error) {
     return (
@@ -58,15 +56,24 @@ export function ProductImage({ brandName, rowData,  alt = "Product Image", class
   }
 
   return (
-    <div className={`relative overflow-hidden rounded-2xl bg-[#1D1D1D] ${className}`}>
+    <div
+      className={`group relative cursor-pointer overflow-hidden rounded-2xl bg-[#1D1D1D] transition-all hover:ring-2 hover:ring-primary/50 ${className}`}
+      onClick={(e) => {
+        if (onClick) {
+          e.stopPropagation();
+          onClick();
+        }
+      }}
+    >
       <Image
         src={displaySrc}
         alt={alt}
         fill
-        className="object-cover transition-transform duration-300 hover:scale-110"
+        className="object-cover transition-transform duration-500 group-hover:scale-110"
         onError={() => setError(true)}
         sizes="(max-width: 768px) 44px, 44px"
       />
+      <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/10" />
     </div>
   );
 }

@@ -25,6 +25,7 @@ interface CatalogTableProps {
   statusClasses: (status: string) => string;
   skuQuantities: Record<string, CartItem>;
   setSkuQuantities: React.Dispatch<React.SetStateAction<Record<string, CartItem>>>;
+  onOpenPreview: (images: string[], index: number) => void;
 }
 
 export function CatalogTable({
@@ -45,6 +46,7 @@ export function CatalogTable({
   statusClasses,
   skuQuantities,
   setSkuQuantities,
+  onOpenPreview,
 }: CatalogTableProps) {
   return (
     <section className="premium-card overflow-clip rounded-[28px]">
@@ -83,6 +85,7 @@ export function CatalogTable({
             handleDelete={handleDelete}
             deletingId={deletingId}
             statusClasses={statusClasses}
+            onOpenPreview={onOpenPreview}
           />
         ) : (
           <SkuTable
@@ -96,6 +99,7 @@ export function CatalogTable({
             statusClasses={statusClasses}
             skuQuantities={skuQuantities}
             setSkuQuantities={setSkuQuantities}
+            onOpenPreview={onOpenPreview}
           />
         )}
       </div>

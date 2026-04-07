@@ -25,6 +25,7 @@ import UpdateCurrentBrand from "../brands/UpdateCurrentBrand";
 import { SelectRetailerModal } from "./SelectRetailerModal";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart, CartItem } from "@/store/slices/cart/cartSlice";
+import { ImageSliderModal } from "./ImageSliderModal";
 
 
 
@@ -80,6 +81,9 @@ export function ProductCatalogWorkspace({
   const [attributeFilters, setAttributeFilters] = useState<Record<string, string[]>>({});
   const [skuQuantities, setSkuQuantities] = useState<Record<string, CartItem>>({});
   const [retailerModalOpen, setRetailerModalOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImages, setPreviewImages] = useState<string[]>([]);
+  const [previewIndex, setPreviewIndex] = useState(0);
 
 
   const cart = useSelector((state: RootState) => state.cart);
@@ -502,6 +506,12 @@ export function ProductCatalogWorkspace({
     router.push('/admin/cart/new');
   };
 
+  const handleOpenPreview = (images: string[], index: number = 0) => {
+    setPreviewImages(images);
+    setPreviewIndex(index);
+    setPreviewOpen(true);
+  };
+
   return (
     <>
       {!isSourceReadonly ? (
@@ -582,36 +592,46 @@ export function ProductCatalogWorkspace({
           statusClasses={statusClasses}
           skuQuantities={skuQuantities}
           setSkuQuantities={setSkuQuantities}
+          onOpenPreview={handleOpenPreview}
         />
 
         {selectedIds.length ? (
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
+            initial={{ opacity: 0, y: 100 }}
             animate={{ opacity: 1, y: 0 }}
-            className="sticky bottom-4 z-30 mx-auto flex w-full max-w-[900px] flex-wrap items-center justify-between gap-3 rounded-[24px] border border-white/10 bg-[#111111] px-4 py-3 text-white shadow-[0_30px_60px_rgba(0,0,0,0.26)]"
+            exit={{ opacity: 0, y: 100 }}
+            className="fixed bottom-0 left-0 right-0 z-[100] border-t border-white/10 bg-black px-6 py-4 text-white shadow-[0_-10px_40px_rgba(0,0,0,0.5)]"
           >
-            <div className="flex items-center gap-3">
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-white/75">
-                {selectedIds.length} selected
-              </span>
-              <p className="text-sm text-white/72">
-                Select an action to apply to the checked products.
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-2">
-              <ProductExportActions
-                selectedProducts={selectedProducts}
-                selectedIds={selectedIds}
-                setSelectedIds={setSelectedIds}
-                viewMode={viewMode}
-                brandName={selectedProducts.length > 0 && selectedProducts.every(p => p.brand.name === "Travis Mathew") ? "Travis Mathew" : undefined}
-              />
-              <button
-                onClick={() => setSelectedIds([])}
-                className="rounded-2xl border border-white/10 bg-transparent px-4 py-2.5 text-sm font-semibold text-white/70"
-              >
-                Clear selection
-              </button>
+            <div className="mx-auto flex max-w-screen-2xl items-center justify-between gap-6">
+              <div className="flex items-center gap-6">
+                <div className="flex flex-col">
+                  <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">Actions for</span>
+                  <span className="text-sm font-black uppercase tracking-widest text-primary">
+                    {selectedIds.length} items selected
+                  </span>
+                </div>
+                <div className="h-8 w-px bg-white/10" />
+                <p className="hidden text-xs font-semibold text-white/40 lg:block">
+                  Bulk export, quantity updates, and inventory management for the current selection.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => setSelectedIds([])}
+                  className="rounded-xl border border-white/10 bg-white/5 px-5 py-2.5 text-xs font-bold uppercase tracking-wider transition-all hover:bg-white/10 hover:text-white"
+                >
+                  Clear Selection
+                </button>
+                <div className="h-8 w-px bg-white/10" />
+                <ProductExportActions
+                  selectedProducts={selectedProducts}
+                  selectedIds={selectedIds}
+                  setSelectedIds={setSelectedIds}
+                  viewMode={viewMode}
+                  brandName={selectedProducts.length > 0 && selectedProducts.every(p => p.brand.name === "Travis Mathew") ? "Travis Mathew" : undefined}
+                />
+              </div>
             </div>
           </motion.div>
         ) : null}
@@ -648,6 +668,14 @@ export function ProductCatalogWorkspace({
           />
         </>
       ) : null}
+
+      <ImageSliderModal
+        isOpen={previewOpen}
+        onClose={() => setPreviewOpen(false)}
+        images={previewImages}
+        currentIndex={previewIndex}
+        onIndexChange={setPreviewIndex}
+      />
     </>
   );
 }

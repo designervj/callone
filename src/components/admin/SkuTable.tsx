@@ -21,6 +21,7 @@ interface SkuTableProps {
   statusClasses: (status: string) => string;
   skuQuantities: Record<string, CartItem>;
   setSkuQuantities: React.Dispatch<React.SetStateAction<Record<string, CartItem>>>;
+  onOpenPreview: (images: string[], index: number) => void;
 }
 
 export function SkuTable({
@@ -34,6 +35,7 @@ export function SkuTable({
   statusClasses,
   skuQuantities,
   setSkuQuantities,
+  onOpenPreview
 }: SkuTableProps) {
   // Pull data from Redux to show "data on redux" as requested
 
@@ -151,10 +153,35 @@ export function SkuTable({
                         <td key={key} className="border-b border-border/60 px-4 py-4 align-top">
                           <div className="flex gap-3">
                             <ProductImage 
-                            brandName={currentAttribute?.name??""}
+                              brandName={currentAttribute?.name??""}
                               rowData={row}
                               alt={row.name} 
                               className="h-11 w-11 shrink-0" 
+                              onClick={() => {
+                                const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+                                const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
+                                const skuValue = row.sku || row.baseSku;
+
+                                const resolveUrl = (url: string) => {
+                                  if (!url) return '';
+                                  if (url.startsWith('http') || url.startsWith('/')) return url;
+                                  
+                                  if (currentAttribute?.name === "Travis Mathew") {
+                                    const fam = skuValue?.replace(/_[^_]*$/, '') || '';
+                                    return `${s3_url}/${fam}/${url}`;
+                                  } else if (currentAttribute?.name === "Ogio") {
+                                    return `${s3_url_ogio}/${skuValue}/${url}`;
+                                  }
+                                  return url.startsWith('/') ? url : `/${url}`;
+                                };
+
+                                const primary = resolveUrl(row.primary_url || row.primary_image_url);
+                                const gallery = row.gallery_images_url 
+                                  ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim())) 
+                                  : [];
+                                
+                                onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+                              }}
                             />
                             <div className="min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
@@ -282,9 +309,33 @@ export function SkuTable({
                         <ProductImage 
                           brandName={currentAttribute?.name ?? ""}
                           rowData={row}
-                         
                           alt={row.name} 
                           className="h-11 w-11 shrink-0" 
+                          onClick={() => {
+                            const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+                            const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
+                            const skuValue = row.sku || row.baseSku;
+
+                            const resolveUrl = (url: string) => {
+                              if (!url) return '';
+                              if (url.startsWith('http') || url.startsWith('/')) return url;
+                              
+                              if (currentAttribute?.name === "Travis Mathew") {
+                                const fam = skuValue?.replace(/_[^_]*$/, '') || '';
+                                return `${s3_url}/${fam}/${url}`;
+                              } else if (currentAttribute?.name === "Ogio") {
+                                return `${s3_url_ogio}/${skuValue}/${url}`;
+                              }
+                              return url.startsWith('/') ? url : `/${url}`;
+                            };
+
+                            const primary = resolveUrl(row.primary_url || row.primary_image_url);
+                            const gallery = row.gallery_images_url 
+                              ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim())) 
+                              : [];
+                            
+                            onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+                          }}
                         />
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">

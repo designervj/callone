@@ -137,10 +137,11 @@ export function ProductExportActions({
       <div className="relative">
         <button
           onClick={() => setExportMenuOpen(!exportMenuOpen)}
-          className="flex items-center gap-2 rounded-2xl border border-white/10 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-white/20"
+          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/10 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-all hover:bg-white/20"
         >
+          <Presentation className="h-4 w-4 text-amber-500" />
           Export selected
-          <ChevronDown className={`h-4 w-4 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown className={`h-3 w-3 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {exportMenuOpen && (
