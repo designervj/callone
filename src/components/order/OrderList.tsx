@@ -174,7 +174,7 @@ export const OrderList = () => {
         {/* Table Content */}
         <div className="relative overflow-x-auto">
           {activeTab === "users" ? (
-            <table className="w-full text-left">
+            <table className="w-full text-left ">
               <thead>
                 <tr className="border-b border-border/40 bg-foreground/[0.01] bg-[#111111] text-white">
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 italic">Name</th>
@@ -207,7 +207,7 @@ export const OrderList = () => {
           ) : (
             <table className="w-full text-left">
               <thead>
-                <tr className="border-b border-border/40 bg-foreground/[0.01]">
+                <tr className="border-b border-border/40 bg-foreground/[0.01] bg-[#111111] text-white">
                   <th className="px-6 py-5"></th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 italic">Order Id</th>
                   <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30 italic">Retailer Name</th>
