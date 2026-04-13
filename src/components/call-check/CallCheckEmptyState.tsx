@@ -44,9 +44,14 @@ export function CallCheckEmptyState({
               <button
                 type="button"
                 onClick={onOpenFile}
-                className="inline-flex items-center gap-2 rounded-[20px] bg-primary px-5 py-3 text-sm font-semibold text-white"
+                disabled={isLoading}
+                className="inline-flex items-center gap-2 rounded-[20px] bg-primary px-5 py-3 text-sm font-semibold text-white disabled:opacity-60"
               >
-                <Upload className="h-4 w-4" />
+                {isLoading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <Upload className="h-4 w-4" />
+                )}
                 Upload spreadsheet
               </button>
             </div>

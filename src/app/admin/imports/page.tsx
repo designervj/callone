@@ -39,7 +39,7 @@ export default async function CallCheckPage({searchParams}: CallCheckPageProps) 
     <>
     <GetAllProducts/>
     <div className="space-y-8">
-      <SectionCard
+      {/* <SectionCard
         title="Brand catalog intake blueprint"
         description="Use one shared catalog contract in code while keeping the four brand source collections separate until write imports are introduced."
       >
@@ -127,7 +127,7 @@ export default async function CallCheckPage({searchParams}: CallCheckPageProps) 
           settings layer with warnings, because changing allowed warehouses or default stock routing will affect
           import validation, catalog availability, and order assignment behavior.
         </div>
-      </SectionCard>
+      </SectionCard> */}
 
       <CallCheckWorkspace initialDatasets={datasets} initialDatasetSlug={searchParams?.sheet ?? null} />
     </div>

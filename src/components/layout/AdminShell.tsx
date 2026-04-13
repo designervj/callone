@@ -14,6 +14,7 @@ import {
   Menu,
   Moon,
   Search,
+  Settings,
   ShoppingBag,
   ShoppingCart,
   Sun,
@@ -512,13 +513,20 @@ export function AdminShell({children, user}: AdminShellProps) {
                       </div>
 
                       <div className="mt-3 space-y-2">
-                        <Link
-                          href="/admin/orders"
+                        <button
+                          onClick={() => router.push("/admin/orders")}
                           className="flex items-center gap-3 rounded-[18px] border border-white/10 bg-white/4 px-3 py-3 text-sm font-semibold text-white/76 transition hover:bg-white/8 hover:text-white"
                         >
                           <ShoppingBag size={16} />
                           My Orders
-                        </Link>
+                        </button>
+                            <button
+                          onClick={() => router.push("/admin/setting")}
+                          className="flex items-center gap-3 rounded-[18px] border border-white/10 bg-white/4 px-3 py-3 text-sm font-semibold text-white/76 transition hover:bg-white/8 hover:text-white"
+                        >
+                          <Settings size={16} />
+                          Setting
+                        </button>
 
                         <button
                           onClick={() => signOut({callbackUrl: "/login"})}

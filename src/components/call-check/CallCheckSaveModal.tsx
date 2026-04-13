@@ -1,6 +1,6 @@
 "use client"
 import React, {useState, useEffect, useMemo} from "react";
-import {Loader2, X} from "lucide-react";
+import {X} from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, RootState } from "@/store";
 import { setCurrentBrand } from "@/store/slices/brandSlice/brandSlice";
@@ -14,9 +14,9 @@ type CallCheckSaveModalProps = {
 
 export function CallCheckSaveModal({isOpen, onClose, onSave}: CallCheckSaveModalProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const {allBrand, isFetchedBrand} = useSelector((state: RootState) => state.brand);
+  const {allBrand} = useSelector((state: RootState) => state.brand);
 
-  const {allAttribute,isFetchedAttribute}=useSelector((state:RootState)=>state.attribute)
+  const {allAttribute}=useSelector((state:RootState)=>state.attribute)
   const dispatch=useDispatch<AppDispatch>()
   // Reset selected state when modal opens
   useEffect(() => {
@@ -25,17 +25,27 @@ export function CallCheckSaveModal({isOpen, onClose, onSave}: CallCheckSaveModal
     }
   }, [isOpen]);
 
-  const collections = useMemo(() => {
-    if (!isFetchedBrand || allBrand.length === 0) {
-      return [];
-    }
-    return allBrand.map((brand) => ({
+const collections = useMemo(() => {
+  if (allBrand.length === 0) {
+    return [
+      {
+        id: "sheet_travismethew",
+        label: "Travis Mathew Sheet",
+      },
+    ];
+  }
+
+  return [
+    ...allBrand.map((brand) => ({
       id: brand.collection ?? "",
       label: brand.name ?? "",
-    }));
-  }, [allBrand, isFetchedBrand]);
-
-  const isLoading = !isFetchedBrand;
+    })),
+    {
+      id: "sheet_travismethew",
+      label: "Travis Mathew Sheet",
+    },
+  ];
+}, [allBrand]);
 
   if (!isOpen) {
     return null;
@@ -43,10 +53,16 @@ export function CallCheckSaveModal({isOpen, onClose, onSave}: CallCheckSaveModal
 
 
   const toggleSelection = (id: string) => {
+    if (id === "sheet_travismethew") {
+      dispatch(setCurrentAttribute(null));
+      dispatch(setCurrentBrand(null));
+      setSelected(new Set([id]));
+      return;
+    }
+
     const selectedBrand= allBrand.find((brand) => brand.collection === id);
     const selectedAttribute= allAttribute.find((attribute) => attribute.name === selectedBrand?.name);
-    console.log("selectedAttribute",selectedAttribute)
-    console.log("selectedBrand",selectedBrand)
+
     if(selectedBrand && selectedAttribute){
       dispatch(setCurrentAttribute(selectedAttribute))
       dispatch(setCurrentBrand(selectedBrand))
@@ -76,13 +92,8 @@ export function CallCheckSaveModal({isOpen, onClose, onSave}: CallCheckSaveModal
           <p className="mb-4 text-sm text-foreground/70">
             Please select the collections to associate with this dataset:
           </p>
-          <div className="space-y-3">   
-            {isLoading?(
-              <div className="flex items-center justify-center">
-                <Loader2 className="h-5 w-5 animate-spin" />
-              </div>
-            ):(
-            collections.map((collection) => (
+          <div className="space-y-3">
+            {collections.map((collection) => (
               <label
                 key={collection.id}
                 className="flex cursor-pointer items-center gap-3 rounded-lg border border-border/40 p-3 transition-colors hover:bg-surface-muted"
@@ -98,7 +109,7 @@ export function CallCheckSaveModal({isOpen, onClose, onSave}: CallCheckSaveModal
                   {collection.label}
                 </span>
               </label>
-            )))}
+            ))}
           </div>
         </div>
 
