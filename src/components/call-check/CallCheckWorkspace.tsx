@@ -5,7 +5,7 @@ import {usePathname, useRouter, useSearchParams} from "next/navigation";
 import {AgGridReact} from "ag-grid-react";
 import {AllCommunityModule, ColDef, CellValueChangedEvent, ModuleRegistry, ValueFormatterParams} from "ag-grid-community";
 import * as XLSX from "xlsx";
-import {FileSpreadsheet} from "lucide-react";
+import {FileSpreadsheet, Loader2} from "lucide-react";
 import {CallCheckDropzone} from "@/components/call-check/CallCheckDropzone";
 import {CallCheckEmptyState} from "@/components/call-check/CallCheckEmptyState";
 import {CallCheckGrid} from "@/components/call-check/CallCheckGrid";
@@ -26,6 +26,9 @@ import { setHardGoods } from "@/store/slices/hardgoodSlice/hardgoodSlice";
 import { createHardGood } from "@/store/slices/hardgoodSlice/hardgoodThunks";
 import { setSoftGoods } from "@/store/slices/softgoods/softgoodsSlice";
 import { createSoftGood } from "@/store/slices/softgoods/softgoodsThunks";
+import { createTravisSheet } from "@/store/slices/sheet/travismethew/TravisSheetThunks";
+import { setAllTravisSheet } from "@/store/slices/sheet/travismethew/TravisSheetSlice";
+import { getTravisSheetKey, pickTravisSheetFields } from "@/store/slices/sheet/travismethew/TravisMethewSheetType";
 
 ModuleRegistry.registerModules([AllCommunityModule]);
 
@@ -54,6 +57,26 @@ function ImageCellRenderer(params: {data?: CallCheckRow}) {
   );
 }
 
+function hasMeaningfulSheetValue(value: unknown) {
+  if (value === null || value === undefined) {
+    return false;
+  }
+
+  return String(value).trim() !== "";
+}
+
+function isMeaningfulSheetRow(row: unknown) {
+  if (Array.isArray(row)) {
+    return row.some(hasMeaningfulSheetValue);
+  }
+
+  if (row && typeof row === "object") {
+    return Object.values(row as Record<string, unknown>).some(hasMeaningfulSheetValue);
+  }
+
+  return false;
+}
+
 export function CallCheckWorkspace({
   initialDatasets,
   initialDatasetSlug = null,
@@ -73,7 +96,7 @@ export function CallCheckWorkspace({
   const [isDragging, setIsDragging] = useState(false);
   const [urlInput, setUrlInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
+  const [isSaving] = useState(false);
   const [isDarkGrid, setIsDarkGrid] = useState(false);
   const [activeDatasetSlug, setActiveDatasetSlug] = useState(initialDatasetSlug ?? "");
   const [isSaveModalOpen, setIsSaveModalOpen] = useState(false);
@@ -87,10 +110,11 @@ export function CallCheckWorkspace({
 
   const { currentBrand } = useSelector((state: RootState) => state.brand);
   const { currentAttribute } = useSelector((state: RootState) => state.attribute);
-  const { travismathew } = useSelector((state: RootState) => state.travisMathew);
+   const { travismathew } = useSelector((state: RootState) => state.travisMathew);
   const { ogio } = useSelector((state: RootState) => state.ogio);
   const { hardgoods } = useSelector((state: RootState) => state.hardgoods);
   const { softgoods } = useSelector((state: RootState) => state.softgoods);
+  const { allTravisSheet } = useSelector((state: RootState) => state.travisSheet);
 
 
   const syncSheetParam = useCallback(
@@ -237,7 +261,7 @@ export function CallCheckWorkspace({
     }
 
     const headers = (rawData[headerRowIndex] ?? []) as unknown[];
-    const dataRows = rawData.slice(headerRowIndex + 1);
+    const dataRows = rawData.slice(headerRowIndex + 1).filter(isMeaningfulSheetRow);
     const fieldNames: string[] = [];
 
     const cols: ColDef<CallCheckRow>[] = [
@@ -341,6 +365,7 @@ export function CallCheckWorkspace({
   // console.log("rowData",rowData)
   const processFile = useCallback(
     (uploadedFile: File) => {
+      setIsLoading(true);
       setFile(uploadedFile);
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -350,11 +375,17 @@ export function CallCheckWorkspace({
           setWorkbook(nextWorkbook);
           setSheets(nextWorkbook.SheetNames);
           if (nextWorkbook.SheetNames.length) {
-            loadSheetData(nextWorkbook, nextWorkbook.SheetNames[0]);
+            setTimeout(() => {
+              loadSheetData(nextWorkbook, nextWorkbook.SheetNames[0]);
+              setIsLoading(false);
+            }, 100);
+          } else {
+            setIsLoading(false);
           }
         } catch (error) {
           console.error(error);
           window.alert("Failed to parse the spreadsheet. Please upload a valid Excel or CSV file.");
+          setIsLoading(false);
         }
       };
       reader.readAsBinaryString(uploadedFile);
@@ -801,6 +832,99 @@ export function CallCheckWorkspace({
     void runImport();
   }, [currentAttribute?._id, currentBrand?._id, dispatch, rowData, softgoods]);
 
+  const handleTravisSheetImport = useCallback(async () => {
+    if (!rowData.length) return;
+    setStatus('uploading');
+    setProgress(0);
+    setProgressLabel('Preparing Travis Mathew Sheet import...');
+
+    const chunkSize = 100;
+    const rowsToSave = rowData.filter((row) => isMeaningfulSheetRow(row) && Boolean(getTravisSheetKey(row)));
+    const totalRows = rowsToSave.length;
+    let insertedCount = 0;
+    let updatedCount = 0;
+    let failedCount = 0;
+    const rowErrors: ImportIssue[] = [];
+
+    const mappedData = rowsToSave.map((item: any) => pickTravisSheetFields(item));
+
+    const runImport = async () => {
+      try {
+        for (let index = 0; index < mappedData.length; index += chunkSize) {
+          const chunk = mappedData.slice(index, index + chunkSize);
+          const chunkNumber = Math.floor(index / chunkSize) + 1;
+          const totalChunks = Math.ceil(mappedData.length / chunkSize);
+          setProgressLabel(`Importing Travis Mathew Sheet chunk ${chunkNumber} of ${totalChunks}`);
+
+          const action = await dispatch(createTravisSheet(chunk));
+          const result = action.payload as any;
+
+          const chunkSummary = result?.summary as ImportSummary | undefined;
+
+          if (chunkSummary) {
+            insertedCount += chunkSummary.insertedCount || 0;
+            updatedCount += chunkSummary.updatedCount || 0;
+            failedCount += chunkSummary.failedCount || 0;
+            rowErrors.push(...(chunkSummary.rowErrors || []).map((issue) => ({
+              ...issue,
+              rowIndex: issue.rowIndex + index,
+            })));
+          } else if (createTravisSheet.rejected.match(action)) {
+            failedCount += chunk.length;
+            rowErrors.push(
+              ...chunk.map((item, rowIndex) => ({
+                rowIndex: index + rowIndex,
+                sku: getTravisSheetKey(item),
+                reason: (action.payload as string) || 'Import failed',
+              }))
+            );
+          }
+          
+          setProgress(Math.min(100, Math.round(((index + chunk.length) / totalRows) * 100)));
+          setSummary({
+            totalRows,
+            insertedCount,
+            updatedCount,
+            failedCount,
+            savedCount: insertedCount + updatedCount,
+            rowErrors,
+          });
+        }
+
+        const merged = [...allTravisSheet];
+        mappedData.forEach((item) => {
+          const key = getTravisSheetKey(item);
+          const existingIndex = merged.findIndex((sheetRow) => getTravisSheetKey(sheetRow) === key);
+          if (existingIndex >= 0) {
+            merged[existingIndex] = item;
+          } else {
+            merged.push(item);
+          }
+        });
+        dispatch(setAllTravisSheet(merged));
+
+        if (insertedCount + updatedCount > 0 && failedCount === 0) {
+          setStatus('success');
+          setProgressLabel('Travis Mathew Sheet import completed successfully.');
+        } else {
+          setStatus(insertedCount + updatedCount > 0 ? 'success' : 'error');
+          setProgressLabel(
+            insertedCount + updatedCount > 0
+              ? 'Travis Mathew Sheet import completed with some failed rows.'
+              : 'No Travis Mathew Sheet data was saved to the database.'
+          );
+        }
+      } catch (error: any) {
+        console.error('Travis Mathew Sheet import failed:', error);
+        setStatus('error');
+        setProgressLabel(error?.message || 'Travis Mathew Sheet import failed');
+      }
+    };
+
+    void runImport();
+  }, [dispatch, rowData, allTravisSheet]);
+
+
    
   const saveToDb = useCallback(async (selectedCollections: string[] = []) => {
     if (!rowData.length) {
@@ -822,6 +946,10 @@ export function CallCheckWorkspace({
             break;
         case "product_softgoods":
             void handleSoftGoodImport();
+            break;
+
+        case "sheet_travismethew":
+           void handleTravisSheetImport();
             break;
                 
       }
@@ -872,7 +1000,7 @@ export function CallCheckWorkspace({
     // } finally {
     //   setIsSaving(false);
     // }
-  }, [handleTravisImport, handleOgioImport, handleHardGoodImport, handleSoftGoodImport, rowData]);
+  }, [handleTravisImport, handleOgioImport, handleHardGoodImport, handleSoftGoodImport, handleTravisSheetImport, rowData]);
   const autoSizeAll = useCallback(() => {
     const allColumnIds: string[] = [];
     gridRef.current?.api?.getColumns()?.forEach((column) => {
@@ -987,7 +1115,11 @@ export function CallCheckWorkspace({
               activeSheet={activeSheet}
               onSelect={(sheet) => {
                 if (workbook) {
-                  loadSheetData(workbook, sheet);
+                  setIsLoading(true);
+                  setTimeout(() => {
+                    loadSheetData(workbook, sheet);
+                    setIsLoading(false);
+                  }, 100);
                 } else {
                   setActiveSheet(sheet);
                 }
@@ -1031,6 +1163,24 @@ export function CallCheckWorkspace({
               }}
               disableClear={status === 'uploading'}
             />
+          </div>
+        </div>
+      )}
+
+      {isLoading && (
+        <div className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-background/60 backdrop-blur-md transition-all duration-300">
+          <div className="flex flex-col items-center gap-5">
+            <div className="relative flex h-20 w-20 items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-primary/10" />
+              <div className="absolute inset-0 animate-ping rounded-full border-4 border-primary/20" />
+              <Loader2 className="h-10 w-10 animate-spin text-primary" strokeWidth={1.5} />
+            </div>
+            <div className="space-y-2 text-center">
+              <h3 className="text-xl font-bold tracking-tight text-foreground">Processing Spreadsheet</h3>
+              <p className="max-w-[280px] text-sm leading-relaxed text-foreground/60">
+                Please wait while we analyze your data and prepare the workspace.
+              </p>
+            </div>
           </div>
         </div>
       )}

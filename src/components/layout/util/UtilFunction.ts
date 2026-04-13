@@ -1,4 +1,5 @@
 import { ADMIN_ACCOUNTS_MENU_ITEMS, ADMIN_PRODUCTS_MENU_ITEMS, HERO_BANNERS } from "@/lib/admin/command-center";
+import { ADMIN_PRODUCTS_SHEET_MENU_ITEMS } from "@/lib/admin/sheet-sections";
 import { VIEW_ROLE_LABELS } from "@/lib/auth/view-role";
 import { HeroSlide } from "../AdminShell";
 
@@ -17,6 +18,10 @@ export function getSectionItems(id: string, role: string) {
 
   if (id === "accounts") {
     return ADMIN_ACCOUNTS_MENU_ITEMS.filter((item) => !item.roles || item.roles.includes(role));
+  }
+
+  if (id === "products_sheet") {
+    return ADMIN_PRODUCTS_SHEET_MENU_ITEMS.filter((item) => !item.roles || item.roles.includes(role));
   }
 
   return [];

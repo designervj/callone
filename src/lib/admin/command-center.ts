@@ -1,44 +1,9 @@
-import type {LucideIcon} from "lucide-react";
-import {
-  BadgeCheck,
-  FileSpreadsheet,
-  FileUp,
-  FolderTree,
-  LayoutDashboard,
-  Package,
-  PlusCircle,
-  Shield,
-  ShoppingBag,
-  Store,
-  UserPlus,
-  Users,
-  Warehouse,
-} from "lucide-react";
+export * from "./types";
+import { HERO_BANNERS, type AdminCommandItem } from "./types";
+import { ADMIN_PRODUCTS_SHEET_MENU_ITEMS } from "./sheet-sections";
 import {ACCOUNT_SECTIONS} from "@/lib/admin/account-sections";
 import {CATALOG_SECTIONS} from "@/lib/admin/catalog-sections";
-
-export type AdminCommandGroup = "Navigate" | "Create" | "Operations";
-
-export type AdminCommandItem = {
-  id: string;
-  label: string;
-  description: string;
-  href: string;
-  icon: LucideIcon;
-  group: AdminCommandGroup;
-  keywords: string[];
-  roles?: string[];
-  heroImage?: string;
-};
-
-export const HERO_BANNERS = {
-  graphite:
-    "https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/18_b3b08ebc11.png",
-  iron:
-    "https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/19_582a243868.png",
-  orange:
-    "https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/24_8d8dd65fde.png",
-};
+import { BadgeCheck, FileSpreadsheet, FileUp, FolderTree, LayoutDashboard, Package, PlusCircle, Shield, ShoppingBag, Store, UserPlus, Users, Warehouse } from "lucide-react";
 
 export const ADMIN_PRODUCTS_MENU_ITEMS: AdminCommandItem[] = CATALOG_SECTIONS.map(
   (section) => ({
@@ -84,6 +49,7 @@ export const ADMIN_ACCOUNTS_MENU_ITEMS: AdminCommandItem[] = ACCOUNT_SECTIONS.ma
   })
 );
 
+
 export const ADMIN_NAV_ITEMS: AdminCommandItem[] = [
   {
     id: "dashboard",
@@ -116,6 +82,17 @@ export const ADMIN_NAV_ITEMS: AdminCommandItem[] = [
     group: "Navigate",
     keywords: ["catalog", "variants", "sku", "brands"],
     roles: ["super_admin", "admin", "manager", "sales_rep", "retailer"],
+    heroImage: HERO_BANNERS.iron,
+  },
+    {
+    id: "products_sheet",
+    label: "Products Sheet",
+    description: "Explore collections, variants, and stock-ready assortments.",
+    href: "/admin/products/sheet",
+    icon: Package,
+    group: "Navigate",
+    keywords: ["catalog", "variants", "sku", "brands"],
+    roles: ["super_admin", "admin", "manager", "sales_rep"],
     heroImage: HERO_BANNERS.iron,
   },
   {
@@ -179,6 +156,7 @@ export const ADMIN_ROUTE_ITEMS: AdminCommandItem[] = [
   ...ADMIN_NAV_ITEMS,
   ...ADMIN_PRODUCTS_MENU_ITEMS,
   ...ADMIN_ACCOUNTS_MENU_ITEMS,
+  ...ADMIN_PRODUCTS_SHEET_MENU_ITEMS,
   {
     id: "brands",
     label: "Brands",
