@@ -118,48 +118,48 @@ export function CatalogHeader({
 }: CatalogHeaderProps) {
   return (
     <section className="premium-card overflow-hidden rounded-[28px]">
-      <div className="grid gap-3 border-b border-border/60 px-4 py-4 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
+      <div className="grid gap-3 border-b border-white/8 px-4 py-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
         <div className="space-y-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/42">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.26em] text-foreground/42">
             {badgeLabel}
           </p>
-          <div className="flex flex-wrap items-center gap-3 ">
+          <div className="flex flex-wrap items-center gap-3">
             <h2 className="text-[1.85rem] font-semibold tracking-tight text-foreground">
               {title}
             </h2>
-            <span className="rounded-full border border-border/70 bg-background/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/55">
+            <span className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-foreground/55">
               {totalCount} total
             </span>
           </div>
-          <p className="max-w-4xl text-sm text-foreground/62">{description}</p>
+          <p className="max-w-4xl text-sm leading-6 text-foreground/58">{description}</p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
           {isSourceReadonly ? (
             <Link
               href={importHref}
-              className="rounded-2xl border border-border/70 bg-background px-4 py-2.5 text-sm font-semibold text-foreground/76"
+              className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-2.5 text-sm font-semibold text-foreground/76 transition hover:border-white/18 hover:bg-white/[0.06]"
             >
               {importLabel}
             </Link>
           ) : (
             <button
               onClick={handleImport}
-              className="rounded-2xl border border-border/70 bg-background px-4 py-2.5 text-sm font-semibold text-foreground/76"
+              className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-2.5 text-sm font-semibold text-foreground/76 transition hover:border-white/18 hover:bg-white/[0.06]"
             >
               Import file
             </button>
           )}
           <button
             onClick={exportVisible}
-            className="rounded-2xl border border-border/70 bg-background px-4 py-2.5 text-sm font-semibold text-foreground/76"
+            className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-2.5 text-sm font-semibold text-foreground/76 transition hover:border-white/18 hover:bg-white/[0.06]"
           >
             Export visible
           </button>
           {newProductHref ? (
             <Link
               href={newProductHref}
-              className="rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-[0_16px_32px_rgba(47,127,244,0.22)]"
+              className="rounded-2xl bg-white px-4 py-2.5 text-sm font-semibold text-background shadow-[0_16px_32px_rgba(255,255,255,0.12)] transition hover:opacity-95"
             >
               {newProductLabel}
             </Link>
@@ -169,30 +169,30 @@ export function CatalogHeader({
 
       <div className="space-y-4 px-4 py-4">
         {/* {isSourceReadonly && sourceNotice ? (
-          <div className="rounded-[22px] border border-primary/20 bg-primary/8 px-4 py-4 text-sm text-foreground/72">
+          <div className="rounded-[22px] border border-white/8 bg-white/[0.03] px-4 py-4 text-sm text-foreground/72">
             {sourceNotice}
           </div>
         ) : null} */}
 
       <div className="flex flex-wrap items-center gap-3">
 
-  <label className="premium-search flex items-center gap-3 rounded-[22px] px-4 py-3 flex-1 min-w-[250px]">
+  <label className="premium-search flex min-w-[250px] flex-1 items-center gap-3 rounded-[22px] px-4 py-3">
     <Search className="h-4 w-4 text-foreground/45" />
     <input
       value={query}
       onChange={(event) => setQuery(event.target.value)}
       placeholder="Search by product, base SKU, variant SKU, brand, category, or attribute value"
-      className="w-full border-none bg-transparent p-0 text-sm"
+      className="w-full border-none bg-transparent p-0 text-sm text-foreground outline-none placeholder:text-foreground/26"
     />
   </label>
 
-  <div className="flex items-center gap-1 rounded-[22px] border border-border/70 bg-background p-1.5 shadow-sm">
+  <div className="flex items-center gap-1 rounded-[22px] border border-white/8 bg-white/[0.03] p-1.5 shadow-[0_16px_30px_rgba(0,0,0,0.16)]">
     <button
       onClick={() => setViewMode("product")}
       className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold ${
         viewMode === "product"
-          ? "bg-[#111] text-white"
-          : "text-foreground/55 hover:bg-foreground/5"
+          ? "bg-white text-background shadow-[0_8px_20px_rgba(255,255,255,0.12)]"
+          : "text-foreground/55 hover:bg-white/[0.04]"
       }`}
     >
       <LayoutGrid className="h-4 w-4" />
@@ -203,8 +203,8 @@ export function CatalogHeader({
       onClick={() => setViewMode("sku")}
       className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold ${
         viewMode === "sku"
-          ? "bg-[#111] text-white"
-          : "text-foreground/55 hover:bg-foreground/5"
+          ? "bg-white text-background shadow-[0_8px_20px_rgba(255,255,255,0.12)]"
+          : "text-foreground/55 hover:bg-white/[0.04]"
       }`}
     >
       <Layers className="h-4 w-4" />
@@ -214,36 +214,38 @@ export function CatalogHeader({
 
   <button
     onClick={() => setFilterPanelOpen((c: boolean) => !c)}
-    className="inline-flex items-center gap-2 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold"
+    className="inline-flex items-center gap-2 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-foreground/80 transition hover:border-white/18 hover:bg-white/[0.06]"
   >
     <SlidersHorizontal className="h-4 w-4" />
     Filters
   </button>
 
-  <label className="inline-flex items-center gap-3 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold">
+  <label className="inline-flex items-center gap-3 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-foreground/80">
     <ArrowDownUp className="h-4 w-4" />
     <select
       value={sortBy}
       onChange={(event) => setSortBy(event.target.value)}
-      className="bg-transparent border-none text-sm"
+      className="border-none bg-[#111111] text-sm text-foreground outline-none [color-scheme:dark]"
+      style={{colorScheme: "dark"}}
     >
       {SORT_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
+        <option key={option.value} value={option.value} className="bg-[#111111] text-white">
           {option.label}
         </option>
       ))}
     </select>
   </label>
 
-  <label className="inline-flex items-center gap-3 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold">
+  <label className="inline-flex items-center gap-3 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-foreground/80">
     <ChevronsUpDown className="h-4 w-4" />
     <select
       value={pageSize}
       onChange={(event) => setPageSize(Number(event.target.value))}
-      className="bg-transparent border-none text-sm"
+      className="border-none bg-[#111111] text-sm text-foreground outline-none [color-scheme:dark]"
+      style={{colorScheme: "dark"}}
     >
       {PAGE_SIZE_OPTIONS.map((value) => (
-        <option key={value} value={value}>
+        <option key={value} value={value} className="bg-[#111111] text-white">
           {value} / page
         </option>
       ))}
@@ -261,9 +263,9 @@ export function CatalogHeader({
 
         {filterPanelOpen ? (
           <motion.div
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="grid-row gap-4 rounded-[24px] border border-border/70 bg-background/75 p-4"
+            initial={{opacity: 0, y: -8}}
+            animate={{opacity: 1, y: 0}}
+            className="grid-row gap-4 rounded-[24px] border border-white/8 bg-white/[0.03] p-4"
           >
             {/* <FilterGroup
               title="Brand"
@@ -299,12 +301,12 @@ export function CatalogHeader({
                     Filter products by specific attributes like size, color, or material.
                   </p>
                 </div>
-                <label className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/64">
+                <label className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-[color:var(--surface)] px-3 py-2 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/64">
                   <input
                     type="checkbox"
                     checked={availableOnly}
                     onChange={(event) => setAvailableOnly(event.target.checked)}
-                    className="h-4 w-4 rounded border-border/80"
+                    className="h-4 w-4 rounded border-white/30 bg-transparent"
                   />
                   Available stock only
                 </label>
@@ -336,7 +338,7 @@ export function CatalogHeader({
               <button
                 key={filterItem.key}
                 onClick={filterItem.onRemove}
-                className="inline-flex items-center gap-2 rounded-full border border-border/70 bg-background px-3 py-1.5 text-xs font-semibold text-foreground/72"
+                className="inline-flex items-center gap-2 rounded-full border border-white/8 bg-white/[0.03] px-3 py-1.5 text-xs font-semibold text-foreground/72"
               >
                 {filterItem.label}
                 <X className="h-3.5 w-3.5" />
@@ -344,7 +346,7 @@ export function CatalogHeader({
             ))}
             <button
               onClick={clearAllFilters}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary"
+              className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-xs font-semibold text-foreground"
             >
               <RefreshCcw className="h-3.5 w-3.5" />
               Clear all
@@ -369,8 +371,8 @@ function SummaryTile({
     <div
       className={`rounded-[22px] border px-4 py-4 ${
         tone === "primary"
-          ? "border-primary/20 bg-primary/10"
-          : "border-border/70 bg-background/75"
+          ? "border-white/12 bg-white/[0.05]"
+          : "border-white/8 bg-white/[0.03]"
       }`}
     >
       <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/45">
@@ -397,7 +399,7 @@ function FilterGroup({
   }
 
   return (
-    <div className="rounded-[22px] border border-border/70 bg-[color:var(--surface)] p-3">
+    <div className="rounded-[22px] border border-white/8 bg-[color:var(--surface)] p-3">
       <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-foreground/46">
         {title}
       </p>
@@ -411,8 +413,8 @@ function FilterGroup({
               onClick={() => onToggle(value)}
               className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
                 selected
-                  ? "border-primary/20 bg-primary/10 text-primary"
-                  : "border-border/70 bg-background text-foreground/66 hover:text-foreground"
+                  ? "border-white/14 bg-white/[0.08] text-white"
+                  : "border-white/8 bg-white/[0.03] text-foreground/66 hover:text-foreground"
               }`}
             >
               {selected ? <Check className="h-3.5 w-3.5" /> : null}

@@ -14,17 +14,17 @@ export function SectionCard({
   return (
     <section className="premium-card overflow-hidden rounded-[28px]">
       {(title || action) && (
-        <div className="flex flex-col gap-4 border-b border-border/60 px-5 py-4 lg:flex-row lg:items-center lg:justify-between">
+        <div className="flex flex-col gap-4 border-b border-white/8 px-7 py-7 lg:flex-row lg:items-center lg:justify-between">
           <div>
-            {title ? <h2 className="text-base font-semibold text-foreground">{title}</h2> : null}
+            {title ? <h2 className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/62">{title}</h2> : null}
             {description ? (
-              <p className="mt-1 text-sm leading-6 text-foreground/58">{description}</p>
+              <p className="mt-2 max-w-2xl text-sm leading-6 text-foreground/62">{description}</p>
             ) : null}
           </div>
           {action ? <div className="flex items-center gap-3">{action}</div> : null}
         </div>
       )}
-      <div className="p-5">{children}</div>
+      <div className="p-7">{children}</div>
     </section>
   );
 }

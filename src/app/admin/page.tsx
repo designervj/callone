@@ -51,15 +51,15 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-4">
       {loadError ? (
-        <section className="rounded-[24px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-950/30 dark:text-amber-100">
+        <section className="rounded-[24px] border border-white/8 bg-[#111111] px-4 py-3 text-sm text-foreground/80">
           {loadError}
         </section>
       ) : null}
 
       <section className="premium-card overflow-hidden rounded-[28px]">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-border/60 px-4 py-4">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-4 py-5">
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/42">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/60">
               Daily overview
             </p>
             <h2 className="text-[1.85rem] font-semibold tracking-tight text-foreground">
@@ -71,7 +71,7 @@ export default async function AdminDashboardPage() {
           </div>
         </div>
 
-        <div className="grid gap-6 px-4 py-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-6 px-4 py-5 md:grid-cols-2 xl:grid-cols-4">
           {(() => {
             const getBrandData = (name: string) => 
               insights.brandCatalog.find(b => b.label.toLowerCase().includes(name.toLowerCase())) || { products: 0 };
@@ -111,7 +111,7 @@ export default async function AdminDashboardPage() {
             );
           })()}
         </div>
-        <div className="grid gap-6 px-4 py-4 md:grid-cols-2 xl:grid-cols-5">
+        <div className="grid gap-6 px-4 py-5 md:grid-cols-2 xl:grid-cols-5">
           <InsightMetricCard
             label="Order value"
             value={money.format(insights.headline.totalRevenue)}

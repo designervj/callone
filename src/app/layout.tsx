@@ -31,7 +31,27 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className={geistSans.className}>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var storageKey = 'theme';
+                  var root = document.documentElement;
+                  var savedTheme = localStorage.getItem(storageKey);
+                  var systemTheme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+                  var theme = savedTheme === 'light' || savedTheme === 'dark' ? savedTheme : systemTheme;
+                  root.classList.toggle('dark', theme === 'dark');
+                  root.dataset.theme = theme;
+                  root.style.colorScheme = theme;
+                } catch (error) {}
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body className={`${geistSans.className} bg-background text-foreground transition-colors duration-300`}>
         <ReduxProvider>
           <AuthProvider>
             <SessionSync />

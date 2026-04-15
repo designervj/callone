@@ -12,21 +12,19 @@ type PageHeaderProps = {
 
 export function PageHeader({ title, description, action, icon: Icon }: PageHeaderProps) {
   return (
-    // <div className="premium-card overflow-hidden rounded-[28px] p-4">
-    <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between mt-12 mb-8">
-      <div className="flex items-center gap-6">
+    <div className="flex flex-col gap-5 pb-8 pt-7 md:flex-row md:items-end md:justify-between">
+      <div className="flex items-center gap-4">
         {Icon && (
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary ring-1 ring-primary/20 shadow-lg shadow-primary/5">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-white/8 bg-white/5 text-foreground shadow-[0_16px_30px_rgba(0,0,0,0.18)]">
             <Icon size={24} />
           </div>
         )}
-        <div className="space-y-1.5">
-          <h1 className="text-2xl font-bold uppercase tracking-[0.1em] text-foreground">{title}</h1>
-          {description && <p className="max-w-2xl text-sm font-medium text-muted-foreground/60 leading-relaxed">{description}</p>}
+        <div className="space-y-1">
+          <h1 className="text-[2.3rem] font-semibold tracking-[-0.04em] text-foreground sm:text-[2.9rem]">{title}</h1>
+          {description && <p className="max-w-2xl text-sm leading-6 text-foreground/62">{description}</p>}
         </div>
       </div>
       {action && <div className="flex items-center gap-3">{action}</div>}
     </div>
-    // </div>
   );
 }

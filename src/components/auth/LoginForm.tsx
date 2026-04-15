@@ -64,18 +64,18 @@ export function LoginForm({
                 key={preset.email}
                 type="button"
                 onClick={() => setEmail(preset.email)}
-                className={`group relative flex flex-col items-center justify-center rounded-lg border p-3 transition-all active:scale-[0.98] ${
+                className={`group relative flex flex-col items-center justify-center rounded-[18px] border p-3 transition-all active:scale-[0.98] ${
                   isActive 
-                    ? "border-primary bg-primary/[0.03]" 
-                    : "border-black/[0.08] dark:border-white/[0.16] bg-black/[0.02] dark:bg-white/[0.06] hover:border-black/20 dark:hover:border-white/20"
+                    ? "border-[color:var(--primary)] bg-[color:var(--control-bg-hover)]" 
+                    : "border-border bg-[color:var(--surface)] hover:border-[color:var(--primary)] hover:bg-[color:var(--control-bg-hover)]"
                 }`}
               >
-                <div className={`mb-2 ${isActive ? "text-primary" : "text-foreground/45 dark:text-foreground/60 group-hover:text-foreground/50"}`}>
+                <div className={`mb-2 ${isActive ? "text-foreground" : "text-foreground/45 group-hover:text-foreground/62"}`}>
                   <RoleIcon size={20} strokeWidth={isActive ? 2.5 : 1.5} />
                 </div>
 
-                <p className={`text-[10px] font-black uppercase tracking-[0.15em] italic text-center transition-colors ${
-                  isActive ? "text-primary" : "text-foreground/50 dark:text-foreground/60 group-hover:text-foreground/60"
+                <p className={`text-[10px] font-semibold uppercase tracking-[0.18em] text-center transition-colors ${
+                  isActive ? "text-foreground" : "text-foreground/52 group-hover:text-foreground/72"
                 }`}>
                   {preset.label}
                 </p>
@@ -87,18 +87,18 @@ export function LoginForm({
 
       <div className="space-y-5">
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 dark:text-foreground/70 italic ml-1 flex items-center gap-2">
+          <label className="ml-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/48">
              User Name
           </label>
-          <div className="group relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/20 transition-colors group-focus-within:text-primary">
+            <div className="group relative">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/20 transition-colors group-focus-within:text-foreground/70">
               <Mail size={16} />
             </div>
             <input
               type="email"
               value={email}
               onChange={(event) => setEmail(event.target.value)}
-              className="w-full rounded-xl border border-black/[0.1] dark:border-white/[0.15] bg-transparent dark:bg-white/[0.03] py-3 pl-10 pr-4 text-sm font-bold text-foreground placeholder:text-foreground/10 transition-all outline-none focus:border-black/20 dark:focus:border-white/30 focus:bg-black/[0.02] dark:focus:bg-white/[0.05] tracking-wide"
+              className="w-full rounded-2xl border border-border bg-[color:var(--control-bg)] py-3 pl-10 pr-4 text-sm font-medium tracking-wide text-foreground placeholder:text-foreground/18 transition-all outline-none focus:border-[color:var(--primary)] focus:bg-[color:var(--control-bg-hover)]"
               placeholder="admin@callone.local"
               required
             />
@@ -106,25 +106,25 @@ export function LoginForm({
         </div>
 
         <div className="space-y-1.5">
-          <label className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/50 dark:text-foreground/70 italic ml-1 flex items-center gap-2">
+          <label className="ml-1 flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.22em] text-foreground/48">
            Password
           </label>
           <div className="group relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/20 transition-colors group-focus-within:text-primary">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/20 transition-colors group-focus-within:text-foreground/70">
               <Lock size={16} />
             </div>
             <input
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              className="w-full rounded-xl border border-black/[0.1] dark:border-white/[0.15] bg-transparent dark:bg-white/[0.03] py-3 pl-10 pr-12 text-sm font-bold text-foreground placeholder:text-foreground/10 transition-all outline-none focus:border-black/20 dark:focus:border-white/30 focus:bg-black/[0.02] dark:focus:bg-white/[0.05] tracking-wide"
+              className="w-full rounded-2xl border border-border bg-[color:var(--control-bg)] py-3 pl-10 pr-12 text-sm font-medium tracking-wide text-foreground placeholder:text-foreground/18 transition-all outline-none focus:border-[color:var(--primary)] focus:bg-[color:var(--control-bg-hover)]"
               placeholder={defaultPasswordHint}
               required
             />
             <button
               type="button"
               onClick={() => setShowPassword((current) => !current)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-foreground/30 dark:text-foreground/50 transition-all hover:bg-black/5 dark:hover:bg-white/5 hover:text-foreground/60"
+              className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-2 text-foreground/34 transition-all hover:bg-[color:var(--control-bg-hover)] hover:text-foreground/72"
             >
               {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
             </button>
@@ -133,7 +133,7 @@ export function LoginForm({
       </div>
 
       {error ? (
-        <div className="flex items-center gap-3 rounded-lg border border-red-500/20 bg-red-500/[0.02] px-4 py-3 text-[10px] font-black uppercase tracking-widest text-red-500/80 italic">
+        <div className="flex items-center gap-3 rounded-xl border border-border bg-[color:var(--surface)] px-4 py-3 text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/72">
           <ShieldCheck size={14} className="shrink-0" />
           {error}
         </div>
@@ -143,11 +143,11 @@ export function LoginForm({
         <button
           type="submit"
           disabled={isPending}
-          className="group relative flex w-full items-center justify-center overflow-hidden rounded-lg bg-black dark:bg-white p-px transition-all active:scale-[0.99] disabled:opacity-60"
+          className="group relative flex w-full items-center justify-center overflow-hidden rounded-2xl border border-[color:var(--primary)] bg-[color:var(--primary)] text-[color:var(--background)] transition-all active:scale-[0.99] disabled:opacity-60"
         >
-          <div className="relative flex w-full items-center justify-center gap-3 py-4 text-[11px] font-black uppercase tracking-[0.3em] text-white dark:text-black italic">
+          <div className="relative flex w-full items-center justify-center gap-3 py-4 text-[11px] font-semibold uppercase tracking-[0.28em] text-[color:var(--background)]">
             {isPending ? (
-              <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 dark:border-black/20 border-t-white dark:border-t-black" />
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-[color:var(--background)]/20 border-t-[color:var(--background)]" />
             ) : (
               // <LogIn size={16} />
               <></>

@@ -100,7 +100,7 @@ export default async function CallCheckPage({searchParams}: CallCheckPageProps) 
                 </div>
               </dl>
 
-              <div className="mt-4 rounded-[20px] border border-amber-500/20 bg-amber-500/8 px-4 py-3 text-sm text-amber-100/80">
+              <div className="mt-4 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-foreground/68">
                 {source.caution}
               </div>
 
@@ -113,7 +113,7 @@ export default async function CallCheckPage({searchParams}: CallCheckPageProps) 
                 </Link>
                 <Link
                   href="/admin/imports"
-                  className="rounded-2xl border border-primary/20 bg-primary/10 px-3 py-2 text-xs font-semibold text-primary"
+                  className="rounded-2xl border border-white/8 bg-white/[0.04] px-3 py-2 text-xs font-semibold text-foreground/80 transition hover:border-white/16 hover:bg-white/[0.06]"
                 >
                   Stay in imports
                 </Link>
@@ -122,7 +122,7 @@ export default async function CallCheckPage({searchParams}: CallCheckPageProps) 
           ))}
         </div>
 
-        <div className="mt-5 rounded-[24px] border border-primary/20 bg-primary/8 px-5 py-4 text-sm text-foreground/72">
+        <div className="mt-5 rounded-[24px] border border-white/8 bg-white/[0.03] px-5 py-4 text-sm text-foreground/68">
           Warehouse-brand policy changes are not writable yet by design. The next safe step is to add an admin
           settings layer with warnings, because changing allowed warehouses or default stock routing will affect
           import validation, catalog availability, and order assignment behavior.

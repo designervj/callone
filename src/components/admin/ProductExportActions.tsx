@@ -137,34 +137,34 @@ export function ProductExportActions({
       <div className="relative">
         <button
           onClick={() => setExportMenuOpen(!exportMenuOpen)}
-          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/10 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-white transition-all hover:bg-white/20"
+          className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-5 py-2.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition-all hover:border-white/18 hover:bg-white/[0.08]"
         >
-          <Presentation className="h-4 w-4 text-amber-500" />
+          <Presentation className="h-4 w-4 text-white" />
           Export selected
           <ChevronDown className={`h-3 w-3 transition-transform ${exportMenuOpen ? 'rotate-180' : ''}`} />
         </button>
 
         {exportMenuOpen && (
-          <div className="absolute bottom-full right-0 mb-2 w-48 overflow-hidden rounded-2xl border border-white/10 bg-[#1A1A1A] p-1 shadow-2xl z-50">
+          <div className="absolute bottom-full right-0 z-50 mb-2 w-48 overflow-hidden rounded-2xl border border-white/10 bg-[color:var(--surface)] p-1 shadow-2xl">
             <button
               onClick={handleExportPdf}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-white/78 transition-colors hover:bg-white/[0.05] hover:text-white"
             >
-              <FileText className="h-4 w-4 text-primary" />
+              <FileText className="h-4 w-4 text-white" />
               Export to PDF
             </button>
             <button
               onClick={handleExportExcel}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-white/78 transition-colors hover:bg-white/[0.05] hover:text-white"
             >
-              <FileSpreadsheet className="h-4 w-4 text-emerald-500" />
+              <FileSpreadsheet className="h-4 w-4 text-white" />
               Export to Excel
             </button>
             <button
               onClick={handleExportPpt}
-              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-white/80 transition-colors hover:bg-white/5 hover:text-white"
+              className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-left text-sm text-white/78 transition-colors hover:bg-white/[0.05] hover:text-white"
             >
-              <Presentation className="h-4 w-4 text-amber-500" />
+              <Presentation className="h-4 w-4 text-white" />
               Export to PPT
             </button>
           </div>

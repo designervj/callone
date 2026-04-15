@@ -81,8 +81,8 @@ export function SkuQuantityInput({
       className={clsx(
         "inline-flex items-stretch overflow-hidden rounded-xl border transition-all duration-300",
         isError
-          ? "border-rose-500 bg-rose-500/5 ring-1 ring-rose-500/10 shadow-[0_0_15px_rgba(244,63,94,0.1)]"
-          : "border-border/40 bg-white dark:bg-foreground/[0.02] shadow-sm hover:border-foreground/20 hover:shadow-md"
+          ? "border-white/14 bg-[#111111] ring-1 ring-white/10 shadow-[0_0_15px_rgba(255,255,255,0.06)]"
+          : "border-white/10 bg-[#111111] shadow-[0_8px_24px_rgba(0,0,0,0.35)] hover:border-white/18 hover:shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
       )}
       style={{ height: "40px" }}
     >
@@ -90,7 +90,7 @@ export function SkuQuantityInput({
       <div
         className={clsx(
           "flex items-center justify-center px-3 text-[9px] font-black uppercase tracking-widest transition-colors",
-          isError ? "bg-rose-500/10 text-rose-500" : "bg-foreground/5 text-foreground/30 border-r border-border/40"
+          isError ? "bg-white/[0.06] text-white" : "border-r border-white/10 bg-white/[0.03] text-foreground/72"
         )}
         style={{ minWidth: "38px" }}
         title="Physical Inventory Limit"
@@ -107,16 +107,16 @@ export function SkuQuantityInput({
         onChange={handleManualChange}
         className={clsx(
           "w-12 bg-transparent px-1 text-center text-sm font-black tracking-tighter focus:outline-none transition-colors",
-          isError ? "text-rose-500" : "text-foreground/90"
+          isError ? "text-white" : "text-white"
         )}
       />
 
       {/* Stepper Controls */}
-      <div className="flex flex-col border-l border-border/40">
+      <div className="flex flex-col border-l border-white/10">
         <button
           disabled={inputvalue >= maxStock}
           onClick={() => handleChange(inputvalue + 1)}
-          className="flex flex-1 items-center justify-center px-2 text-[8px] hover:bg-foreground/10 transition-all active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed border-b border-border/20"
+          className="flex flex-1 items-center justify-center border-b border-white/10 px-2 text-[8px] text-foreground/72 transition-all active:scale-95 hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-20"
           aria-label="Increase level"
         >
           <span className="mb-0.5">▲</span>
@@ -124,7 +124,7 @@ export function SkuQuantityInput({
         <button
           disabled={inputvalue <= 0}
           onClick={() => handleChange(Math.max(0, inputvalue - 1))}
-          className="flex flex-1 items-center justify-center px-2 text-[8px] hover:bg-foreground/10 transition-all active:scale-95 disabled:opacity-20 disabled:cursor-not-allowed"
+          className="flex flex-1 items-center justify-center px-2 text-[8px] text-foreground/72 transition-all active:scale-95 hover:bg-white/[0.06] disabled:cursor-not-allowed disabled:opacity-20"
           aria-label="Decrease level"
         >
           <span className="mt-0.5">▼</span>

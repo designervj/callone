@@ -78,7 +78,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
   return (
     <div className={clsx('relative w-full', className)} ref={containerRef}>
       {label && (
-        <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-foreground/30">
+        <label className="mb-2 block text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60">
           {label}
         </label>
       )}
@@ -91,15 +91,15 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
           'flex h-[44px] w-full items-center justify-between rounded-xl border transition-all duration-300 outline-none',
           'px-5 py-3 text-[13px] font-bold text-foreground',
           isOpen 
-            ? 'border-primary bg-surface shadow-[0_0_0_4px_rgba(99,102,241,0.1)]' 
-            : 'border-border bg-surface-muted/30 backdrop-blur-sm hover:border-primary/50 hover:bg-surface-muted/50',
+            ? 'border-white/18 bg-[#111111] shadow-[0_0_0_4px_rgba(255,255,255,0.06)]' 
+            : 'border-white/8 bg-[#0d0d0d] backdrop-blur-sm hover:border-white/18 hover:bg-[#111111]',
           disabled && 'opacity-50 cursor-not-allowed',
           triggerClassName
         )}
       >
         <div className="flex items-center gap-3 overflow-hidden">
-          {icon && <div className={clsx("shrink-0 transition-colors duration-300", isOpen ? "text-primary" : "text-muted-foreground/40")}>{icon}</div>}
-          <span className={clsx('truncate transition-colors duration-300', !selectedOption && 'text-muted-foreground/30')}>
+          {icon && <div className={clsx("shrink-0 transition-colors duration-300", isOpen ? "text-white" : "text-foreground/42")}>{icon}</div>}
+          <span className={clsx('truncate transition-colors duration-300', !selectedOption && 'text-foreground/38')}>
             {selectedOption ? selectedOption.label : placeholder}
           </span>
         </div>
@@ -107,12 +107,12 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
           {isOpen && (
             <motion.div 
               layoutId="focus-bar"
-              className="h-4 w-[2px] rounded-full bg-primary shadow-[0_0_8px_rgba(99,102,241,0.6)]"
+              className="h-4 w-[2px] rounded-full bg-white shadow-[0_0_8px_rgba(255,255,255,0.4)]"
             />
           )}
           <ChevronDown 
             size={16} 
-            className={clsx('shrink-0 text-muted-foreground/20 transition-all duration-300', isOpen && 'rotate-180 text-primary')} 
+            className={clsx('shrink-0 text-foreground/34 transition-all duration-300', isOpen && 'rotate-180 text-white')} 
           />
         </div>
       </button>
@@ -124,7 +124,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-0 right-0 z-[100] mt-2 overflow-hidden rounded-2xl border border-border/40 bg-[#111111] shadow-[0_20px_60px_rgba(0,0,0,0.3)] backdrop-blur-xl w-60"
+            className="absolute left-0 right-0 z-[100] mt-2 w-60 overflow-hidden rounded-2xl border border-white/8 bg-[#111111] shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl"
           >
             {searchable && (
               <div className="border-b border-white/[0.05] p-3">
@@ -156,21 +156,21 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
                     onClick={() => handleSelect(option.value)}
                     className={clsx(
                       'group relative flex w-full flex-col items-start rounded-xl px-4 py-3 text-left transition-all',
-                      value === option.value ? 'bg-primary/10 text-primary' : 'text-white/60 hover:bg-white/[0.03] hover:text-white'
+                      value === option.value ? 'bg-white/[0.08] text-white' : 'text-white/62 hover:bg-white/[0.03] hover:text-white'
                     )}
                   >
                     <div className="flex w-full items-center justify-between">
                       <span className="text-[12px] font-black uppercase tracking-wide">{option.label}</span>
                       {value === option.value && (
                         <motion.div initial={{ scale: 0 }} animate={{ scale: 1 }}>
-                          <Check size={14} strokeWidth={3} className="text-primary" />
+                          <Check size={14} strokeWidth={3} className="text-white" />
                         </motion.div>
                       )}
                     </div>
                     {option.subLabel && (
                       <span className={clsx(
                         'mt-1 text-[10px] font-bold uppercase tracking-widest transition-colors',
-                        value === option.value ? 'text-primary/60' : 'text-white/20 group-hover:text-white/30'
+                        value === option.value ? 'text-white/72' : 'text-white/24 group-hover:text-white/34'
                       )}>
                         {option.subLabel}
                       </span>
@@ -178,7 +178,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
                     {value === option.value && (
                       <motion.div 
                         layoutId="active-item-indicator"
-                        className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 bg-primary rounded-r-full"
+                        className="absolute left-0 top-1/2 h-4 w-[2px] -translate-y-1/2 rounded-r-full bg-white"
                       />
                     )}
                   </button>

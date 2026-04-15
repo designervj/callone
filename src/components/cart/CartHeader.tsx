@@ -71,26 +71,26 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
     <div className="grid gap-4 md:grid-cols-3">
       {/* Retailer Section */}
       <div className={clsx(
-        "group relative z-10 rounded-[24px] border border-border/40 bg-white/40 p-8 shadow-xl backdrop-blur-2xl transition-all duration-500 hover:bg-white/60 focus-within:z-50",
-        selectedRetailer ? "border-primary/20" : "border-border/30"
+        "group relative z-10 rounded-[24px] border border-white/8 bg-white/[0.03] p-8 shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.05] focus-within:z-50",
+        selectedRetailer ? "border-white/14" : "border-white/8"
       )}>
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={clsx(
               "flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-500",
-              selectedRetailer ? "bg-primary text-white" : "bg-foreground/5 text-foreground/30"
+              selectedRetailer ? "bg-white text-background" : "bg-white/[0.04] text-foreground/30"
             )}>
               <ShoppingBag size={14} strokeWidth={2.5} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20">Authorized Account</span>
-              <span className="text-[11px] font-black uppercase tracking-wider text-foreground/60">Retailer</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-foreground/32">Authorized Account</span>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground/68">Retailer</span>
             </div>
           </div>
           {selectedRetailer && !isEditingRetailer && (
             <button
               onClick={() => setIsEditingRetailer(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/5 text-foreground/30 transition-all hover:bg-primary hover:text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.04] text-foreground/30 transition-all hover:bg-white hover:text-background"
             >
               <Edit2 size={14} />
             </button>
@@ -112,9 +112,9 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
               }}
             />
             {!selectedRetailer && (
-               <div className="flex items-center gap-2 rounded-lg bg-rose-500/5 px-3 py-2 text-rose-500/60">
-                 <div className="h-1.5 w-1.5 rounded-full bg-rose-500/40" />
-                 <span className="text-[10px] font-bold uppercase tracking-widest">Awaiting Verification</span>
+               <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.03] px-3 py-2 text-foreground/54">
+                 <div className="h-1.5 w-1.5 rounded-full bg-white/40" />
+                 <span className="text-[10px] font-semibold uppercase tracking-widest">Awaiting Verification</span>
                </div>
             )}
           </div>
@@ -124,16 +124,16 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="space-y-4"
           >
-            <h3 className="text-2xl font-black tracking-tight text-primary leading-tight">{selectedRetailer?.name}</h3>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground leading-tight">{selectedRetailer?.name}</h3>
             <div className="flex flex-wrap gap-2 pt-2">
-              <div className="flex items-center gap-2 rounded-lg bg-[#111111]/[0.03] px-3 py-1.5">
-                <span className="text-[9px] font-black uppercase tracking-[0.1em] text-foreground/20 italic">GSTIN</span>
-                <span className="text-[10px] font-black text-foreground/70">{selectedRetailer?.gstin || "VERIFIED"}</span>
-                <Check size={10} className="text-emerald-500" strokeWidth={4} />
+              <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.03] px-3 py-1.5">
+                <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-foreground/24">GSTIN</span>
+                <span className="text-[10px] font-semibold text-foreground/72">{selectedRetailer?.gstin || "VERIFIED"}</span>
+                <Check size={10} className="text-white/70" strokeWidth={4} />
               </div>
-              <div className="flex items-center gap-2 rounded-lg bg-[#111111]/[0.03] px-3 py-1.5">
-                <span className="text-[9px] font-black uppercase tracking-[0.1em] text-foreground/20 italic">NODE</span>
-                <span className="text-[10px] font-black text-foreground/70 max-w-[120px] truncate">{selectedRetailer?.address || "Global HQ"}</span>
+              <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-white/[0.03] px-3 py-1.5">
+                <span className="text-[9px] font-semibold uppercase tracking-[0.1em] text-foreground/24">NODE</span>
+                <span className="max-w-[120px] truncate text-[10px] font-semibold text-foreground/72">{selectedRetailer?.address || "Global HQ"}</span>
               </div>
             </div>
             
@@ -147,26 +147,26 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
 
       {/* Manager Section */}
       <div className={clsx(
-        "group relative z-10 rounded-[24px] border border-border/40 bg-white/40 p-8 shadow-xl backdrop-blur-2xl transition-all duration-500 hover:bg-white/60 focus-within:z-50",
-        selectedManager ? "border-foreground/20" : "border-border/30"
+        "group relative z-10 rounded-[24px] border border-white/8 bg-white/[0.03] p-8 shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.05] focus-within:z-50",
+        selectedManager ? "border-white/14" : "border-white/8"
       )}>
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={clsx(
               "flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-500",
-              selectedManager ? "bg-[#111111] text-white" : "bg-foreground/5 text-foreground/30"
+              selectedManager ? "bg-white text-background" : "bg-white/[0.04] text-foreground/30"
             )}>
               <ShieldCheck size={14} strokeWidth={2.5} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20">Operational Lead</span>
-              <span className="text-[11px] font-black uppercase tracking-wider text-foreground/60">Manager</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-foreground/32">Operational Lead</span>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground/68">Manager</span>
             </div>
           </div>
           {selectedManager && !isEditingManager && (
             <button
               onClick={() => setIsEditingManager(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/5 text-foreground/30 transition-all hover:bg-[#111111] hover:text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.04] text-foreground/30 transition-all hover:bg-white hover:text-background"
             >
               <Edit2 size={14} />
             </button>
@@ -192,10 +192,10 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="space-y-2"
           >
-            <h3 className="text-2xl font-black tracking-tight text-foreground/80 leading-tight">{selectedManager?.name}</h3>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground leading-tight">{selectedManager?.name}</h3>
             <div className="flex items-center gap-2">
-               <div className="h-1.5 w-1.5 rounded-full bg-emerald-500 shadow-[0_0_10px_rgba(16,185,129,0.5)]" />
-               <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">Active Administrative Access</p>
+               <div className="h-1.5 w-1.5 rounded-full bg-white/70 shadow-[0_0_10px_rgba(255,255,255,0.25)]" />
+               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/32">Active Administrative Access</p>
             </div>
           </motion.div>
         )}
@@ -203,26 +203,26 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
 
       {/* Sales Rep Section */}
       <div className={clsx(
-        "group relative z-10 rounded-[24px] border border-border/40 bg-white/40 p-8 shadow-xl backdrop-blur-2xl transition-all duration-500 hover:bg-white/60 focus-within:z-50",
-        selectedSalesRep ? "border-foreground/20" : "border-border/30"
+        "group relative z-10 rounded-[24px] border border-white/8 bg-white/[0.03] p-8 shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-2xl transition-all duration-300 hover:-translate-y-0.5 hover:bg-white/[0.05] focus-within:z-50",
+        selectedSalesRep ? "border-white/14" : "border-white/8"
       )}>
         <div className="mb-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className={clsx(
               "flex h-8 w-8 items-center justify-center rounded-xl transition-colors duration-500",
-              selectedSalesRep ? "bg-[#111111] text-white" : "bg-foreground/5 text-foreground/30"
+              selectedSalesRep ? "bg-white text-background" : "bg-white/[0.04] text-foreground/30"
             )}>
               <Briefcase size={14} strokeWidth={2.5} />
             </div>
             <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20">Account Director</span>
-              <span className="text-[11px] font-black uppercase tracking-wider text-foreground/60">Representative</span>
+            <span className="text-[9px] font-semibold uppercase tracking-[0.2em] text-foreground/32">Account Director</span>
+            <span className="text-[11px] font-semibold uppercase tracking-wider text-foreground/68">Representative</span>
             </div>
           </div>
           {selectedSalesRep && !isEditingSalesRep && (
             <button
               onClick={() => setIsEditingSalesRep(true)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg bg-foreground/5 text-foreground/30 transition-all hover:bg-[#111111] hover:text-white"
+              className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/[0.04] text-foreground/30 transition-all hover:bg-white hover:text-background"
             >
               <Edit2 size={14} />
             </button>
@@ -252,10 +252,10 @@ export const CartHeader: React.FC<CartHeaderProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="space-y-2"
           >
-            <h3 className="text-2xl font-black tracking-tight text-foreground/80 leading-tight">{selectedSalesRep?.name || "Internal (Self)"}</h3>
+            <h3 className="text-2xl font-semibold tracking-tight text-foreground leading-tight">{selectedSalesRep?.name || "Internal (Self)"}</h3>
             <div className="flex items-center gap-2">
-               <div className="h-1.5 w-1.5 rounded-full bg-primary shadow-[0_0_10px_rgba(75,141,248,0.5)]" />
-               <p className="text-[10px] font-black text-foreground/30 uppercase tracking-[0.2em]">Verified Account Lead</p>
+               <div className="h-1.5 w-1.5 rounded-full bg-white/70 shadow-[0_0_10px_rgba(255,255,255,0.25)]" />
+               <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-foreground/32">Verified Account Lead</p>
             </div>
           </motion.div>
         )}

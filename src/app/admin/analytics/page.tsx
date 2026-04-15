@@ -51,15 +51,15 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-4">
       {loadError ? (
-        <section className="rounded-[24px] border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 dark:border-amber-500/20 dark:bg-amber-950/30 dark:text-amber-100">
+        <section className="rounded-[24px] border border-white/8 bg-[#111111] px-4 py-3 text-sm text-[color:var(--surface-foreground)]">
           {loadError}
         </section>
       ) : null}
 
       <section className="premium-card overflow-hidden rounded-[28px]">
-        <div className="grid gap-4 border-b border-border/60 px-4 py-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid gap-4 border-b border-white/8 px-4 py-5 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/42">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/60">
               Analytics
             </p>
             <h2 className="text-[1.85rem] font-semibold tracking-tight text-foreground">
@@ -70,8 +70,8 @@ export default async function AnalyticsPage() {
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-border/70 bg-background/80 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/42">
+          <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-4">
+            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/60">
               Quick insight
             </p>
             <div className="mt-3 space-y-3 text-sm text-foreground/62">
@@ -89,7 +89,7 @@ export default async function AnalyticsPage() {
           </div>
         </div>
 
-        <div className="grid gap-4 px-4 py-4 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-4 px-4 py-5 md:grid-cols-2 xl:grid-cols-4">
           <InsightMetricCard
             label="Order value"
             value={money.format(insights.headline.totalRevenue)}

@@ -80,8 +80,8 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
             className={clsx(
               "flex h-7 w-7 items-center justify-center rounded-lg border transition-all duration-500 active:scale-90",
               isExpanded 
-                ? "border-primary bg-primary text-white shadow-[0_0_15px_rgba(59,130,246,0.4)]" 
-                : "border-border/40 bg-foreground/[0.03] text-foreground/30 hover:border-foreground/20 hover:text-foreground"
+                ? "border-white bg-white text-background shadow-[0_0_15px_rgba(255,255,255,0.16)]" 
+                : "border-border/40 bg-foreground/[0.03] text-foreground/62 hover:border-foreground/20 hover:text-foreground"
             )}
           >
             {isExpanded ? <Minus size={14} strokeWidth={3} /> : <Plus size={14} strokeWidth={3} />}
@@ -96,17 +96,17 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
         <td className="px-6 py-5">
           <div className="flex flex-col">
             <span className="text-[14px] font-semibold text-foreground">{created.date}</span>
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20 italic">{created.time}</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/62 italic">{created.time}</span>
           </div>
         </td>
         <td className="px-6 py-5">
           <div className="flex flex-col">
             <span className="text-[14px] font-semibold text-foreground">{updated.date}</span>
-            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/20 italic">{updated.time}</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-foreground/62 italic">{updated.time}</span>
           </div>
         </td>
         <td className="px-6 py-5">
-          <span className="inline-flex items-center rounded-full bg-danger/10 px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-danger border border-danger/10">
+          <span className="inline-flex items-center rounded-full border border-white/8 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground">
              ₹{(order.discountAmount || (order as any).pricing?.discountAmount || 0).toLocaleString()}
           </span>
         </td>
@@ -117,8 +117,8 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
           <span className={clsx(
             "inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider border",
             order.status === "completed" 
-              ? "bg-success/10 text-success border-success/20" 
-              : "bg-warning/10 text-warning border-warning/20 shadow-sm shadow-warning/5"
+              ? "border-white/8 bg-white/[0.04] text-foreground" 
+              : "border-white/8 bg-white/[0.03] text-foreground/80"
           )}>
             {order.status || "pending"}
           </span>
@@ -128,30 +128,30 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
             <div className="group/action relative">
               <button 
                 onClick={() => downloadOrderExcel(order, retailers, managers)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-muted/50 text-muted-foreground/40 transition-all hover:bg-success hover:text-white hover:border-success"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white hover:text-background hover:border-white"
               >
                 <FileSpreadsheet size={14} />
               </button>
               <div className="absolute -top-8 left-1/2 -translate-x-1/2 scale-50 opacity-0 transition-all group-hover/action:scale-100 group-hover/action:opacity-100">
-                <span className="rounded bg-surface-muted border border-border px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-foreground">Excel</span>
+                <span className="rounded border border-white/8 bg-[#111111] px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-foreground/72">Excel</span>
               </div>
             </div>
 
             <div className="group/action relative">
               <button 
                 onClick={() => downloadOrderPDF(order, retailers, managers, allSaleRep)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-muted/50 text-muted-foreground/40 transition-all hover:bg-danger hover:text-white hover:border-danger"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white hover:text-background hover:border-white"
               >
                 <FileText size={14} />
               </button>
               <div className="absolute -top-8 left-1/2 -translate-x-1/2 scale-50 opacity-0 transition-all group-hover/action:scale-100 group-hover/action:opacity-100">
-                <span className="rounded bg-surface-muted border border-border px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-foreground">PDF</span>
+                <span className="rounded border border-white/8 bg-[#111111] px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-foreground/72">PDF</span>
               </div>
             </div>
 
             <button 
               onClick={() => handleOrderEdit(order)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-surface-muted/50 text-muted-foreground/40 transition-all hover:bg-primary hover:text-white hover:border-primary"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white hover:text-background hover:border-white"
             >
               <Edit3 size={14} />
             </button>
@@ -172,9 +172,9 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
                 className="overflow-hidden"
               >
                 <div className="mx-6 mb-6 mt-2 rounded-[16px] border border-border/10 bg-surface-muted/30 p-8 shadow-inner backdrop-blur-xl">
-                    <div className="mb-4 flex items-center justify-between border-b border-border/5 pb-4">
-                       <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-muted-foreground/30">Order Manifest Archive</h4>
-                       <div className="h-1.5 w-1.5 rounded-full bg-primary shadow shadow-primary/50 animate-pulse" />
+                <div className="mb-4 flex items-center justify-between border-b border-white/8 pb-4">
+                       <h4 className="text-[10px] font-bold uppercase tracking-[0.4em] text-foreground/62">Order Manifest Archive</h4>
+                       <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white shadow-[0_0_10px_rgba(255,255,255,0.18)]" />
                     </div>
                    <OrderItemsTable items={order.items || []} />
                 </div>

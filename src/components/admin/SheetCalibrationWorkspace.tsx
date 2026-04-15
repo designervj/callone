@@ -65,18 +65,18 @@ const PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
 
 function relationTone(status?: "matched" | "partial" | "unmatched") {
   if (status === "matched") {
-    return "border-emerald-500/20 bg-emerald-500/10 text-emerald-600 dark:text-emerald-300";
+    return "border-white/12 bg-white/[0.05] text-white/82";
   }
 
   if (status === "partial") {
-    return "border-amber-500/20 bg-amber-500/10 text-amber-600 dark:text-amber-300";
+    return "border-white/10 bg-white/[0.04] text-foreground/72";
   }
 
   if (status === "unmatched") {
-    return "border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-300";
+    return "border-white/10 bg-white/[0.03] text-foreground/58";
   }
 
-  return "border-border/70 bg-background text-foreground/60";
+  return "border-white/8 bg-white/[0.03] text-foreground/60";
 }
 
 function downloadCsv(filename: string, rows: Record<string, unknown>[]) {
@@ -398,7 +398,7 @@ export function SheetCalibrationWorkspace({
   return (
     <div className="space-y-4">
       <section className="premium-card overflow-hidden rounded-[28px]">
-        <div className="grid gap-4 border-b border-border/60 px-4 py-4 xl:grid-cols-[minmax(0,1fr)_320px]">
+        <div className="grid gap-4 border-b border-white/8 px-4 py-5 xl:grid-cols-[minmax(0,1fr)_320px]">
           <div className="space-y-3">
             <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/42">
               Sheet calibration workspace
@@ -407,7 +407,7 @@ export function SheetCalibrationWorkspace({
               <h2 className="text-[1.85rem] font-semibold tracking-tight text-foreground">
                 CSV Intake and Mapping
               </h2>
-              <span className="rounded-full border border-border/70 bg-background px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/55">
+              <span className="rounded-full border border-white/8 bg-white/[0.03] px-3 py-1 text-xs font-semibold uppercase tracking-[0.14em] text-foreground/55">
                 Derived from OLD/call-check
               </span>
             </div>
@@ -423,7 +423,7 @@ export function SheetCalibrationWorkspace({
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-border/70 bg-background/80 p-4">
+          <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-4">
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/42">
               Process
             </p>
@@ -436,7 +436,7 @@ export function SheetCalibrationWorkspace({
             <div className="mt-4">
               <Link
                 href="/sample-data/brand-calibration.csv"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-primary"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-foreground"
               >
                 <Download className="h-4 w-4" />
                 Download default CSV
@@ -445,7 +445,7 @@ export function SheetCalibrationWorkspace({
           </div>
         </div>
 
-        <div className="grid gap-4 px-4 py-4 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid gap-4 px-4 py-5 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="space-y-4">
             <div className="grid gap-3 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)]">
               <label className="space-y-2">
@@ -455,7 +455,7 @@ export function SheetCalibrationWorkspace({
                 <input
                   value={datasetName}
                   onChange={(event) => setDatasetName(event.target.value)}
-                  className="w-full rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm"
+                  className="w-full rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-foreground outline-none"
                 />
               </label>
               <label className="space-y-2">
@@ -465,7 +465,7 @@ export function SheetCalibrationWorkspace({
                 <input
                   value={datasetDescription}
                   onChange={(event) => setDatasetDescription(event.target.value)}
-                  className="w-full rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm"
+                  className="w-full rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm text-foreground outline-none"
                 />
               </label>
             </div>
@@ -473,12 +473,12 @@ export function SheetCalibrationWorkspace({
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={loadSampleCsv}
-                className="inline-flex items-center gap-2 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold text-foreground/76"
+                className="inline-flex items-center gap-2 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-foreground/76"
               >
                 <FileSpreadsheet className="h-4 w-4" />
                 Load default CSV
               </button>
-              <label className="inline-flex cursor-pointer items-center gap-2 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold text-foreground/76">
+              <label className="inline-flex cursor-pointer items-center gap-2 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-foreground/76">
                 <Upload className="h-4 w-4" />
                 Upload CSV
                 <input type="file" accept=".csv" className="hidden" onChange={handleFileUpload} />
@@ -486,7 +486,7 @@ export function SheetCalibrationWorkspace({
               <button
                 onClick={saveDraftAsDataset}
                 disabled={!draftRows.length || saving}
-                className="inline-flex items-center gap-2 rounded-[20px] bg-primary px-4 py-3 text-sm font-semibold text-white disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-[20px] bg-white px-4 py-3 text-sm font-semibold text-background disabled:opacity-60"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <CheckCircle2 className="h-4 w-4" />}
                 Calibrate and save
@@ -494,7 +494,7 @@ export function SheetCalibrationWorkspace({
               <button
                 onClick={exportCurrentRows}
                 disabled={!displayRows.length}
-                className="inline-flex items-center gap-2 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold text-foreground/76 disabled:opacity-60"
+                className="inline-flex items-center gap-2 rounded-[20px] border border-white/8 bg-white/[0.03] px-4 py-3 text-sm font-semibold text-foreground/76 disabled:opacity-60"
               >
                 <Download className="h-4 w-4" />
                 Export current
@@ -509,7 +509,7 @@ export function SheetCalibrationWorkspace({
             </div>
           </div>
 
-          <div className="rounded-[24px] border border-border/70 bg-background/80 p-4">
+          <div className="rounded-[24px] border border-white/8 bg-white/[0.03] p-4">
             <div className="flex items-center justify-between gap-3">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/42">
@@ -519,7 +519,7 @@ export function SheetCalibrationWorkspace({
                   Saved calibration sets ready to reopen and compare.
                 </p>
               </div>
-              <span className="rounded-full border border-border/70 px-3 py-1 text-xs font-semibold text-foreground/52">
+              <span className="rounded-full border border-white/8 px-3 py-1 text-xs font-semibold text-foreground/52">
                 {datasets.length}
               </span>
             </div>
@@ -530,10 +530,10 @@ export function SheetCalibrationWorkspace({
                   <button
                     key={dataset.id}
                     onClick={() => openDataset(dataset.slug)}
-                    className={`w-full rounded-[20px] border px-3 py-3 text-left transition ${
+                className={`w-full rounded-[20px] border px-3 py-3 text-left transition ${
                       activeDataset?.slug === dataset.slug
-                        ? "border-primary/20 bg-primary/10"
-                        : "border-border/70 bg-[color:var(--surface)]"
+                        ? "border-white/14 bg-white/[0.06]"
+                        : "border-white/8 bg-[color:var(--surface)]"
                     }`}
                   >
                     <div className="flex items-start justify-between gap-3">
@@ -561,7 +561,7 @@ export function SheetCalibrationWorkspace({
                   </button>
                 ))
               ) : (
-                <div className="rounded-[20px] border border-dashed border-border/70 bg-[color:var(--surface)] px-4 py-6 text-sm text-foreground/56">
+                <div className="rounded-[20px] border border-dashed border-white/8 bg-[color:var(--surface)] px-4 py-6 text-sm text-foreground/56">
                   No datasets saved yet. Load the sample CSV and save it to create the first calibration set.
                 </div>
               )}
@@ -572,7 +572,7 @@ export function SheetCalibrationWorkspace({
 
       {activeDataset && brandSummary.length ? (
         <section className="premium-card overflow-clip rounded-[28px]">
-          <div className="flex items-center justify-between gap-3 border-b border-border/60 px-4 py-3">
+          <div className="flex items-center justify-between gap-3 border-b border-white/8 px-4 py-3">
             <div>
               <h3 className="text-base font-semibold text-foreground">Brand relation board</h3>
               <p className="text-sm text-foreground/56">
@@ -583,7 +583,7 @@ export function SheetCalibrationWorkspace({
           <div className="w-full max-h-[400px] overflow-auto rounded-b-[24px]">
             <table className="min-w-full text-left text-sm">
               <thead>
-                <tr className="bg-[#111111] text-white">
+                <tr className="bg-white/[0.03] text-white">
                   <StickyHeading className="px-4 py-3">Brand reference</StickyHeading>
                   <StickyHeading className="px-4 py-3">Total rows</StickyHeading>
                   <StickyHeading className="px-4 py-3">Matched</StickyHeading>
@@ -608,7 +608,7 @@ export function SheetCalibrationWorkspace({
       ) : null}
 
       <section className="premium-card overflow-clip rounded-[28px]">
-        <div className="space-y-4 border-b border-border/60 px-4 py-4">
+        <div className="space-y-4 border-b border-white/8 px-4 py-4">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
               <h3 className="text-base font-semibold text-foreground">
@@ -628,7 +628,7 @@ export function SheetCalibrationWorkspace({
                   className="w-[280px] border-none bg-transparent p-0 text-sm"
                 />
               </label>
-              <label className="inline-flex items-center gap-2 rounded-[20px] border border-border/70 bg-background px-4 py-3 text-sm font-semibold text-foreground/76">
+              <label className="inline-flex items-center gap-2 rounded-[20px] border border-white/8 bg-background px-4 py-3 text-sm font-semibold text-foreground/76">
                 <select
                   value={pageSize}
                   onChange={(event) => {
@@ -659,7 +659,7 @@ export function SheetCalibrationWorkspace({
                   )
                 }
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] ${
-                  statusFilters.includes(status) ? relationTone(status as "matched" | "partial" | "unmatched") : "border-border/70 bg-background text-foreground/64"
+                  statusFilters.includes(status) ? relationTone(status as "matched" | "partial" | "unmatched") : "border-white/8 bg-white/[0.03] text-foreground/64"
                 }`}
               >
                 {status}
@@ -678,8 +678,8 @@ export function SheetCalibrationWorkspace({
                 }
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${
                   brandFilters.includes(brand)
-                    ? "border-primary/20 bg-primary/10 text-primary"
-                    : "border-border/70 bg-background text-foreground/64"
+                    ? "border-white/14 bg-white/[0.05] text-white"
+                    : "border-white/8 bg-white/[0.03] text-foreground/64"
                 }`}
               >
                 {brand}
@@ -698,8 +698,8 @@ export function SheetCalibrationWorkspace({
                 }
                 className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${
                   warehouseFilters.includes(warehouse)
-                    ? "border-primary/20 bg-primary/10 text-primary"
-                    : "border-border/70 bg-background text-foreground/64"
+                    ? "border-white/14 bg-white/[0.05] text-white"
+                    : "border-white/8 bg-white/[0.03] text-foreground/64"
                 }`}
               >
                 {warehouse}
@@ -710,8 +710,8 @@ export function SheetCalibrationWorkspace({
               onClick={() => setIssuesOnly((current) => !current)}
               className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${
                 issuesOnly
-                  ? "border-rose-500/20 bg-rose-500/10 text-rose-600 dark:text-rose-300"
-                  : "border-border/70 bg-background text-foreground/64"
+                  ? "border-white/14 bg-white/[0.05] text-white"
+                  : "border-white/8 bg-white/[0.03] text-foreground/64"
               }`}
             >
               Issues only
@@ -720,7 +720,7 @@ export function SheetCalibrationWorkspace({
             {activeFilterCount ? (
               <button
                 onClick={clearFilters}
-                className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary"
+                className="inline-flex items-center gap-2 rounded-full border border-white/12 bg-white/[0.05] px-3 py-1.5 text-xs font-semibold text-white"
               >
                 <RefreshCcw className="h-3.5 w-3.5" />
                 Clear filters
@@ -732,7 +732,7 @@ export function SheetCalibrationWorkspace({
         <div className="w-full max-h-[calc(100vh-250px)] overflow-auto rounded-b-[24px]">
           <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
             <thead>
-              <tr className="bg-[#111111] text-white">
+              <tr className="bg-white/[0.03] text-white">
                 <StickyHeading className="min-w-[80px] px-4 py-3">Row</StickyHeading>
                 <StickyHeading className="min-w-[130px] px-4 py-3">Status</StickyHeading>
                 <StickyHeading className="min-w-[180px] px-4 py-3">Brand</StickyHeading>
@@ -750,32 +750,32 @@ export function SheetCalibrationWorkspace({
             <tbody className="bg-[color:var(--surface)]">
               {visibleRows.length ? (
                 visibleRows.map((row) => (
-                  <tr key={`${row.id ?? "draft"}-${row.rowIndex}`} className="border-b border-border/60 transition-colors hover:bg-primary/5">
-                    <td className="border-b border-border/60 px-4 py-3 align-top font-semibold text-foreground">
+                  <tr key={`${row.id ?? "draft"}-${row.rowIndex}`} className="border-b border-white/6 transition-colors hover:bg-white/[0.03]">
+                    <td className="border-b border-white/6 px-4 py-3 align-top font-semibold text-foreground">
                       {row.rowIndex}
                     </td>
-                    <td className="border-b border-border/60 px-4 py-3 align-top">
+                    <td className="border-b border-white/6 px-4 py-3 align-top">
                       <span className={`inline-flex rounded-full border px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] ${relationTone(row.relation?.status)}`}>
                         {row.relation?.status ?? "draft"}
                       </span>
                     </td>
-                    <td className="border-b border-border/60 px-4 py-3 align-top text-sm text-foreground/72">
+                    <td className="border-b border-white/6 px-4 py-3 align-top text-sm text-foreground/72">
                       {row.relation?.brandLabel || String(row.data.brandCode ?? row.data.brandName ?? row.data.brand ?? "—")}
                     </td>
-                    <td className="border-b border-border/60 px-4 py-3 align-top text-sm text-foreground/72">
+                    <td className="border-b border-white/6 px-4 py-3 align-top text-sm text-foreground/72">
                       {row.relation?.warehouseLabel || String(row.data.warehouseCode ?? row.data.warehouseName ?? row.data.warehouse ?? "—")}
                     </td>
-                    <td className="border-b border-border/60 px-4 py-3 align-top text-sm text-foreground/72">
+                    <td className="border-b border-white/6 px-4 py-3 align-top text-sm text-foreground/72">
                       {row.relation?.productLabel || String(row.data.baseSku ?? row.data.productName ?? row.data.name ?? "—")}
                     </td>
-                    <td className="border-b border-border/60 px-4 py-3 align-top text-sm text-foreground/72">
+                    <td className="border-b border-white/6 px-4 py-3 align-top text-sm text-foreground/72">
                       {row.relation?.variantLabel || String(row.data.sku ?? row.data.variantSku ?? "—")}
                     </td>
-                    <td className="border-b border-border/60 px-4 py-3 align-top">
+                    <td className="border-b border-white/6 px-4 py-3 align-top">
                       {row.relation?.issues.length ? (
                         <div className="space-y-1">
                           {row.relation.issues.map((issue) => (
-                            <p key={issue} className="text-xs text-danger">
+                            <p key={issue} className="text-xs text-foreground/70">
                               {issue}
                             </p>
                           ))}
@@ -785,7 +785,7 @@ export function SheetCalibrationWorkspace({
                       )}
                     </td>
                     {displayHeaders.map((header) => (
-                      <td key={header} className="border-b border-border/60 px-4 py-3 align-top text-sm text-foreground/72">
+                      <td key={header} className="border-b border-white/6 px-4 py-3 align-top text-sm text-foreground/72">
                         {String(row.data[header] ?? "—")}
                       </td>
                     ))}
@@ -807,7 +807,7 @@ export function SheetCalibrationWorkspace({
           </table>
         </div>
 
-        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border/60 px-4 py-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/8 px-4 py-3">
           <div className="text-sm text-foreground/56">
             Page {currentPage} of {pageCount} · {filteredRows.length} rows after filters
           </div>
@@ -815,14 +815,14 @@ export function SheetCalibrationWorkspace({
             <button
               onClick={() => setPage((current) => Math.max(1, current - 1))}
               disabled={currentPage === 1}
-              className="rounded-2xl border border-border/70 bg-background px-3 py-2 text-sm font-semibold text-foreground/70 disabled:opacity-50"
+              className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-2 text-sm font-semibold text-foreground/70 disabled:opacity-50"
             >
               Prev
             </button>
             <button
               onClick={() => setPage((current) => Math.min(pageCount, current + 1))}
               disabled={currentPage === pageCount}
-              className="rounded-2xl border border-border/70 bg-background px-3 py-2 text-sm font-semibold text-foreground/70 disabled:opacity-50"
+              className="rounded-2xl border border-white/8 bg-white/[0.03] px-3 py-2 text-sm font-semibold text-foreground/70 disabled:opacity-50"
             >
               Next
             </button>
@@ -843,7 +843,7 @@ function MetricTile({
   icon: React.ReactNode;
 }) {
   return (
-    <div className="rounded-[22px] border border-border/70 bg-background/75 px-4 py-4">
+    <div className="rounded-[22px] border border-white/8 bg-white/[0.03] px-4 py-4">
       <div className="flex items-center justify-between gap-3">
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-foreground/45">
           {label}
@@ -864,7 +864,7 @@ function StickyHeading({
 }) {
   return (
     <th
-      className={`bg-[#111] text-white shadow-[0_1px_0_rgba(255,255,255,0.08)] ${className || ""}`}
+      className={`bg-white/[0.03] text-white shadow-[0_1px_0_rgba(255,255,255,0.08)] ${className || ""}`}
       style={{
         position: "sticky",
         top: 0,

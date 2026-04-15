@@ -12,12 +12,10 @@ import {
   Grid2x2,
   LogOut,
   Menu,
-  Moon,
   Search,
   Settings,
   ShoppingBag,
   ShoppingCart,
-  Sun,
   X,
 } from "lucide-react";
 import {
@@ -27,8 +25,8 @@ import {
 } from "@/lib/admin/command-center";
 import {getAdminPageMeta} from "@/lib/admin/page-chrome";
 import {getAvailableViewRoles, VIEW_ROLE_LABELS} from "@/lib/auth/view-role";
-import {useTheme} from "../ThemeProvider";
 import {MegaSearch} from "../ui/MegaSearch";
+import {ThemeToggle} from "../ui/ThemeToggle";
 import GetAllProducts from "../products/GetAllProducts";
 import { buildHeroSlides, getInitials, getSectionItems, matchesPath } from "./util/UtilFunction";
 import { useSelector } from "react-redux";
@@ -55,7 +53,6 @@ export type HeroSlide = {
 export function AdminShell({children, user}: AdminShellProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const {theme, toggleTheme} = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [megaMenuOpen, setMegaMenuOpen] = useState(false);
@@ -184,7 +181,7 @@ export function AdminShell({children, user}: AdminShellProps) {
   return (
     <>
       <GetAllProducts />
-      <div className="relative min-h-screen overflow-x-hidden text-foreground selection:bg-primary/15 selection:text-foreground">
+      <div className="relative min-h-screen overflow-x-hidden text-foreground selection:bg-white selection:text-background">
         <MegaSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} role={viewRole} />
 
         <AnimatePresence>
@@ -199,24 +196,24 @@ export function AdminShell({children, user}: AdminShellProps) {
           ) : null}
         </AnimatePresence>
 
-        <header className="sticky inset-x-0 top-0 z-[1000] border-b border-white/5 bg-surface/60 backdrop-blur-xl">
+        <header className="header-shell sticky inset-x-0 top-0 z-[1000] border-b">
           <div className="mx-auto flex h-[var(--admin-header-height)] items-center justify-between gap-4 px-6 sm:px-10">
             {/* Logo Section */}
             <div className="flex items-center gap-6">
               <button
-                className="rounded-xl border border-white/10 bg-white/5 p-2 text-white/50 transition hover:bg-white/10 hover:text-white md:hidden"
+                className="header-control rounded-xl border p-2 transition md:hidden"
                 onClick={() => setMobileMenuOpen(true)}
               >
                 <Menu size={20} />
               </button>
               <Link href="/admin" className="group flex items-center gap-3">
-                <div className="flex h-11 w-[100px] items-center justify-center rounded-xl bg-white/5 px-2.5 transition-all duration-500 group-hover:bg-white/10 group-hover:shadow-[0_0_20px_rgba(255,255,255,0.05)]">
+                <div className="header-control flex h-11 w-[104px] items-center justify-center rounded-xl border px-2.5 transition-all duration-500 group-hover:shadow-[0_0_24px_rgba(0,0,0,0.08)]">
                   <Image
                     src="/images/brands/callaway-logo-white.png"
                     alt="Callaway"
                     width={80}
                     height={44}
-                    className="h-auto w-full object-contain filter brightness-110"
+                    className="h-auto w-full object-contain grayscale brightness-110 dark:brightness-110"
                     priority
                   />
                 </div>
@@ -232,7 +229,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                     "inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition",
                     megaMenuOpen
                       ? "border-white/18 bg-white/12 text-white"
-                      : "border-white/10 bg-white/8 text-white/76 hover:text-white"
+                      : "border-white/10 bg-white/[0.04] text-white/76 hover:text-white"
                   )}
                   aria-label="Open workspace menu"
                 >
@@ -245,20 +242,20 @@ export function AdminShell({children, user}: AdminShellProps) {
                       initial={{opacity: 0, y: 10}}
                       animate={{opacity: 1, y: 0}}
                       exit={{opacity: 0, y: 10}}
-                      className="absolute left-0 top-full z-[100] mt-3 w-[min(980px,calc(100vw-48px))] overflow-hidden rounded-[28px] border border-white/10 bg-[#111111] p-4 shadow-[0_35px_100px_rgba(0,0,0,0.35)]"
+                      className="absolute left-0 top-full z-[100] mt-3 w-[min(980px,calc(100vw-48px))] overflow-hidden rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-4 shadow-[0_35px_100px_rgba(0,0,0,0.42)]"
                     >
                       <div className="mb-4 flex items-end justify-between gap-3 border-b border-white/10 pb-4">
                         <div>
-                          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/42">
+                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--header-muted)]">
                             Workspace
                           </p>
-                          <p className="mt-2 text-lg font-semibold text-white">
+                        <p className="mt-2 text-lg font-semibold tracking-tight text-[color:var(--header-fg)]">
                             Fast module access
                           </p>
                         </div>
                         <button
                           onClick={() => setSearchOpen(true)}
-                          className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/8 px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/62"
+                        className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] header-pill"
                         >
                           <Search size={14} />
                           Search
@@ -269,9 +266,9 @@ export function AdminShell({children, user}: AdminShellProps) {
                         {megaMenuGroups.map((group) => (
                           <div
                             key={group.title}
-                            className="rounded-[24px] border border-white/10 bg-white/4 p-3"
+                            className="rounded-[24px] border border-white/10 bg-[color:var(--header-control-bg)] p-3"
                           >
-                            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-white/42">
+                            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--header-muted)]">
                               {group.title}
                             </p>
                             <div className="space-y-2">
@@ -281,21 +278,21 @@ export function AdminShell({children, user}: AdminShellProps) {
 
                                 return (
                                   <Link
-                                    key={item.id}
-                                    href={item.href}
-                                    className={clsx(
-                                      "flex items-start gap-3 rounded-[20px] border px-3 py-3 transition",
-                                      isActive
-                                        ? "border-white/14 bg-white/10"
-                                        : "border-transparent bg-white/3 hover:border-white/10 hover:bg-white/8"
-                                    )}
+                                  key={item.id}
+                                  href={item.href}
+                              className={clsx(
+                                "flex items-start gap-3 rounded-[20px] border px-3 py-3 transition",
+                                isActive
+                                  ? "border-[color:var(--header-pill-active-bg)] bg-[color:var(--header-pill-active-bg)]/5"
+                                  : "border-transparent bg-[color:var(--header-control-bg)] hover:border-[color:var(--header-border)] hover:bg-[color:var(--header-control-hover)]"
+                              )}
                                   >
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/8 text-white">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]">
                                       <Icon size={17} />
                                     </div>
                                     <div className="min-w-0">
-                                      <p className="text-sm font-semibold text-white">{item.label}</p>
-                                      <p className="mt-1 text-xs leading-5 text-white/56">
+                                      <p className="text-sm font-semibold text-[color:var(--header-fg)]">{item.label}</p>
+                                      <p className="mt-1 text-xs leading-5 text-[color:var(--header-muted)]">
                                         {item.description}
                                       </p>
                                     </div>
@@ -332,20 +329,20 @@ export function AdminShell({children, user}: AdminShellProps) {
                           className={clsx(
                             "group relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300",
                             isActive || openNavMenu === item.id
-                              ? "text-white"
-                              : "text-muted-foreground/60 hover:text-white"
+                              ? "text-[color:var(--header-pill-active-fg)]"
+                              : "text-[color:var(--header-fg)]/70 hover:text-[color:var(--header-fg)]"
                           )}
                         >
                           <span className="relative z-10">{item.label}</span>
                           {(isActive || openNavMenu === item.id) && (
                             <motion.div
                               layoutId="nav-glow"
-                              className="absolute inset-0 z-0 rounded-xl bg-primary/20 shadow-[0_0_15px_rgba(99,102,241,0.3)] ring-1 ring-primary/40"
+                              className="absolute inset-0 z-0 rounded-xl bg-[color:var(--header-pill-active-bg)] shadow-[0_0_15px_rgba(255,255,255,0.12)] ring-1 ring-white/20"
                               transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                             />
                           )}
                           {!isActive && openNavMenu !== item.id && (
-                            <div className="absolute inset-x-4 bottom-0 h-[2px] scale-x-0 bg-primary/40 transition-transform duration-300 group-hover:scale-x-100" />
+                            <div className="absolute inset-x-4 bottom-0 h-px scale-x-0 bg-[color:var(--header-border)] transition-transform duration-300 group-hover:scale-x-100" />
                           )}
                           <ChevronDown
                             size={14}
@@ -359,13 +356,13 @@ export function AdminShell({children, user}: AdminShellProps) {
                               initial={{opacity: 0, y: 10}}
                               animate={{opacity: 1, y: 0}}
                               exit={{opacity: 0, y: 10}}
-                              className="absolute left-0 top-full z-[100] mt-3 w-[360px] overflow-hidden rounded-[28px] border border-white/10 bg-[#111111] p-3 shadow-[0_30px_90px_rgba(0,0,0,0.34)]"
+                              className="absolute left-0 top-full z-[100] mt-3 w-[360px] overflow-hidden rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-3 shadow-[0_30px_90px_rgba(0,0,0,0.42)]"
                             >
                               <div className="border-b border-white/10 px-2 pb-3">
-                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-white/42">
+                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--header-muted)]">
                                   {item.label}
                                 </p>
-                                <p className="mt-2 text-sm leading-6 text-white/62">
+                                <p className="mt-2 text-sm leading-6 text-[color:var(--header-muted)]">
                                   {item.description}
                                 </p>
                               </div>
@@ -382,16 +379,16 @@ export function AdminShell({children, user}: AdminShellProps) {
                                       className={clsx(
                                         "flex items-start gap-3 rounded-[20px] border px-3 py-3 transition",
                                         childActive
-                                          ? "border-white/14 bg-white/10"
-                                          : "border-transparent bg-white/4 hover:border-white/10 hover:bg-white/8"
+                                          ? "border-[color:var(--header-pill-active-bg)] bg-[color:var(--header-pill-active-bg)]/5"
+                                          : "border-transparent bg-[color:var(--header-control-bg)] hover:border-[color:var(--header-border)] hover:bg-[color:var(--header-control-hover)]"
                                       )}
                                     >
-                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-white/8 text-white">
+                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]">
                                         <Icon size={16} />
                                       </div>
                                       <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-white">{submenuItem.label}</p>
-                                        <p className="mt-1 text-xs leading-5 text-white/56">
+                                        <p className="text-sm font-semibold text-[color:var(--header-fg)]">{submenuItem.label}</p>
+                                        <p className="mt-1 text-xs leading-5 text-[color:var(--header-muted)]">
                                           {submenuItem.description}
                                         </p>
                                       </div>
@@ -407,26 +404,26 @@ export function AdminShell({children, user}: AdminShellProps) {
                   }
 
                   return (
-                    <Link
+                      <Link
                       key={item.href}
                       href={item.href}
                       className={clsx(
                         "group relative rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300",
                         isActive
-                          ? "text-white"
-                          : "text-muted-foreground/60 hover:text-white"
+                          ? "text-[color:var(--header-pill-active-fg)]"
+                          : "text-[color:var(--header-fg)]/70 hover:text-[color:var(--header-fg)]"
                       )}
                     >
                       <span className="relative z-10">{item.label}</span>
                       {isActive && (
                         <motion.div
                           layoutId="nav-glow"
-                          className="absolute inset-0 z-0 rounded-xl bg-primary/20 shadow-[0_0_15px_rgba(99,102,241,0.3)] ring-1 ring-primary/40"
+                          className="absolute inset-0 z-0 rounded-xl bg-[color:var(--header-pill-active-bg)] shadow-[0_0_15px_rgba(255,255,255,0.12)] ring-1 ring-white/20"
                           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
                       )}
                       {!isActive && (
-                        <div className="absolute inset-x-4 bottom-0 h-[2px] scale-x-0 bg-primary/40 transition-transform duration-300 group-hover:scale-x-100" />
+                        <div className="absolute inset-x-4 bottom-0 h-px scale-x-0 bg-[color:var(--header-border)] transition-transform duration-300 group-hover:scale-x-100" />
                       )}
                     </Link>
                   );
@@ -438,7 +435,7 @@ export function AdminShell({children, user}: AdminShellProps) {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSearchOpen(true)}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/50 transition hover:bg-white/10 hover:text-white"
+                className="header-control inline-flex h-9 w-9 items-center justify-center rounded-lg border transition"
                 aria-label="Open search"
               >
                 <Search size={16} />
@@ -446,32 +443,25 @@ export function AdminShell({children, user}: AdminShellProps) {
 
               <Link
                 href={`/admin/cart/${currentOrder?.orderNumber}`}
-                className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/50 transition hover:bg-white/10 hover:text-white"
+                className="header-control relative inline-flex h-9 w-9 items-center justify-center rounded-lg border transition"
                 aria-label="Open cart"
               >
                 <ShoppingCart size={16} />
                 {items.length > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[9px] font-bold text-white ring-2 ring-surface">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[color:var(--header-pill-active-bg)] text-[9px] font-bold text-[color:var(--header-pill-active-fg)] ring-2 ring-[color:var(--background)]">
                     {items.length}
                   </span>
                 )}
               </Link>
 
-              <motion.button
-                whileTap={{scale: 0.94}}
-                onClick={toggleTheme}
-                className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/50 transition hover:bg-white/10 hover:text-white"
-                aria-label="Toggle theme"
-              >
-                {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
-              </motion.button>
+              <ThemeToggle className="header-control" />
 
               <div ref={profileMenuRef} className="relative">
                 <button
                   onClick={() => setProfileMenuOpen((current) => !current)}
-                  className="group inline-flex h-9 items-center gap-2 rounded-lg border border-white/10 bg-white/5 pl-1 pr-2 text-white/60 transition hover:bg-white/10 hover:text-white"
+                  className="header-control group inline-flex h-9 items-center gap-2 rounded-lg border pl-1 pr-2 transition"
                 >
-                  <div className="flex h-7 w-7 items-center justify-center rounded bg-primary/20 text-[10px] font-bold text-primary ring-1 ring-primary/30 group-hover:bg-primary group-hover:text-white group-hover:ring-primary/50 transition-all">
+                  <div className="flex h-7 w-7 items-center justify-center rounded bg-[color:var(--header-pill-active-bg)] text-[10px] font-bold text-[color:var(--header-pill-active-fg)] ring-1 ring-[color:var(--header-pill-border)] transition-all group-hover:bg-[color:var(--header-pill-active-bg)] group-hover:text-[color:var(--header-pill-active-fg)] group-hover:ring-[color:var(--header-pill-active-bg)]">
                     {getInitials(user.name)}
                   </div>
                   <ChevronDown
@@ -486,29 +476,29 @@ export function AdminShell({children, user}: AdminShellProps) {
                       initial={{opacity: 0, y: 10}}
                       animate={{opacity: 1, y: 0}}
                       exit={{opacity: 0, y: 10}}
-                      className="absolute right-0 top-full z-[100] mt-3 w-[320px] overflow-hidden rounded-[24px] border border-white/10 bg-[#111111] p-3 shadow-[0_30px_90px_rgba(0,0,0,0.34)]"
+                      className="absolute right-0 top-full z-[100] mt-3 w-[320px] overflow-hidden rounded-[24px] border border-white/10 bg-[color:var(--surface)] p-3 shadow-[0_30px_90px_rgba(0,0,0,0.42)]"
                     >
-                      <div className="rounded-[20px] border border-white/10 bg-white/4 p-3">
+                      <div className="rounded-[20px] border border-white/8 bg-[color:var(--header-control-bg)] p-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-sm font-semibold uppercase text-white">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-[color:var(--header-pill-active-bg)] text-sm font-semibold uppercase text-[color:var(--header-pill-active-fg)]">
                             {getInitials(user.name)}
                           </div>
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-white">
+                            <p className="truncate text-sm font-semibold text-[color:var(--header-fg)]">
                               {user.name ?? "Workspace User"}
                             </p>
-                            <p className="truncate text-xs text-white/55">
+                            <p className="truncate text-xs text-[color:var(--header-muted)]">
                               {user.email ?? "No email available"}
                             </p>
-                            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/42">
+                            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--header-muted)]">
                               Logged in as {VIEW_ROLE_LABELS[user.role as keyof typeof VIEW_ROLE_LABELS] ?? user.role}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-3 rounded-[20px] border border-white/10 bg-white/4 p-3">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-white/42">
+                      <div className="mt-3 rounded-[20px] border border-white/8 bg-[color:var(--header-control-bg)] p-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--header-muted)]">
                           View As
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -521,8 +511,8 @@ export function AdminShell({children, user}: AdminShellProps) {
                                 className={clsx(
                                   "rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition",
                                   active
-                                    ? "border-white/18 bg-white/12 text-white"
-                                    : "border-white/10 bg-white/6 text-white/62 hover:text-white"
+                                  ? "border-[color:var(--header-pill-active-bg)] bg-[color:var(--header-pill-active-bg)] text-[color:var(--header-pill-active-fg)]"
+                                    : "border-[color:var(--header-pill-border)] bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]/72 hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
                                 )}
                               >
                                 {VIEW_ROLE_LABELS[role]}
@@ -535,14 +525,14 @@ export function AdminShell({children, user}: AdminShellProps) {
                       <div className="mt-3 space-y-2">
                         <button
                           onClick={() => router.push("/admin/orders")}
-                          className="flex items-center gap-3 rounded-[18px] border border-white/10 bg-white/4 px-3 py-3 text-sm font-semibold text-white/76 transition hover:bg-white/8 hover:text-white"
+                          className="header-control flex items-center gap-3 rounded-[18px] border px-3 py-3 text-sm font-semibold transition"
                         >
                           <ShoppingBag size={16} />
                           My Orders
                         </button>
-                            <button
+                        <button
                           onClick={() => router.push("/admin/setting")}
-                          className="flex items-center gap-3 rounded-[18px] border border-white/10 bg-white/4 px-3 py-3 text-sm font-semibold text-white/76 transition hover:bg-white/8 hover:text-white"
+                          className="header-control flex items-center gap-3 rounded-[18px] border px-3 py-3 text-sm font-semibold transition"
                         >
                           <Settings size={16} />
                           Setting
@@ -550,7 +540,7 @@ export function AdminShell({children, user}: AdminShellProps) {
 
                         <button
                           onClick={() => signOut({callbackUrl: "/login"})}
-                          className="flex w-full items-center gap-3 rounded-[18px] border border-white/10 bg-white/4 px-3 py-3 text-sm font-semibold text-white/76 transition hover:bg-white/8 hover:text-white"
+                          className="header-control flex w-full items-center gap-3 rounded-[18px] border px-3 py-3 text-sm font-semibold transition"
                         >
                           <LogOut size={16} />
                           Sign out
@@ -573,11 +563,11 @@ export function AdminShell({children, user}: AdminShellProps) {
               initial={{x: -24, opacity: 0}}
               animate={{x: 0, opacity: 1}}
               exit={{x: -24, opacity: 0}}
-              className="fixed left-3 top-3 z-[120] w-[320px] rounded-[28px] border border-white/10 bg-[#111111] p-4 text-white shadow-[0_30px_90px_rgba(0,0,0,0.3)] md:hidden"
+              className="fixed left-3 top-3 z-[120] w-[320px] rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-4 text-[color:var(--surface-foreground)] shadow-[0_30px_90px_rgba(0,0,0,0.42)] md:hidden"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="min-w-0">
-                  <div className="mb-3 flex h-11 w-[108px] items-center justify-center rounded-2xl bg-white/4 px-3">
+                  <div className="header-control mb-3 flex h-11 w-[108px] items-center justify-center rounded-2xl border px-3">
                     <Image
                       src="/images/brands/callaway-logo-white.png"
                       alt="Callaway"
@@ -586,13 +576,13 @@ export function AdminShell({children, user}: AdminShellProps) {
                       className="h-auto w-full object-contain"
                     />
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-[0.4em] text-white/40">
+                  <p className="text-xs font-bold uppercase tracking-[0.4em] text-[color:var(--header-muted)]">
                     Admin Gate
                   </p>
-                  <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-white/60">v4.2.0</p>
+                  <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-[color:var(--header-muted)]">v4.2.0</p>
                 </div>
                 <button
-                  className="rounded-2xl border border-white/12 bg-white/6 p-2.5 text-white/70"
+                  className="header-control rounded-2xl border p-2.5"
                   onClick={() => setMobileMenuOpen(false)}
                 >
                   <X size={18} />
@@ -605,44 +595,39 @@ export function AdminShell({children, user}: AdminShellProps) {
                     setSearchOpen(true);
                     setMobileMenuOpen(false);
                   }}
-                  className="flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/8 text-white/72"
+                  className="header-control flex h-11 items-center justify-center rounded-2xl border"
                 >
                   <Search size={17} />
                 </button>
                 <Link
                   href="/admin/cart"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="relative flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/8 text-white/72"
+                  className="header-control relative flex h-11 items-center justify-center rounded-2xl border"
                 >
                   <ShoppingCart size={17} />
                   {items.length > 0 && (
-                    <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
-                      {items.length}
-                    </span>
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[color:var(--header-pill-active-bg)] text-[10px] font-bold text-[color:var(--header-pill-active-fg)]">
+                    {items.length}
+                  </span>
                   )}
                 </Link>
-                <button
-                  onClick={toggleTheme}
-                  className="flex h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/8 text-white/72"
-                >
-                  {theme === "dark" ? <Sun size={17} /> : <Moon size={17} />}
-                </button>
+                <ThemeToggle className="h-11 w-full justify-center rounded-2xl" showLabel />
               </div>
 
-              <div className="mb-4 rounded-[20px] border border-white/10 bg-white/4 p-3">
+              <div className="mb-4 rounded-[20px] border border-white/8 bg-[color:var(--header-control-bg)] p-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-xs font-semibold uppercase">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-[color:var(--header-pill-active-bg)] text-xs font-semibold uppercase text-[color:var(--header-pill-active-fg)]">
                     {getInitials(user.name)}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-white">
+                    <p className="truncate text-sm font-semibold text-[color:var(--header-fg)]">
                       {user.name ?? "Workspace User"}
                     </p>
-                    <p className="truncate text-xs text-white/55">{user.email ?? ""}</p>
+                    <p className="truncate text-xs text-[color:var(--header-muted)]">{user.email ?? ""}</p>
                   </div>
                 </div>
 
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-white/42">
+                <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[color:var(--header-muted)]">
                   View As
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -656,8 +641,8 @@ export function AdminShell({children, user}: AdminShellProps) {
                       className={clsx(
                         "rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition",
                         role === viewRole
-                          ? "border-white/18 bg-white/12 text-white"
-                          : "border-white/10 bg-white/6 text-white/62 hover:text-white"
+                          ? "border-[color:var(--header-pill-active-bg)] bg-[color:var(--header-pill-active-bg)] text-[color:var(--header-pill-active-fg)]"
+                          : "border-[color:var(--header-pill-border)] bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]/72 hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
                       )}
                     >
                       {VIEW_ROLE_LABELS[role]}
@@ -672,12 +657,12 @@ export function AdminShell({children, user}: AdminShellProps) {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                    className={clsx(
-                      "flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition",
-                      matchesPath(pathname, item.href)
-                        ? "bg-white/14 text-white"
-                        : "text-white/72 hover:bg-white/8 hover:text-white"
-                    )}
+                      className={clsx(
+                        "flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition",
+                        matchesPath(pathname, item.href)
+                        ? "bg-[color:var(--header-pill-active-bg)] text-[color:var(--header-pill-active-fg)]"
+                        : "text-[color:var(--header-fg)]/72 hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
+                      )}
                   >
                     <item.icon size={17} />
                     {item.label}
@@ -687,7 +672,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                 <Link
                   href="/admin/orders"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white"
+                  className="flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-[color:var(--header-fg)]/72 transition hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
                 >
                   <ShoppingBag size={17} />
                   My Orders
@@ -695,7 +680,7 @@ export function AdminShell({children, user}: AdminShellProps) {
 
                 <button
                   onClick={() => signOut({callbackUrl: "/login"})}
-                  className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-white/72 transition hover:bg-white/8 hover:text-white"
+                  className="flex w-full items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold text-[color:var(--header-fg)]/72 transition hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
                 >
                   <LogOut size={17} />
                   Sign out
@@ -719,11 +704,12 @@ export function AdminShell({children, user}: AdminShellProps) {
                   backgroundImage: `linear-gradient(to bottom, transparent, var(--background)), url(${activeHeroSlide.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
+                  filter: "grayscale(1) contrast(1.1) brightness(0.7)",
                 }}
               />
             </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/40 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(99,102,241,0.15),transparent_40%)]" />
+            <div className="absolute inset-0 bg-gradient-to-r from-background/94 via-background/46 to-transparent" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.1),transparent_42%)]" />
 
             <div
               className={clsx(
@@ -734,7 +720,7 @@ export function AdminShell({children, user}: AdminShellProps) {
             </div>
           </div>
 
-          <main className={clsx("relative z-10 overflow-y-auto overflow-x-hidden px-3 pb-5 sm:px-16", contentLiftClass)}>
+          <main className={clsx("relative z-10 overflow-y-auto overflow-x-hidden px-3 pb-5 sm:px-10", contentLiftClass)}>
             <motion.div
               initial={{opacity: 0, y: 10}}
               animate={{opacity: 1, y: 0}}

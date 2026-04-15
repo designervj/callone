@@ -31,16 +31,16 @@ export const CartStepper: React.FC<CartStepperProps> = ({
 }) => {
   return (
     <div className="mx-auto w-full max-w-[1400px]">
-      <div className="relative flex items-center gap-8 overflow-hidden rounded-[24px] border border-border/40 bg-white/40 p-6 shadow-2xl ">
+      <div className="relative flex items-center gap-8 overflow-hidden rounded-[24px] border border-white/8 bg-white/[0.03] p-6 shadow-[0_18px_50px_rgba(0,0,0,0.45)]">
         
         {/* Horizontal Timeline Container */}
         <div className="relative flex flex-1 items-center justify-between px-10 py-12">
           {/* Background Track */}
-          <div className="absolute left-[12%] right-[12%] top-1/2 h-[2px] -translate-y-1/2 bg-foreground/[0.05]" />
+          <div className="absolute left-[12%] right-[12%] top-1/2 h-[2px] -translate-y-1/2 bg-white/[0.06]" />
           
           {/* Active Progress Fill */}
           <motion.div 
-            className="absolute left-[12%] top-1/2 h-[2px] -translate-y-1/2 bg-primary"
+            className="absolute left-[12%] top-1/2 h-[2px] -translate-y-1/2 bg-white"
             initial={{ width: 0 }}
             animate={{ width: `${Math.min(100, Math.max(0, activeStep - 1) / (steps.length - 1) * 76)}%` }}
             transition={{ duration: 1, ease: [0.22, 1, 0.36, 1] }}
@@ -57,13 +57,13 @@ export const CartStepper: React.FC<CartStepperProps> = ({
                 <motion.div
                   initial={false}
                   animate={{
-                    backgroundColor: isCompleted ? '#22c55e' : isActive ? '#3b82f6' : '#ddd',
+                    backgroundColor: isCompleted ? 'rgba(255,255,255,0.9)' : isActive ? 'rgba(255,255,255,1)' : 'rgba(255,255,255,0.16)',
                     scale: isActive ? 1.2 : 1,
-                    boxShadow: isActive ? '0 0 0 8px rgba(59, 130, 246, 0.1)' : 'none'
+                    boxShadow: isActive ? '0 0 0 8px rgba(255, 255, 255, 0.08)' : 'none'
                   }}
                   className={clsx(
                     "flex h-[40px] w-[40px] items-center justify-center rounded-full transition-all duration-500",
-                    (isCompleted || isActive) ? 'text-white shadow-xl' : 'text-foreground/30 bg-[#f3f4f6]'
+                    (isCompleted || isActive) ? 'text-background shadow-xl' : 'text-foreground/62 bg-white/[0.08]'
                   )}
                 >
                   {isCompleted ? (
@@ -77,21 +77,21 @@ export const CartStepper: React.FC<CartStepperProps> = ({
                 <div className="absolute -bottom-10 flex flex-col items-center whitespace-nowrap">
                   <span className={clsx(
                     "text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500",
-                    isActive ? 'text-primary' : 'text-foreground/20'
+                    isActive ? 'text-white' : 'text-foreground/20'
                   )}>
                     {step.label}
                   </span>
                   {isActive && (
                     <motion.div 
                       layoutId="pulsar"
-                      className="mt-2 h-1 w-1 rounded-full bg-primary"
+                      className="mt-2 h-1 w-1 rounded-full bg-white"
                       animate={{ scale: [1, 2, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     />
                   )}
                 </div>
                 
-                <div className="absolute -top-10 flex flex-col items-center whitespace-nowrap text-[8px] font-black uppercase tracking-[0.4em] text-foreground/10 italic">
+                <div className="absolute -top-10 flex flex-col items-center whitespace-nowrap text-[8px] font-black uppercase tracking-[0.4em] text-foreground/62 italic">
                    Milestone 0{step.id}
                 </div>
               </div>
@@ -100,7 +100,7 @@ export const CartStepper: React.FC<CartStepperProps> = ({
         </div>
 
         {/* Action Goal Anchor */}
-        <div className="shrink-0 border-l border-border/30 pl-8">
+        <div className="shrink-0 border-l border-white/8 pl-8">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeStep}
@@ -118,13 +118,13 @@ export const CartStepper: React.FC<CartStepperProps> = ({
                 }
                 disabled={isSubmitting}
                 className={clsx(
-                  "group relative flex h-16 min-w-[200px] items-center justify-center gap-4 overflow-hidden rounded-2xl bg-[#111111] px-10 text-[11px] font-black uppercase tracking-[0.25em] text-white shadow-2xl transition-all hover:bg-black active:scale-95 disabled:opacity-50"
+                  "group relative flex h-16 min-w-[200px] items-center justify-center gap-4 overflow-hidden rounded-2xl bg-white px-10 text-[11px] font-black uppercase tracking-[0.25em] text-background shadow-2xl transition-all hover:bg-white/92 active:scale-95 disabled:opacity-50"
                 )}
               >
                 {isSubmitting ? (
-                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
+                  <div className="h-4 w-4 animate-spin rounded-full border-2 border-background/20 border-t-background" />
                 ) : (
-                  <ChevronRight size={18} className="translate-x-[-4px] text-primary transition-transform group-hover:translate-x-[-2px]" />
+                  <ChevronRight size={18} className="translate-x-[-4px] text-background transition-transform group-hover:translate-x-[-2px]" />
                 )}
                 <span className="relative z-10">
                   {isSubmitting ? 'Sync' : 
@@ -135,7 +135,7 @@ export const CartStepper: React.FC<CartStepperProps> = ({
                 </span>
                 
                 {/* Visual Accent */}
-                <div className="absolute right-0 top-0 h-full w-[4px] bg-primary" />
+                <div className="absolute right-0 top-0 h-full w-[4px] bg-background/80" />
               </button>
             </motion.div>
           </AnimatePresence>

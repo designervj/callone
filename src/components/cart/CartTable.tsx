@@ -143,10 +143,10 @@ export const CartTable: React.FC<CartTableProps> = ({
 
 
   return (
-     <div className="overflow-hidden rounded-[32px] border border-border/50 bg-background shadow-sm">
+     <div className="overflow-hidden rounded-[32px] border border-white/8 bg-[color:var(--surface)] shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-foreground/[0.02] text-[10px] font-bold uppercase tracking-wider text-foreground/45">
+          <tr className="bg-[#111111] text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/62">
             <th className="px-6 py-4">S.No</th>
             <th className="px-6 py-4">Product</th>
             <th className="px-6 py-4">Brand</th>
@@ -166,16 +166,16 @@ export const CartTable: React.FC<CartTableProps> = ({
             <th className="px-6 py-4 text-center">Actions</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-border/40">
+        <tbody className="divide-y divide-white/6">
           { cartData && cartData.length > 0 && cartData.map((item, index) => {
             const stock88 = item?.stock88 ?? 0;
             const stock90 = item?.stock90 ?? 0;
             const itemId = item.sku || '';
            return (
-              <tr key={item.sku || index} className="group hover:bg-foreground/[0.01] transition-colors">
-                <td className="px-6 py-4 text-xs font-bold text-foreground/40">{index + 1}</td>
+              <tr key={item.sku || index} className="group transition-colors hover:bg-white/[0.03]">
+                <td className="px-6 py-4 text-xs font-bold text-foreground/62">{index + 1}</td>
                 <td className="px-6 py-4">
-                  <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-border/40 bg-foreground/[0.02]">
+                  <div className="relative h-10 w-10 overflow-hidden rounded-lg border border-white/8 bg-white/[0.03]">
                     <ProductImage 
                       brandName={item.brand || ""} 
                       rowData={item} 
@@ -183,22 +183,22 @@ export const CartTable: React.FC<CartTableProps> = ({
                     />
                   </div>
                 </td>
-                <td className="px-6 py-4 text-[10px] font-bold text-foreground/70">{item.brand}</td>
-                <td className="px-6 py-4 text-[10px] font-black tracking-tight">{item.sku}</td>
-                <td className="px-6 py-4 text-[10px] font-medium text-foreground/50 max-w-[150px] truncate">
+                <td className="px-6 py-4 text-[10px] font-semibold text-foreground">{item.brand}</td>
+                <td className="px-6 py-4 text-[10px] font-semibold tracking-tight text-foreground">{item.sku}</td>
+                <td className="max-w-[150px] truncate px-6 py-4 text-[10px] font-medium text-foreground/80">
                   {item.description ?? ""}
                 </td>
                 <td className="px-6 py-4">
                   <div className="flex flex-col items-center justify-center">
                     <div className={clsx(
                       "flex items-center gap-1 rounded-lg border p-0.5 transition-all",
-                      (item.qty88 || 0) > stock88 ? "border-red-500 bg-red-50" : "border-border/60 bg-foreground/5",
-                      stock88 === 0 && (item.qty88 || 0) === 0 && "opacity-50 grayscale"
+                      (item.qty88 || 0) > stock88 ? "border-white/18 bg-white/[0.06]" : "border-white/8 bg-white/[0.03]",
+                      stock88 === 0 && (item.qty88 || 0) === 0 && "opacity-80 grayscale"
                     )}>
-                      <span className="px-2 text-[10px] font-bold text-foreground/40 min-w-[24px] text-center">
+                      <span className="min-w-[24px] px-2 text-center text-[10px] font-semibold text-foreground/62">
                         {stock88}
                       </span>
-                      <div className="w-[1px] h-3 bg-border/40" />
+                      <div className="h-3 w-px bg-white/8" />
                       <input
                         type="number"
                         value={item.qty88}
@@ -207,11 +207,11 @@ export const CartTable: React.FC<CartTableProps> = ({
                           const val = e.target.value === '' ? 0 : parseInt(e.target.value) || 0;
                           onUpdateQty(itemId, 'qty88', val, stock88);
                         }}
-                        className="w-10 bg-transparent py-1 text-center text-[10px] font-bold outline-none disabled:cursor-not-allowed"
+                        className="w-10 bg-transparent py-1 text-center text-[10px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
                       />
                     </div>
                     {(item.qty88 || 0) > stock88 && (
-                      <p className="mt-1 text-[8px] font-bold text-red-500 uppercase">Out of stock</p>
+                      <p className="mt-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-foreground/62">Out of stock</p>
                     )}
                   </div>
                 </td>
@@ -219,13 +219,13 @@ export const CartTable: React.FC<CartTableProps> = ({
                   <div className="flex flex-col items-center justify-center">
                     <div className={clsx(
                       "flex items-center gap-1 rounded-lg border p-0.5 transition-all",
-                      (item.qty90 || 0) > stock90 ? "border-red-500 bg-red-50" : "border-border/60 bg-foreground/5",
-                      stock90 === 0 && (item.qty90 || 0) === 0 && "opacity-50 grayscale"
+                      (item.qty90 || 0) > stock90 ? "border-white/18 bg-white/[0.06]" : "border-white/8 bg-white/[0.03]",
+                      stock90 === 0 && (item.qty90 || 0) === 0 && "opacity-80 grayscale"
                     )}>
-                      <span className="px-2 text-[10px] font-bold text-foreground/40 min-w-[24px] text-center">
+                      <span className="min-w-[24px] px-2 text-center text-[10px] font-semibold text-foreground/62">
                         {stock90}
                       </span>
-                      <div className="w-[1px] h-3 bg-border/40" />
+                      <div className="h-3 w-px bg-white/8" />
                       <input
                         type="number"
                         value={item.qty90}
@@ -234,19 +234,19 @@ export const CartTable: React.FC<CartTableProps> = ({
                           const val = e.target.value === '' ? 0 : parseInt(e.target.value) || 0;
                           onUpdateQty(itemId, 'qty90', val, stock90);
                         }}
-                        className="w-10 bg-transparent py-1 text-center text-[10px] font-bold outline-none disabled:cursor-not-allowed"
+                        className="w-10 bg-transparent py-1 text-center text-[10px] font-semibold text-foreground outline-none disabled:cursor-not-allowed"
                       />
                     </div>
                     {(item.qty90 || 0) > stock90 && (
-                      <p className="mt-1 text-[8px] font-bold text-red-500 uppercase">Out of stock</p>
+                      <p className="mt-1 text-[8px] font-semibold uppercase tracking-[0.14em] text-foreground/62">Out of stock</p>
                     )}
                   </div>
                 </td>
-                <td className="px-6 py-4 text-center text-[10px] font-bold text-primary">{item.qty}</td>
-                <td className="px-6 py-4 text-[10px] font-bold text-foreground/70 text-right">₹{item.mrp?.toLocaleString() ?? 0}</td>
-                <td className="px-6 py-4 text-[10px] font-bold text-foreground/70 text-right">₹{item.amount?.toLocaleString() ?? 0}</td>
-                <td className="px-6 py-4 text-[10px] font-bold text-foreground/40 text-center">{item.gstRate}%</td>
-                <td className="px-6 py-4 text-[10px] font-bold text-foreground/60 text-right">₹{item.lessGst?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="px-6 py-4 text-center text-[10px] font-semibold text-foreground">{item.qty}</td>
+                <td className="px-6 py-4 text-[10px] font-bold text-foreground text-right">₹{item.mrp?.toLocaleString() ?? 0}</td>
+                <td className="px-6 py-4 text-[10px] font-bold text-foreground text-right">₹{item.amount?.toLocaleString() ?? 0}</td>
+                <td className="px-6 py-4 text-[10px] font-bold text-foreground/62 text-center">{item.gstRate}%</td>
+                <td className="px-6 py-4 text-[10px] font-bold text-foreground/80 text-right">₹{item.lessGst?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-2 justify-center">
                     <input
@@ -258,10 +258,10 @@ export const CartTable: React.FC<CartTableProps> = ({
                         handleUpdateItemDiscount?.(itemId, val);
                       }}
                       className={clsx(
-                        "w-12 rounded-lg border px-2 py-1.5 text-center text-[10px] font-bold outline-none transition-all",
+                        "w-12 rounded-lg border px-2 py-1.5 text-center text-[10px] font-semibold outline-none transition-all",
                         item.isIndividualDiscount 
-                          ? "border-primary bg-primary/5 text-primary" 
-                          : "border-border/60 bg-foreground/5 text-foreground/40"
+                          ? "border-white/14 bg-white/[0.05] text-white"
+                          : "border-white/8 bg-white/[0.03] text-foreground/62"
                       )}
                     />
                     <button
@@ -269,27 +269,27 @@ export const CartTable: React.FC<CartTableProps> = ({
                       // disabled={isDisabled}
                       className={clsx(
                         "relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none",
-                        item.isIndividualDiscount ? "bg-primary" : "bg-foreground/20"
+                        item.isIndividualDiscount ? "bg-white" : "bg-white/18"
                       )}
                     >
                       <span
                         className={clsx(
-                          "inline-block h-3.5 w-3.5 transform rounded-full bg-white transition-transform",
+                          "inline-block h-3.5 w-3.5 transform rounded-full bg-background transition-transform",
                           item.isIndividualDiscount ? "translate-x-5" : "translate-x-0.5"
                         )}
                       />
                     </button>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-[10px] font-bold text-red-500/80 text-right">₹{item.discountAmt?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="px-6 py-4 text-[10px] font-bold text-foreground/62 text-right">₹{item.discountAmt?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td className="px-6 py-4 text-[10px] font-bold text-foreground/80 text-right">₹{item.netBilling?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
-                <td className="px-6 py-4 text-[10px] font-black text-primary text-right">₹{item.finalBillValue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+                <td className="px-6 py-4 text-[10px] font-black text-white text-right">₹{item.finalBillValue?.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
                 <td className="px-6 py-4">
                   <div className="flex items-center justify-center">
                     <button
                       onClick={() => handleRemoveItem(itemId)}
                       disabled={isDisabled}
-                      className="rounded-lg p-1.5 text-foreground/20 hover:bg-red-500/10 hover:text-red-500 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="rounded-lg p-1.5 text-foreground/24 transition-all hover:bg-white/[0.05] hover:text-white disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       <Trash2 size={14} />
                     </button>
@@ -302,47 +302,47 @@ export const CartTable: React.FC<CartTableProps> = ({
       </table>
 
       {/* Footer / Summary Section */}
-      <div className="flex flex-wrap items-start justify-between gap-8 bg-foreground/[0.02] p-8">
-        <div className="flex items-center gap-4 bg-background p-3 rounded-[24px] border border-border/60 shadow-sm">
+      <div className="flex flex-wrap items-start justify-between gap-8 bg-[#0b0b0b] p-8">
+        <div className="flex items-center gap-4 rounded-[24px] border border-white/8 bg-[#111111] p-4 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
           <div className="space-y-1">
-            <span className="text-[10px] font-bold uppercase tracking-wider text-foreground/40 block">Discount Mode</span>
+            <span className="block text-[10px] font-bold uppercase tracking-wider text-foreground/62">Discount Mode</span>
             <select
               value={discountType}
               disabled={isDisabled}
               onChange={(e) => onSetDiscount(e.target.value as any, discountValue)}
-              className="rounded-lg border-none bg-foreground/5 px-3 py-1.5 text-xs font-bold outline-none disabled:cursor-not-allowed"
+              className="rounded-lg border-none bg-white/[0.05] px-3 py-1.5 text-xs font-bold text-foreground outline-none disabled:cursor-not-allowed"
             >
               <option value="inclusive">Inclusive</option>
               <option value="exclusive">Exclusive</option>
                  <option value="flat">Flat</option>
             </select>
           </div>
-          <div className="h-10 w-[1px] bg-border/40" />
+          <div className="h-10 w-[1px] bg-white/10" />
           <div className="flex items-center gap-2">
             <input
               type="number"
               value={discountValue}
               disabled={isDisabled}
               onChange={(e)=>handleDiscountvalue(discountType as any, parseInt(e.target.value) || 0)}
-              className="w-12 rounded-lg bg-foreground/5 px-2 py-1.5 text-center text-sm font-bold outline-none disabled:cursor-not-allowed"
+              className="w-12 rounded-lg bg-white/[0.05] px-2 py-1.5 text-center text-sm font-bold text-foreground outline-none disabled:cursor-not-allowed"
             />
-            <span className="text-xs font-bold text-foreground/40">%</span>
+            <span className="text-xs font-bold text-foreground/62">%</span>
           </div>
         </div>
 
         <div className="w-full max-w-[320px] space-y-4">
-          <div className="flex items-center justify-between text-xs font-bold text-foreground/60">
+          <div className="flex items-center justify-between text-xs font-bold text-foreground/72">
             <span>Sub Total:</span>
-            <span className="text-foreground font-black">₹{subtotal.toLocaleString()}</span>
+            <span className="font-black text-foreground">₹{subtotal.toLocaleString()}</span>
           </div>
-          <div className="flex items-center justify-between text-xs font-bold text-foreground/60">
+          <div className="flex items-center justify-between text-xs font-bold text-foreground/72">
             <span>Discount:</span>
-            <span className="text-red-500">₹{totalDiscount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span className="text-foreground/80">₹{totalDiscount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
-          <div className="h-[1px] bg-border/60" />
+          <div className="h-[1px] bg-white/10" />
           <div className="flex items-center justify-between">
-            <span className="text-sm font-bold text-foreground/80">Total Net Bill:</span>
-            <span className="text-xl font-black text-primary">₹{finalTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span className="text-sm font-bold text-foreground">Total Net Bill:</span>
+            <span className="text-xl font-black text-white">₹{finalTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
       </div>
