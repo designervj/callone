@@ -51,23 +51,20 @@ export default async function AdminDashboardPage() {
   return (
     <div className="space-y-4">
       {loadError ? (
-        <section className="rounded-[24px] border border-white/8 bg-[#111111] px-4 py-3 text-sm text-foreground/80">
+        <section className="rounded-[24px] border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-900">
           {loadError}
         </section>
       ) : null}
 
       <section className="premium-card overflow-hidden rounded-[28px]">
-        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-white/8 px-4 py-5">
+        <div className="flex flex-wrap items-start justify-between gap-4 border-b border-black/5 px-4 py-5">
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/60">
+            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-muted">
               Daily overview
             </p>
-            <h2 className="text-[1.85rem] font-semibold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               Performance at a glance
-            </h2>
-            {/* <p className="max-w-3xl text-sm text-foreground/62">
-              Follow order movement, product readiness, available stock, and team activity from one clear starting point.
-            </p> */}
+            </h1>
           </div>
         </div>
 
@@ -82,31 +79,30 @@ export default async function AdminDashboardPage() {
                   label="Travis Mathew"
                   value={String(getBrandData("travis").products)}
                   detail="Total products currently active in the Travis Mathew catalog."
-                  accent="#111111"
+                  accent="#EEF4FF"
                   image={"https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/tm_thum_23fdeb8c29.png"}
                 />
                 <InsightMetricCard
                   label="Ogio"
                   value={String(getBrandData("ogio").products)}
                   detail="Products currently available in the OGIO product line."
-                  accent="#4b4b4b"
+                  accent="#FFF7E6"
                   image="https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/ogio_favicon_ac591c347e_8de0fee6f4.png"
                 />
                 <InsightMetricCard
                   label="Callaway Softgoods"
                   value={String(getBrandData("softgoods").products)}
                   detail="Active softgoods items ready for sales and distribution."
-                  accent="#6b6b6b"
+                  accent="#ECFDF5"
                   image="https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/icon_callway_f25555115b.png"
                 />
                 <InsightMetricCard
                   label="Callaway Hardgoods"
                   value={String(getBrandData("hardgoods").products)}
                   detail="Hardware and equipment products in the current inventory."
-                  accent="#8a8a8a"
+                  accent="#FFF1F2"
                   image="https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/icon_callway_f25555115b.png"
                 />
-              
               </>
             );
           })()}
@@ -116,35 +112,35 @@ export default async function AdminDashboardPage() {
             label="Order value"
             value={money.format(insights.headline.totalRevenue)}
             detail={`${insights.headline.totalOrders} live orders tracked across the workspace.`}
-            accent="#111111"
+            accent="#EEF4FF"
             icon={CreditCard}
           />
           <InsightMetricCard
             label="Active products"
             value={String(insights.headline.activeProducts)}
             detail="Total products currently available to sales and admin teams."
-            accent="#4b4b4b"
+            accent="#ECFDF5"
             icon={ShoppingBag}
           />
           <InsightMetricCard
             label="Available units"
             value={String(insights.headline.availableUnits)}
             detail="Stock ready to allocate across active warehouse locations."
-            accent="#6b6b6b"
+            accent="#FFF7E6"
             icon={Warehouse}
           />
           <InsightMetricCard
             label="Pending approvals"
             value={String(insights.headline.pendingApprovals)}
             detail="Orders waiting on availability review or approval."
-            accent="#8a8a8a"
+            accent="#FFF1F2"
             icon={ClipboardCheck}
           />
           <InsightMetricCard
             label="Average order"
             value={money.format(insights.headline.averageOrderValue)}
             detail="Average value per active order in the current system."
-            accent="#b5b5b5"
+            accent="#F3F4F6"
             icon={TrendingUp}
           />
         </div>

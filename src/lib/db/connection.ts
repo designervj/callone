@@ -101,88 +101,57 @@ function buildMongoCandidates(rawUri: string) {
 // ---------- Main DB Connect ----------
 
 export default async function dbConnect() {
-  const rawMongoUri =
-    process.env.MONGODB_URI ?? process.env.NEXTAUTH_MONGODB_URI;
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  const rawMongoUri = process.env.MONGODB_URI ?? process.env.NEXTAUTH_MONGODB_URI;
 
   if (!rawMongoUri) {
     console.error("DB_CONNECT_ERROR: MongoDB URI is not defined.");
-    throw new Error(
-      "Missing MONGODB_URI or NEXTAUTH_MONGODB_URI. Add one of them to your deployment environment."
-    );
+    throw new Error("Missing MONGODB_URI. Please check your .env file.");
   }
 
   const {candidates, host, pathDb} = buildMongoCandidates(rawMongoUri);
   const resolvedDbName = process.env.MONGODB_DB_NAME?.trim() || pathDb;
 
-  // Return existing connection
-  if (cached.conn) {
-    return cached.conn;
-  }
-
-  // Create new connection promise if not exists
   if (!cached.promise) {
     const opts: mongoose.ConnectOptions = {
       bufferCommands: false,
       dbName: resolvedDbName,
-      connectTimeoutMS: parseTimeout(
-        process.env.MONGODB_CONNECT_TIMEOUT_MS,
-        10000
-      ),
-      serverSelectionTimeoutMS: parseTimeout(
-        process.env.MONGODB_SERVER_SELECTION_TIMEOUT_MS,
-        10000
-      ),
+      autoIndex: true,
+      connectTimeoutMS: 15000,
+      serverSelectionTimeoutMS: 15000,
     };
 
-    // Enable debug in development
     if (process.env.NODE_ENV === "development") {
-      mongoose.set("debug", true);
+      mongoose.set("debug", false); // Reduce noise but keep connection logs
     }
 
     cached.promise = (async () => {
-      let lastError: unknown = null;
+      let lastError: any = null;
 
       for (const candidate of candidates) {
-        const candidateAuthSource = candidate.authSource ?? "(default)";
-        console.log(
-          `DB_CONNECT_INFO: Trying MongoDB host=${host} db=${resolvedDbName ?? "(default)"} authSource=${candidateAuthSource}`
-        );
-
         try {
+          console.log(`DB_CONNECT_INFO: Connecting to ${host} (db: ${resolvedDbName || 'default'})...`);
           const mongooseInstance = await mongoose.connect(candidate.uri, opts);
-          console.log(
-            `DB_CONNECT_SUCCESS: MongoDB connection established using authSource=${candidateAuthSource}.`
-          );
           return mongooseInstance;
-        } catch (error) {
+        } catch (error: any) {
           lastError = error;
-          const message = error instanceof Error ? error.message : String(error);
-
-          if (!/bad auth|authentication failed|auth failed/i.test(message)) {
-            throw error;
-          }
-
-          console.warn(
-            `DB_CONNECT_WARN: MongoDB auth failed with authSource=${candidateAuthSource}.`
-          );
+          console.warn(`DB_CONNECT_WARN: Failed candidate ${candidate.authSource || 'default'}: ${error.message}`);
           await mongoose.disconnect().catch(() => undefined);
         }
       }
-
-      throw lastError instanceof Error
-        ? lastError
-        : new Error("Failed to connect to MongoDB.");
+      throw lastError;
     })();
   }
 
   try {
     cached.conn = await cached.promise;
+    console.log(`DB_CONNECT_SUCCESS: Connected to ${host}`);
   } catch (error: any) {
-    console.error(
-      "DB_CONNECT_ERROR:",
-      error?.message || error
-    );
-    cached.promise = null;
+    console.error("DB_CONNECT_FATAL:", error.message);
+    cached.promise = null; // Reset for retry
     throw error;
   }
 

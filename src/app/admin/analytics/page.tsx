@@ -51,39 +51,39 @@ export default async function AnalyticsPage() {
   return (
     <div className="space-y-4">
       {loadError ? (
-        <section className="rounded-[24px] border border-white/8 bg-[#111111] px-4 py-3 text-sm text-[color:var(--surface-foreground)]">
+        <section className="rounded-[24px] border border-red-100 bg-red-50 px-4 py-3 text-sm text-red-900">
           {loadError}
         </section>
       ) : null}
 
       <section className="premium-card overflow-hidden rounded-[28px]">
-        <div className="grid gap-4 border-b border-white/8 px-4 py-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+        <div className="grid gap-4 border-b border-border px-4 py-5 xl:grid-cols-[minmax(0,1fr)_340px]">
           <div className="space-y-2">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.24em] text-foreground/60">
+            <p className="text-[11px] font-bold uppercase tracking-[0.24em] text-muted">
               Analytics
             </p>
-            <h2 className="text-[1.85rem] font-semibold tracking-tight text-foreground">
+            <h1 className="text-3xl font-bold tracking-tight text-foreground">
               Revenue, product, and people insights
-            </h2>
-            <p className="max-w-3xl text-sm text-foreground/62">
+            </h1>
+            <p className="max-w-3xl text-sm leading-relaxed text-muted">
               Use this page to compare weekly order flow, top-performing products, brand coverage, and who is driving the most value through the system.
             </p>
           </div>
 
-          <div className="rounded-[24px] border border-white/8 bg-black/30 p-4">
-            <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/60">
+          <div className="rounded-[24px] border border-border bg-surface-muted/50 p-5">
+            <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-muted">
               Quick insight
             </p>
-            <div className="mt-3 space-y-3 text-sm text-foreground/62">
+            <div className="mt-4 space-y-3 text-sm text-muted">
               <p>
-                Best week: <span className="font-semibold text-foreground">{bestWeek.label}</span> with{" "}
-                <span className="font-semibold text-foreground">{money.format(bestWeek.value)}</span>.
+                Best week: <span className="font-bold text-foreground">{bestWeek.label}</span> with{" "}
+                <span className="font-bold text-foreground">{money.format(bestWeek.value)}</span>.
               </p>
               <p>
-                Leading product: <span className="font-semibold text-foreground">{topProduct?.label ?? "No orders yet"}</span>.
+                Leading product: <span className="font-bold text-foreground">{topProduct?.label ?? "No orders yet"}</span>.
               </p>
               <p>
-                Leading contributor: <span className="font-semibold text-foreground">{topContributor?.label ?? "No assignments yet"}</span>.
+                Leading contributor: <span className="font-bold text-foreground">{topContributor?.label ?? "No assignments yet"}</span>.
               </p>
             </div>
           </div>
@@ -94,25 +94,25 @@ export default async function AnalyticsPage() {
             label="Order value"
             value={money.format(insights.headline.totalRevenue)}
             detail="Combined value across active order records."
-            accent="#111111"
+            accent="#EEF4FF"
           />
           <InsightMetricCard
             label="Orders in flow"
             value={String(insights.headline.totalOrders)}
             detail="Orders currently tracked in the workspace."
-            accent="#4b4b4b"
+            accent="#ECFDF5"
           />
           <InsightMetricCard
             label="Best week"
             value={bestWeek.label}
             detail={money.format(bestWeek.value)}
-            accent="#6b6b6b"
+            accent="#FFF7E6"
           />
           <InsightMetricCard
             label="Top product"
             value={topProduct ? String(topProduct.value) : "0"}
             detail={topProduct ? `${topProduct.label}` : "No ordered products yet"}
-            accent="#8a8a8a"
+            accent="#FFF1F2"
           />
         </div>
       </section>

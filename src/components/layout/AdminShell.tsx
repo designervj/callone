@@ -213,7 +213,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                     alt="Callaway"
                     width={80}
                     height={44}
-                    className="h-auto w-full object-contain grayscale brightness-110 dark:brightness-110"
+                    className="h-auto w-full object-contain brightness-125 transition-all group-hover:brightness-150"
                     priority
                   />
                 </div>
@@ -226,10 +226,10 @@ export function AdminShell({children, user}: AdminShellProps) {
                 {/* <button
                   onClick={() => setMegaMenuOpen((current) => !current)}
                   className={clsx(
-                    "inline-flex h-11 w-11 items-center justify-center rounded-2xl border transition",
+                    "inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-[color:var(--header-border)] transition",
                     megaMenuOpen
-                      ? "border-white/18 bg-white/12 text-white"
-                      : "border-white/10 bg-white/[0.04] text-white/76 hover:text-white"
+                      ? "bg-[color:var(--header-pill-active-bg)] text-[color:var(--header-pill-active-fg)]"
+                      : "bg-[color:var(--header-pill-bg)] text-[color:var(--header-fg)]/76 hover:text-[color:var(--header-fg)]"
                   )}
                   aria-label="Open workspace menu"
                 >
@@ -242,20 +242,20 @@ export function AdminShell({children, user}: AdminShellProps) {
                       initial={{opacity: 0, y: 10}}
                       animate={{opacity: 1, y: 0}}
                       exit={{opacity: 0, y: 10}}
-                      className="absolute left-0 top-full z-[100] mt-3 w-[min(980px,calc(100vw-48px))] overflow-hidden rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-4 shadow-[0_35px_100px_rgba(0,0,0,0.42)]"
+                      className="absolute left-0 top-full z-[100] mt-3 w-[min(980px,calc(100vw-48px))] overflow-hidden rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-4 shadow-[var(--header-shadow)]"
                     >
                       <div className="mb-4 flex items-end justify-between gap-3 border-b border-white/10 pb-4">
                         <div>
-                        <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[color:var(--header-muted)]">
+                        <p className="text-xs font-bold uppercase tracking-wider text-muted">
                             Workspace
                           </p>
-                        <p className="mt-2 text-lg font-semibold tracking-tight text-[color:var(--header-fg)]">
+                        <p className="mt-2 text-lg font-bold tracking-tight text-foreground">
                             Fast module access
                           </p>
                         </div>
                         <button
                           onClick={() => setSearchOpen(true)}
-                        className="inline-flex items-center gap-2 rounded-full border px-3 py-2 text-xs font-semibold uppercase tracking-[0.16em] header-pill"
+                        className="inline-flex items-center gap-2 rounded-full border border-border bg-surface-muted px-3 py-2 text-xs font-bold uppercase tracking-wider text-muted hover:bg-surface-strong"
                         >
                           <Search size={14} />
                           Search
@@ -268,7 +268,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                             key={group.title}
                             className="rounded-[24px] border border-white/10 bg-[color:var(--header-control-bg)] p-3"
                           >
-                            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--header-muted)]">
+                            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.18em] text-muted">
                               {group.title}
                             </p>
                             <div className="space-y-2">
@@ -278,21 +278,21 @@ export function AdminShell({children, user}: AdminShellProps) {
 
                                 return (
                                   <Link
-                                  key={item.id}
-                                  href={item.href}
-                              className={clsx(
-                                "flex items-start gap-3 rounded-[20px] border px-3 py-3 transition",
-                                isActive
-                                  ? "border-[color:var(--header-pill-active-bg)] bg-[color:var(--header-pill-active-bg)]/5"
-                                  : "border-transparent bg-[color:var(--header-control-bg)] hover:border-[color:var(--header-border)] hover:bg-[color:var(--header-control-hover)]"
-                              )}
+                                    key={item.id}
+                                    href={item.href}
+                                    className={clsx(
+                                      "flex items-start gap-3 rounded-[20px] border px-3 py-3 transition",
+                                      isActive
+                                        ? "border-foreground bg-foreground/5"
+                                        : "border-transparent bg-surface-muted hover:border-border hover:bg-surface-strong"
+                                    )}
                                   >
-                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]">
+                                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface-muted text-foreground">
                                       <Icon size={17} />
                                     </div>
                                     <div className="min-w-0">
-                                      <p className="text-sm font-semibold text-[color:var(--header-fg)]">{item.label}</p>
-                                      <p className="mt-1 text-xs leading-5 text-[color:var(--header-muted)]">
+                                      <p className="text-sm font-bold text-foreground">{item.label}</p>
+                                      <p className="mt-1 text-xs leading-5 text-muted">
                                         {item.description}
                                       </p>
                                     </div>
@@ -329,15 +329,15 @@ export function AdminShell({children, user}: AdminShellProps) {
                           className={clsx(
                             "group relative inline-flex items-center gap-2 rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300",
                             isActive || openNavMenu === item.id
-                              ? "text-[color:var(--header-pill-active-fg)]"
-                              : "text-[color:var(--header-fg)]/70 hover:text-[color:var(--header-fg)]"
+                              ? "text-white"
+                              : "text-white/60 hover:text-white"
                           )}
                         >
                           <span className="relative z-10">{item.label}</span>
                           {(isActive || openNavMenu === item.id) && (
                             <motion.div
                               layoutId="nav-glow"
-                              className="absolute inset-0 z-0 rounded-xl bg-[color:var(--header-pill-active-bg)] shadow-[0_0_15px_rgba(255,255,255,0.12)] ring-1 ring-white/20"
+                              className="absolute inset-0 z-0 rounded-xl bg-[color:var(--header-pill-bg)] ring-1 ring-[color:var(--header-border)]"
                               transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                             />
                           )}
@@ -356,13 +356,13 @@ export function AdminShell({children, user}: AdminShellProps) {
                               initial={{opacity: 0, y: 10}}
                               animate={{opacity: 1, y: 0}}
                               exit={{opacity: 0, y: 10}}
-                              className="absolute left-0 top-full z-[100] mt-3 w-[360px] overflow-hidden rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-3 shadow-[0_30px_90px_rgba(0,0,0,0.42)]"
+                              className="absolute left-0 top-full z-[100] mt-3 w-[360px] overflow-hidden rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-3 shadow-[var(--header-shadow)]"
                             >
-                              <div className="border-b border-white/10 px-2 pb-3">
-                                <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[color:var(--header-muted)]">
+                              <div className="border-b border-border/8 px-2 pb-3">
+                                <p className="text-xs font-bold uppercase tracking-wider text-muted">
                                   {item.label}
                                 </p>
-                                <p className="mt-2 text-sm leading-6 text-[color:var(--header-muted)]">
+                                <p className="mt-2 text-sm leading-6 text-muted">
                                   {item.description}
                                 </p>
                               </div>
@@ -383,12 +383,12 @@ export function AdminShell({children, user}: AdminShellProps) {
                                           : "border-transparent bg-[color:var(--header-control-bg)] hover:border-[color:var(--header-border)] hover:bg-[color:var(--header-control-hover)]"
                                       )}
                                     >
-                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-white/8 bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]">
+                                      <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border border-border bg-surface-muted text-foreground">
                                         <Icon size={16} />
                                       </div>
                                       <div className="min-w-0">
-                                        <p className="text-sm font-semibold text-[color:var(--header-fg)]">{submenuItem.label}</p>
-                                        <p className="mt-1 text-xs leading-5 text-[color:var(--header-muted)]">
+                                        <p className="text-sm font-bold text-foreground">{submenuItem.label}</p>
+                                        <p className="mt-1 text-xs leading-5 text-muted">
                                           {submenuItem.description}
                                         </p>
                                       </div>
@@ -410,15 +410,15 @@ export function AdminShell({children, user}: AdminShellProps) {
                       className={clsx(
                         "group relative rounded-xl px-4 py-2 text-sm font-semibold tracking-wide transition-all duration-300",
                         isActive
-                          ? "text-[color:var(--header-pill-active-fg)]"
-                          : "text-[color:var(--header-fg)]/70 hover:text-[color:var(--header-fg)]"
+                          ? "text-white"
+                          : "text-white/60 hover:text-white"
                       )}
                     >
                       <span className="relative z-10">{item.label}</span>
                       {isActive && (
                         <motion.div
                           layoutId="nav-glow"
-                          className="absolute inset-0 z-0 rounded-xl bg-[color:var(--header-pill-active-bg)] shadow-[0_0_15px_rgba(255,255,255,0.12)] ring-1 ring-white/20"
+                          className="absolute inset-0 z-0 rounded-xl bg-[color:var(--header-pill-bg)] ring-1 ring-[color:var(--header-border)]"
                           transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                         />
                       )}
@@ -435,7 +435,7 @@ export function AdminShell({children, user}: AdminShellProps) {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setSearchOpen(true)}
-                className="header-control inline-flex h-9 w-9 items-center justify-center rounded-lg border transition"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
                 aria-label="Open search"
               >
                 <Search size={16} />
@@ -443,12 +443,12 @@ export function AdminShell({children, user}: AdminShellProps) {
 
               <Link
                 href={`/admin/cart/${currentOrder?.orderNumber}`}
-                className="header-control relative inline-flex h-9 w-9 items-center justify-center rounded-lg border transition"
+                className="relative inline-flex h-9 w-9 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white transition hover:bg-white/10"
                 aria-label="Open cart"
               >
                 <ShoppingCart size={16} />
                 {items.length > 0 && (
-                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-[color:var(--header-pill-active-bg)] text-[9px] font-bold text-[color:var(--header-pill-active-fg)] ring-2 ring-[color:var(--background)]">
+                  <span className="absolute -right-1.5 -top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-white text-[9px] font-bold text-black ring-2 ring-black">
                     {items.length}
                   </span>
                 )}
@@ -476,29 +476,29 @@ export function AdminShell({children, user}: AdminShellProps) {
                       initial={{opacity: 0, y: 10}}
                       animate={{opacity: 1, y: 0}}
                       exit={{opacity: 0, y: 10}}
-                      className="absolute right-0 top-full z-[100] mt-3 w-[320px] overflow-hidden rounded-[24px] border border-white/10 bg-[color:var(--surface)] p-3 shadow-[0_30px_90px_rgba(0,0,0,0.42)]"
+                      className="absolute right-0 top-full z-[100] mt-3 w-[320px] overflow-hidden rounded-[24px] border border-white/10 bg-[color:var(--surface)] p-3 shadow-[var(--header-shadow)]"
                     >
-                      <div className="rounded-[20px] border border-white/8 bg-[color:var(--header-control-bg)] p-3">
+                      <div className="rounded-[20px] border border-border bg-surface-muted p-3">
                         <div className="flex items-center gap-3">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/8 bg-[color:var(--header-pill-active-bg)] text-sm font-semibold uppercase text-[color:var(--header-pill-active-fg)]">
+                          <div className="flex h-12 w-12 items-center justify-center rounded-full border border-border bg-foreground text-sm font-bold uppercase text-background">
                             {getInitials(user.name)}
                           </div>
                           <div className="min-w-0">
-                            <p className="truncate text-sm font-semibold text-[color:var(--header-fg)]">
+                            <p className="truncate text-sm font-bold text-foreground">
                               {user.name ?? "Workspace User"}
                             </p>
-                            <p className="truncate text-xs text-[color:var(--header-muted)]">
+                            <p className="truncate text-xs text-muted">
                               {user.email ?? "No email available"}
                             </p>
-                            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-[color:var(--header-muted)]">
+                            <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-muted">
                               Logged in as {VIEW_ROLE_LABELS[user.role as keyof typeof VIEW_ROLE_LABELS] ?? user.role}
                             </p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-3 rounded-[20px] border border-white/8 bg-[color:var(--header-control-bg)] p-3">
-                        <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-[color:var(--header-muted)]">
+                      <div className="mt-3 rounded-[20px] border border-border bg-surface-muted p-3">
+                        <p className="text-[11px] font-bold uppercase tracking-wider text-muted">
                           View As
                         </p>
                         <div className="mt-3 flex flex-wrap gap-2">
@@ -525,14 +525,14 @@ export function AdminShell({children, user}: AdminShellProps) {
                       <div className="mt-3 space-y-2">
                         <button
                           onClick={() => router.push("/admin/orders")}
-                          className="header-control flex items-center gap-3 rounded-[18px] border px-3 py-3 text-sm font-semibold transition"
+                          className="flex items-center gap-3 rounded-[18px] border border-border bg-surface px-3 py-3 text-sm font-bold text-foreground transition hover:bg-surface-muted"
                         >
                           <ShoppingBag size={16} />
                           My Orders
                         </button>
                         <button
                           onClick={() => router.push("/admin/setting")}
-                          className="header-control flex items-center gap-3 rounded-[18px] border px-3 py-3 text-sm font-semibold transition"
+                          className="flex items-center gap-3 rounded-[18px] border border-border bg-surface px-3 py-3 text-sm font-bold text-foreground transition hover:bg-surface-muted"
                         >
                           <Settings size={16} />
                           Setting
@@ -540,7 +540,7 @@ export function AdminShell({children, user}: AdminShellProps) {
 
                         <button
                           onClick={() => signOut({callbackUrl: "/login"})}
-                          className="header-control flex w-full items-center gap-3 rounded-[18px] border px-3 py-3 text-sm font-semibold transition"
+                          className="flex w-full items-center gap-3 rounded-[18px] border border-border bg-surface px-3 py-3 text-sm font-bold text-foreground transition hover:bg-surface-muted"
                         >
                           <LogOut size={16} />
                           Sign out
@@ -563,7 +563,7 @@ export function AdminShell({children, user}: AdminShellProps) {
               initial={{x: -24, opacity: 0}}
               animate={{x: 0, opacity: 1}}
               exit={{x: -24, opacity: 0}}
-              className="fixed left-3 top-3 z-[120] w-[320px] rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-4 text-[color:var(--surface-foreground)] shadow-[0_30px_90px_rgba(0,0,0,0.42)] md:hidden"
+              className="fixed left-3 top-3 z-[120] w-[320px] rounded-[28px] border border-white/10 bg-[color:var(--surface)] p-4 text-[color:var(--surface-foreground)] shadow-[var(--header-shadow)] md:hidden"
             >
               <div className="mb-4 flex items-center justify-between">
                 <div className="min-w-0">
@@ -576,10 +576,10 @@ export function AdminShell({children, user}: AdminShellProps) {
                       className="h-auto w-full object-contain"
                     />
                   </div>
-                  <p className="text-xs font-bold uppercase tracking-[0.4em] text-[color:var(--header-muted)]">
+                  <p className="text-xs font-bold uppercase tracking-[0.4em] text-muted">
                     Admin Gate
                   </p>
-                  <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-[color:var(--header-muted)]">v4.2.0</p>
+                  <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-muted">v4.2.0</p>
                 </div>
                 <button
                   className="header-control rounded-2xl border p-2.5"
@@ -602,11 +602,11 @@ export function AdminShell({children, user}: AdminShellProps) {
                 <Link
                   href="/admin/cart"
                   onClick={() => setMobileMenuOpen(false)}
-                  className="header-control relative flex h-11 items-center justify-center rounded-2xl border"
+                  className="relative flex h-11 items-center justify-center rounded-2xl border border-border bg-surface-muted text-foreground"
                 >
                   <ShoppingCart size={17} />
                   {items.length > 0 && (
-                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[color:var(--header-pill-active-bg)] text-[10px] font-bold text-[color:var(--header-pill-active-fg)]">
+                  <span className="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-foreground text-[10px] font-bold text-background">
                     {items.length}
                   </span>
                   )}
@@ -616,18 +616,18 @@ export function AdminShell({children, user}: AdminShellProps) {
 
               <div className="mb-4 rounded-[20px] border border-white/8 bg-[color:var(--header-control-bg)] p-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white/8 bg-[color:var(--header-pill-active-bg)] text-xs font-semibold uppercase text-[color:var(--header-pill-active-fg)]">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-foreground text-xs font-bold uppercase text-background">
                     {getInitials(user.name)}
                   </div>
                   <div className="min-w-0">
-                    <p className="truncate text-sm font-semibold text-[color:var(--header-fg)]">
+                    <p className="truncate text-sm font-bold text-foreground">
                       {user.name ?? "Workspace User"}
                     </p>
-                    <p className="truncate text-xs text-[color:var(--header-muted)]">{user.email ?? ""}</p>
+                    <p className="truncate text-xs text-muted">{user.email ?? ""}</p>
                   </div>
                 </div>
 
-                <p className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[color:var(--header-muted)]">
+                <p className="mt-4 text-[11px] font-bold uppercase tracking-wider text-muted">
                   View As
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
@@ -639,10 +639,10 @@ export function AdminShell({children, user}: AdminShellProps) {
                         setMobileMenuOpen(false);
                       }}
                       className={clsx(
-                        "rounded-full border px-3 py-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition",
+                        "rounded-full border px-3 py-1.5 text-xs font-bold uppercase tracking-wider transition",
                         role === viewRole
-                          ? "border-[color:var(--header-pill-active-bg)] bg-[color:var(--header-pill-active-bg)] text-[color:var(--header-pill-active-fg)]"
-                          : "border-[color:var(--header-pill-border)] bg-[color:var(--header-control-bg)] text-[color:var(--header-fg)]/72 hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
+                          ? "border-foreground bg-foreground text-background"
+                          : "border-border bg-surface text-muted hover:bg-surface-muted hover:text-foreground"
                       )}
                     >
                       {VIEW_ROLE_LABELS[role]}
@@ -657,11 +657,11 @@ export function AdminShell({children, user}: AdminShellProps) {
                     key={item.href}
                     href={item.href}
                     onClick={() => setMobileMenuOpen(false)}
-                      className={clsx(
-                        "flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-semibold transition",
+                       className={clsx(
+                        "flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-bold transition",
                         matchesPath(pathname, item.href)
-                        ? "bg-[color:var(--header-pill-active-bg)] text-[color:var(--header-pill-active-fg)]"
-                        : "text-[color:var(--header-fg)]/72 hover:bg-[color:var(--header-control-hover)] hover:text-[color:var(--header-fg)]"
+                        ? "bg-foreground text-background"
+                        : "text-muted hover:bg-surface-muted hover:text-foreground"
                       )}
                   >
                     <item.icon size={17} />
@@ -701,15 +701,15 @@ export function AdminShell({children, user}: AdminShellProps) {
                 transition={{duration: 0.8, ease: "easeOut"}}
                 className="absolute inset-0"
                 style={{
-                  backgroundImage: `linear-gradient(to bottom, transparent, var(--background)), url(${activeHeroSlide.image})`,
+                  backgroundImage: `linear-gradient(to bottom, transparent, var(--background) 95%), url(${activeHeroSlide.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center",
-                  filter: "grayscale(1) contrast(1.1) brightness(0.7)",
+                  filter: "grayscale(0.1) contrast(1.15) brightness(0.92) opacity(0.65)",
                 }}
               />
             </AnimatePresence>
-            <div className="absolute inset-0 bg-gradient-to-r from-background/94 via-background/46 to-transparent" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.1),transparent_42%)]" />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent via-background/5 to-background/40" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(0,0,0,0.02),transparent_42%)] dark:bg-[radial-gradient(circle_at_20%_30%,rgba(255,255,255,0.05),transparent_42%)]" />
 
             <div
               className={clsx(

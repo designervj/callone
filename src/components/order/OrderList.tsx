@@ -81,7 +81,7 @@ export const OrderList = () => {
   return (
     <div className="flex flex-col gap-6">
       {/* Command Hub Navigation */}
-      <div className="flex w-fit items-center rounded-2xl border border-white/8 bg-[#111111] p-1.5 backdrop-blur-md">
+      <div className="flex w-fit items-center rounded-2xl border border-border bg-surface-muted p-1.5 backdrop-blur-md shadow-sm">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -91,13 +91,13 @@ export const OrderList = () => {
               onClick={() => setActiveTab(tab.id as TabType)}
               className={clsx(
                 "group relative flex items-center gap-3 rounded-xl px-6 py-2.5 transition-all duration-300",
-                isActive ? "text-white" : "text-foreground/62 hover:bg-white/[0.04] hover:text-white"
+                isActive ? "text-background" : "text-muted hover:bg-foreground/5 hover:text-foreground"
               )}
             >
               {isActive && (
                 <motion.div
                   layoutId="activeTabPod"
-                  className="absolute inset-0 z-0 rounded-xl bg-[#1d1d1d] ring-1 ring-white/8 shadow-[0_10px_30px_rgba(0,0,0,0.45)]"
+                  className="absolute inset-0 z-0 rounded-xl bg-foreground text-background shadow-md border border-foreground"
                   transition={{ type: "spring", bounce: 0.2, duration: 0.5 }}
                 />
               )}
@@ -106,7 +106,7 @@ export const OrderList = () => {
                 size={16} 
                 className={clsx(
                   "relative z-10 transition-colors duration-300",
-                  isActive ? "text-white" : "text-foreground/40 group-hover:text-white"
+                  isActive ? "text-background" : "text-muted group-hover:text-foreground"
                 )} 
               />
               <span className="relative z-10 text-[10px] font-bold uppercase tracking-[0.15em]">
@@ -118,15 +118,15 @@ export const OrderList = () => {
       </div>
 
       {/* Main Table Container */}
-      <div className="overflow-hidden rounded-[32px] border border-white/8 bg-[#0b0b0b] shadow-[0_15px_60px_rgba(0,0,0,0.35)] transition-all duration-500">
+      <div className="overflow-hidden rounded-[32px] border border-border bg-surface shadow-xl transition-all duration-500">
         {/* Header / Toolbar */}
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/8 bg-[#111111] px-8 py-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border bg-surface-muted/50 px-8 py-6">
           <div className="flex items-center gap-4">
             <h2 className="text-xl font-black uppercase tracking-widest text-foreground">
               {tabs.find(t => t.id === activeTab)?.label}
             </h2>
-            <div className="h-6 w-px bg-white/10" />
-            <span className="rounded-full border border-white/8 bg-white/[0.04] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/72">
+            <div className="h-6 w-px bg-border" />
+            <span className="rounded-full border border-border bg-foreground/[0.04] px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-muted">
               {totalItems} total items
             </span>
           </div>
@@ -134,13 +134,13 @@ export const OrderList = () => {
           <div className="flex items-center gap-4">
             {/* Search Bar */}
             <div className="relative group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-foreground/34 transition-colors group-focus-within:text-white" size={16} />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-muted/50 transition-colors group-focus-within:text-foreground" size={16} />
               <input
                 type="text"
                 placeholder="Search orders..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="h-10 w-64 rounded-xl border border-white/8 bg-[#0d0d0d] pl-11 pr-4 text-[13px] font-medium text-foreground outline-none transition-all focus:border-white/18 focus:bg-[#111111] placeholder:text-foreground/28"
+                className="h-10 w-64 rounded-xl border border-border bg-surface px-11 pr-4 text-[13px] font-medium text-foreground outline-none transition-all focus:border-foreground/30 focus:shadow-sm placeholder:text-muted/60"
               />
             </div>
 
@@ -149,7 +149,7 @@ export const OrderList = () => {
               <button 
                 disabled={currentPage === 1 || totalPages <= 1}
                 onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-muted transition-all hover:bg-surface-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -162,8 +162,8 @@ export const OrderList = () => {
                       className={clsx(
                         "h-8 w-8 rounded-lg text-xs font-black transition-all",
                         currentPage === p 
-                          ? "bg-white text-background shadow-[0_8px_20px_rgba(0,0,0,0.35)]" 
-                          : "text-foreground/62 hover:bg-white/[0.05] hover:text-white"
+                          ? "bg-foreground text-background shadow-md border border-foreground" 
+                          : "text-muted hover:bg-foreground/[0.05] hover:text-foreground"
                       )}
                     >
                       {p}
@@ -174,7 +174,7 @@ export const OrderList = () => {
               <button 
                 disabled={currentPage === totalPages || totalPages <= 1}
                 onClick={() => setCurrentPage((prev) => Math.min(totalPages || 1, prev + 1))}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white/[0.08] hover:text-white disabled:cursor-not-allowed disabled:opacity-30"
+                className="flex h-10 w-10 items-center justify-center rounded-xl border border-border bg-surface text-muted transition-all hover:bg-surface-muted hover:text-foreground disabled:cursor-not-allowed disabled:opacity-30"
               >
                 <ChevronRight size={18} />
               </button>
@@ -183,13 +183,13 @@ export const OrderList = () => {
                 <select 
                   value={pageSize}
                   onChange={(e) => setPageSize(Number(e.target.value))}
-                  className="h-10 rounded-xl border border-white/8 bg-white/[0.03] px-3 pr-8 text-[10px] font-black uppercase tracking-widest text-foreground/72 outline-none hover:bg-white/[0.06] cursor-pointer appearance-none"
+                  className="h-10 rounded-xl border border-border bg-surface px-3 pr-8 text-[10px] font-black uppercase tracking-widest text-muted outline-none hover:bg-surface-muted cursor-pointer appearance-none"
                 >
                   <option value={25}>25 Items</option>
                   <option value={50}>50 Items</option>
                   <option value={100}>100 Items</option>
                 </select>
-                <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-foreground/34">
+                <div className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-muted">
                    <ChevronRight size={12} className="rotate-90" />
                 </div>
               </div>
@@ -202,27 +202,27 @@ export const OrderList = () => {
           {activeTab === "users" ? (
             <table className="w-full text-left ">
               <thead>
-                <tr className="border-b border-white/8 bg-[#111111] text-white">
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Name</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Role</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Email</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Phone</th>
-                  <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Action</th>
+                <tr className="border-b border-border bg-surface-muted text-foreground">
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Name</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Role</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Email</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Phone</th>
+                  <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/20">
+              <tbody className="divide-y divide-border">
                 {[...allRetailer, ...allManager].map((user) => (
-                  <tr key={user._id || user.id} className="group hover:bg-white/[0.04] transition-all">
+                  <tr key={user._id || user.id} className="group hover:bg-surface-muted transition-all">
                     <td className="px-6 py-4 text-sm font-black text-foreground">{user.name}</td>
                     <td className="px-6 py-4 lowercase">
-                      <span className="inline-flex rounded-lg border border-white/8 bg-white/[0.04] px-2.5 py-1 text-[10px] font-black text-foreground/72 first-letter:uppercase">
+                      <span className="inline-flex rounded-lg border border-border bg-surface px-2.5 py-1 text-[10px] font-black text-muted first-letter:uppercase">
                         {user.role}
                       </span>
                     </td>
                     <td className="px-6 py-4 text-sm font-medium text-foreground/80">{user.email || "—"}</td>
                     <td className="px-6 py-4 text-sm font-medium text-foreground/80">{user.phone || "—"}</td>
                     <td className="px-6 py-4 text-right">
-                      <button className="text-[10px] font-black uppercase tracking-[0.2em] text-foreground/72 hover:text-white transition-colors">
+                      <button className="text-[10px] font-black uppercase tracking-[0.2em] text-muted hover:text-foreground transition-colors">
                         Inspect Profile
                       </button>
                     </td>
@@ -234,19 +234,19 @@ export const OrderList = () => {
             <table className="w-full text-left">
           
               <thead>
-                <tr className="border-b border-white/8 bg-[#111111] text-white">
+                <tr className="border-b border-border bg-surface-muted text-foreground">
                   <th className="px-6 py-5"></th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Order Id</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Retailer Name</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Order Date</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Last Update</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Discount</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Amount</th>
-                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Status</th>
-                  <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-foreground/60 italic">Action</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Order Id</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Retailer Name</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Order Date</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Last Update</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Discount</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Amount</th>
+                  <th className="px-6 py-5 text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Status</th>
+                  <th className="px-6 py-5 text-right text-[10px] font-black uppercase tracking-[0.2em] text-muted italic">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/20">
+              <tbody className="divide-y divide-border">
                 {isLoadingOrders ? (
                   <tr>
                     <td colSpan={9} className="py-24 text-center">

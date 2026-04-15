@@ -11,11 +11,11 @@ type DataTableProps = {
 
 export function DataTable({headers, children}: DataTableProps) {
   return (
-    <div className="overflow-clip rounded-[24px] border border-border/6 bg-[color:var(--surface)] shadow-[0_24px_70px_rgba(0,0,0,0.3)]">
-      <div className="w-full max-h-[calc(100vh-250px)] overflow-auto rounded-b-[16px]">
-        <table className="min-w-full border-separate border-spacing-y-3 text-left text-sm">
+    <div className="overflow-clip rounded-2xl border border-border/15 bg-surface shadow-sm">
+      <div className="w-full max-h-[calc(100vh-250px)] overflow-auto">
+        <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
           <thead>
-            <tr className="bg-surface-muted/50 text-foreground">
+            <tr>
               {headers.map((item, index) => {
                 const label = typeof item === 'string' ? item : item.label;
                 const renderFilter = typeof item === 'object' ? item.renderFilter : undefined;
@@ -23,23 +23,22 @@ export function DataTable({headers, children}: DataTableProps) {
                 return (
                   <th
                     key={`${label}-${index}`}
-                    className="sticky z-20 whitespace-nowrap border-b border-border bg-surface-muted/80 px-5 py-4 text-[10px] font-bold uppercase tracking-[0.2em] text-foreground backdrop-blur-md"
-                    style={{top: 0}}
+                    className="sticky top-0 z-20 whitespace-nowrap border-b border-border bg-surface-muted/95 px-5 py-4 text-[10px] font-bold uppercase tracking-wider text-muted backdrop-blur-sm"
                   >
-                  <div className="flex flex-col gap-2">
-                       <span>{label}</span>
-                       {renderFilter && (
-                         <div className="mt-1 flex items-center gap-1.5 font-normal normal-case tracking-normal">
-                           {renderFilter(label)}
-                         </div>
-                       )}
+                    <div className="flex flex-col gap-2">
+                      <span>{label}</span>
+                      {renderFilter && (
+                        <div className="mt-1 flex items-center gap-1.5 font-normal normal-case tracking-normal">
+                          {renderFilter(label)}
+                        </div>
+                      )}
                     </div>
                   </th>
                 );
               })}
             </tr>
           </thead>
-          <tbody className="bg-[color:var(--surface)] [&_tr]:transition-all [&_tr:hover]:scale-[1.008] [&_tr:hover]:bg-card/[0.05]">
+          <tbody className="divide-y divide-border/4 bg-surface [&_tr]:transition-colors [&_tr:hover]:bg-surface-muted/50">
             {children}
           </tbody>
         </table>

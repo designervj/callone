@@ -106,7 +106,7 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
           </div>
         </td>
         <td className="px-6 py-5">
-          <span className="inline-flex items-center rounded-full border border-white/8 bg-white/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground">
+          <span className="inline-flex items-center rounded-full border border-border bg-foreground/[0.04] px-3 py-1 text-[10px] font-bold uppercase tracking-widest text-foreground">
              ₹{(order.discountAmount || (order as any).pricing?.discountAmount || 0).toLocaleString()}
           </span>
         </td>
@@ -117,8 +117,8 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
           <span className={clsx(
             "inline-flex rounded-full px-3 py-1 text-[11px] font-bold uppercase tracking-wider border",
             order.status === "completed" 
-              ? "border-white/8 bg-white/[0.04] text-foreground" 
-              : "border-white/8 bg-white/[0.03] text-foreground/80"
+              ? "border-green-500/20 bg-green-500/10 text-green-700 dark:text-green-400" 
+              : "border-border bg-foreground/[0.03] text-muted"
           )}>
             {order.status || "pending"}
           </span>
@@ -128,12 +128,12 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
             <div className="group/action relative">
               <button 
                 onClick={() => downloadOrderExcel(order, retailers, managers)}
-                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white hover:text-background hover:border-white"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-foreground/[0.03] text-muted transition-all hover:bg-foreground hover:text-background hover:border-foreground"
               >
                 <FileSpreadsheet size={14} />
               </button>
               <div className="absolute -top-8 left-1/2 -translate-x-1/2 scale-50 opacity-0 transition-all group-hover/action:scale-100 group-hover/action:opacity-100">
-                <span className="rounded border border-white/8 bg-[#111111] px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-foreground/72">Excel</span>
+                <span className="rounded border border-border bg-surface px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-muted">Excel</span>
               </div>
             </div>
 
@@ -145,13 +145,13 @@ export const OrderRow = ({ order, retailers, managers }: OrderRowProps) => {
                 <FileText size={14} />
               </button>
               <div className="absolute -top-8 left-1/2 -translate-x-1/2 scale-50 opacity-0 transition-all group-hover/action:scale-100 group-hover/action:opacity-100">
-                <span className="rounded border border-white/8 bg-[#111111] px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-foreground/72">PDF</span>
+                <span className="rounded border border-border bg-surface px-2 py-1 text-[8px] font-bold uppercase tracking-widest text-muted">PDF</span>
               </div>
             </div>
 
             <button 
               onClick={() => handleOrderEdit(order)}
-              className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/8 bg-white/[0.03] text-foreground/62 transition-all hover:bg-white hover:text-background hover:border-white"
+              className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-foreground/[0.03] text-muted transition-all hover:bg-foreground hover:text-background hover:border-foreground"
             >
               <Edit3 size={14} />
             </button>

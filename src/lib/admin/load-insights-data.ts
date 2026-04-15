@@ -11,7 +11,11 @@ import mongoose from "mongoose";
 
 export async function loadInsightsData() {
   await dbConnect();
-  const db = mongoose.connection.db!;
+  const db = mongoose.connection.db;
+
+  if (!db) {
+    console.warn("LOAD_INSIGHTS_WARN: MongoDB connection.db is not available.");
+  }
 
   const [
     ordersRaw,
@@ -33,10 +37,10 @@ export async function loadInsightsData() {
     User.find({role: {$ne: "retailer"}}).lean(),
     InventoryLevel.find().lean(),
     Warehouse.find().lean(),
-    db.collection("product_hardgoods").find().toArray(),
-    db.collection("product_ogio").find().toArray(),
-    db.collection("product_softgoods").find().toArray(),
-    db.collection("product_travis").find().toArray(),
+    db ? db.collection("product_hardgoods").find().toArray().catch(() => []) : [],
+    db ? db.collection("product_ogio").find().toArray().catch(() => []) : [],
+    db ? db.collection("product_softgoods").find().toArray().catch(() => []) : [],
+    db ? db.collection("product_travis").find().toArray().catch(() => []) : [],
   ]);
 
   // Aggregating all products, ensuring we tag the brand-specific ones
@@ -49,12 +53,12 @@ export async function loadInsightsData() {
   ];
 
   return {
-    orders: toPlainObject(ordersRaw),
+    orders: toPlainObject(ordersRaw || []),
     products: toPlainObject(aggregatedProducts),
-    variants: toPlainObject(variantsRaw),
-    brands: toPlainObject(brandsRaw),
-    users: toPlainObject(usersRaw),
-    inventoryLevels: toPlainObject(inventoryRaw),
-    warehouses: toPlainObject(warehousesRaw),
+    variants: toPlainObject(variantsRaw || []),
+    brands: toPlainObject(brandsRaw || []),
+    users: toPlainObject(usersRaw || []),
+    inventoryLevels: toPlainObject(inventoryRaw || []),
+    warehouses: toPlainObject(warehousesRaw || []),
   };
 }
