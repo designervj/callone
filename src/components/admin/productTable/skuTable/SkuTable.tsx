@@ -231,7 +231,7 @@ export function SkuTable({
                               <div className="min-w-0">
                                 <div className="flex flex-wrap items-center gap-2">
                                   <p className="truncate font-semibold text-foreground">{row.sku}</p>
-                                  <span className="rounded-full border border-white/8 bg-[#111111] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground/72">
+                                  <span className="rounded-full border border-white/8 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground/72">
                                     {row.sku}
                                   </span>
                                 </div>
