@@ -101,6 +101,7 @@ export function TrendCard({
   points,
   isLoading,
   formatter = compactNumber,
+  formatType,
 }: {
   title: string;
   description: string;
@@ -120,7 +121,8 @@ export function TrendCard({
     );
   }
 
-  const maxValue = Math.max(...safePoints.map((point) => point.value || 0), 1);
+  const safePoints = points || [];
+  const maxValue = Math.max(...safePoints.map((point: TrendPoint) => point.value || 0), 1);
   const stepX = safePoints.length > 1 ? 100 / (safePoints.length - 1) : 100;
 
   const generateSmoothPath = (pts: TrendPoint[]) => {
@@ -154,7 +156,7 @@ export function TrendCard({
       <div className="mt-5 overflow-hidden rounded-[24px] border border-border/12 bg-surface-muted/30 p-5">
         {isLoading ? (
           <div className="h-52 w-full animate-pulse bg-muted/10 rounded-xl" />
-        ) : points.length > 0 ? (
+        ) : safePoints.length > 0 ? (
           <svg viewBox="0 0 100 76" className="h-52 w-full">
             <defs>
               <linearGradient id={gradientId} x1="0" y1="0" x2="0" y2="1">
@@ -183,15 +185,20 @@ export function TrendCard({
             [...Array(8)].map((_, i) => (
               <div key={i} className="h-10 animate-pulse rounded-xl bg-muted/20" />
             ))
-          ) : points.map((point) => (
-            <div key={point.label} className="rounded-xl border border-border bg-surface-muted/50 px-3 py-2 text-center transition-all hover:bg-surface-elevated">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted">
-                {point.label || `W${idx+1}`}
-              </p>
-              <p className="mt-1 text-base font-bold text-foreground">
-                {displayValue}
-              </p>
-            </div>
+          ) : safePoints.map((point, idx) => {
+            const displayValue = formatType === "currency" 
+              ? currency(point.value) 
+              : (formatter ? formatter(point.value) : point.value);
+            
+            return (
+              <div key={point.label || idx} className="rounded-xl border border-border bg-surface-muted/50 px-3 py-2 text-center transition-all hover:bg-surface-elevated">
+                <p className="text-[10px] font-bold uppercase tracking-wider text-muted">
+                  {point.label || `W${idx + 1}`}
+                </p>
+                <p className="mt-1 text-base font-bold text-foreground">
+                  {displayValue}
+                </p>
+              </div>
             );
           })}
         </div>
@@ -224,8 +231,8 @@ export function BreakdownCard({
           [...Array(4)].map((_, i) => (
             <div key={i} className="h-16 animate-pulse rounded-xl bg-muted/20" />
           ))
-        ) : items.length ? (
-          items.map((item) => (
+        ) : safeItems.length ? (
+          safeItems.map((item) => (
             <div key={item.label} className="rounded-xl border border-border bg-surface px-4 py-3 transition duration-300 hover:bg-surface-muted">
               <div className="flex items-center justify-between gap-3">
                 <div className="min-w-0">
@@ -280,8 +287,8 @@ export function LeaderboardCard({
           [...Array(5)].map((_, i) => (
             <div key={i} className="h-16 animate-pulse rounded-xl bg-muted/20" />
           ))
-        ) : items.length ? (
-          items.map((item, index) => (
+        ) : safeItems.length ? (
+          safeItems.map((item, index) => (
             <div key={`${item.label}-${index}`} className="rounded-xl border border-border bg-surface px-4 py-4 transition duration-300 hover:bg-surface-muted">
               <div className="flex items-start justify-between gap-4">
                 <div className="min-w-0">
@@ -332,8 +339,8 @@ export function BrandCatalogCard({
           [...Array(4)].map((_, i) => (
             <div key={i} className="h-32 animate-pulse rounded-xl bg-muted/20" />
           ))
-        ) : items.length ? (
-          items.map((item) => (
+        ) : safeItems.length ? (
+          safeItems.map((item) => (
             <div key={item.label} className="rounded-xl border border-border bg-surface p-4 transition duration-300 hover:bg-surface-muted">
               <p className="text-xs font-bold uppercase tracking-wider text-muted pb-3 border-b border-border/10 mb-4">{item.label}</p>
               <div className="grid grid-cols-3 gap-0 text-center">
