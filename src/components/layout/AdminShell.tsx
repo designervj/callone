@@ -353,7 +353,8 @@ export function AdminShell({children, user}: AdminShellProps) {
                          <p className="text-sm font-bold text-foreground">{user.name}</p>
                          <p className="text-xs text-muted">{user.email}</p>
                       </div>
-                      <div className="p-3">
+                      <div className="p-3"
+                      onClick={() => router.push("/admin/setting")}>
                          <p className="text-sm font-bold text-foreground">Setting</p>
                        
                       </div>

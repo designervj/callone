@@ -256,7 +256,7 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
       onClick={() => setViewMode("product")}
       className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold ${
         viewMode === "product"
-          ? "bg-white text-background shadow-[0_8px_20px_rgba(255,255,255,0.12)]"
+          ? "text-blue-600 shadow-[0_8px_20px_rgba(255,255,255,0.12)]"
           : "text-foreground/55 hover:bg-white/[0.04]"
       }`}
     >
@@ -268,7 +268,7 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
       onClick={() => setViewMode("sku")}
       className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold ${
         viewMode === "sku"
-          ? "bg-white text-background shadow-[0_8px_20px_rgba(255,255,255,0.12)]"
+          ? "text-blue-600 shadow-[0_8px_20px_rgba(255,255,255,0.12)]"
           : "text-foreground/55 hover:bg-white/[0.04]"
       }`}
     >
@@ -290,7 +290,7 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
     <select
       value={sortBy}
       onChange={(event) => setSortBy(event.target.value)}
-      className="border-none bg-[#111111] text-sm text-foreground outline-none [color-scheme:dark]"
+      className="border-none text-sm text-foreground outline-none "
       style={{colorScheme: "dark"}}
     >
       {SORT_OPTIONS.map((option) => (
@@ -306,11 +306,11 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
     <select
       value={pageSize}
       onChange={(event) => setPageSize(Number(event.target.value))}
-      className="border-none bg-[#111111] text-sm text-foreground outline-none [color-scheme:dark]"
-      style={{colorScheme: "dark"}}
+      className="border-none text-sm text-foreground outline-none"
+    
     >
       {PAGE_SIZE_OPTIONS.map((value) => (
-        <option key={value} value={value} className="bg-[#111111] text-white">
+        <option key={value} value={value} className="text-white">
           {value} / page
         </option>
       ))}
