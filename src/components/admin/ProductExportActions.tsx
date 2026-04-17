@@ -119,7 +119,7 @@ export function ProductExportActions({
       setShowTravisPdf(true);
     } else {
       // Placeholder for general PDF export
-      console.log("General PDF export not implemented yet");
+   
       alert("PDF export is currently optimized for Travis Mathew. General export coming soon.");
     }
     setExportMenuOpen(false);

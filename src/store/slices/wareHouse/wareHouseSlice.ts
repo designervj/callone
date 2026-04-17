@@ -82,9 +82,10 @@ const warehouseSlice = createSlice({
         state.isError = null;
       })
       .addCase(updateWarehouse.fulfilled, (state, action) => {
+        const {data}=action.payload
         state.isLoading = false;
         state.allWareHouse = state.allWareHouse.map((warehouse) =>
-          warehouse._id === action.payload._id ? action.payload : warehouse
+          warehouse._id === data._id ? data : warehouse
         );
       })
       .addCase(updateWarehouse.rejected, (state, action) => {

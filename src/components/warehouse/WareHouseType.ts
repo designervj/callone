@@ -17,3 +17,11 @@ export interface IWarehouse {
   updatedAt?: string;
 
 }
+
+export interface IWareHouseInAtributeUpdate{
+brand_name?:string
+isActive?:boolean
+warehouse_name?:string
+warehouse_code?:string
+
+}

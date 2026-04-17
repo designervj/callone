@@ -6,11 +6,13 @@ export interface IAttributeSet extends Document {
   appliesTo: string;
   contexts: string[];
   attributes: {
-    key: string;
-    label: string;
-    type: string;
-    options: string[];
-    hint: string;
+    key?: string;
+    label?: string;
+    type?: string;
+    options?: string[];
+    hint?: string;
+    isActive?: boolean;
+    show?: boolean;
   }[];
   isSystem: boolean;
   source: string;
@@ -31,6 +33,8 @@ const AttributeSetSchema = new Schema<IAttributeSet>(
         type: { type: String, required: true },
         options: [{ type: String }],
         hint: { type: String },
+        show: { type: Boolean, default:false },
+        isActive: { type: Boolean, default:false },
       },
     ],
     isSystem: { type: Boolean, default: false },
