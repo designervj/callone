@@ -21,8 +21,9 @@ const EditWareHouse = ({warehouse}: Props) => {
        },[warehouse, currentWareHouse])
   
     const handleCancel = () => {
+        console.log("cananel ware house")
         dispatch(setCurrentWarehouse(null))
-        router.push('/admin/warehouses')
+        router.back()
     }   
     
   return (
@@ -30,11 +31,10 @@ const EditWareHouse = ({warehouse}: Props) => {
          <PageHeader title={`Edit ${currentWareHouse?.name}`} description="Update warehouse routing metadata and active/default flags." backHref="/admin/warehouses" />
     
     <WareHouseForm
-   
-    onCancel={() => handleCancel()}
+    onCancel={handleCancel}
     />  
    </>
-  )
+  ) 
 }
 
 export default EditWareHouse

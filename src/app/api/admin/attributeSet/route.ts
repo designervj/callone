@@ -54,3 +54,88 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function PUT(req: Request) {
+  try {
+    await dbConnect();
+
+    const body = await req.json();
+    console.log("body---->updsate attrsiiiii", body);
+
+    if (!Array.isArray(body) || body.length === 0) {
+      return NextResponse.json(
+        { success: false, message: "Invalid payload" },
+        { status: 400 }
+      );
+    }
+
+    const updates = [];
+
+    for (const item of body) {
+      const {
+        brand_name,
+        warehouse_name,
+        warehouse_code,
+        isActive,
+      } = item;
+
+      // 1️⃣ Try updating existing attribute
+      const updatedDoc = await AttributeSet.findOneAndUpdate(
+        {
+          name: brand_name,
+          "attributes.key": warehouse_code,
+        },
+        {
+          $set: {
+            "attributes.$.isActive": isActive,
+            "attributes.$.label": warehouse_name, // optional update
+          },
+        },
+        { new: true }
+      );
+
+      if (updatedDoc) {
+        updates.push(updatedDoc);
+        continue;
+      }
+
+      // 2️⃣ If not found → push new attribute
+      const insertedDoc = await AttributeSet.findOneAndUpdate(
+        {
+          name: brand_name,
+        },
+        {
+          $push: {
+            attributes: {
+              key: warehouse_code,
+              label: warehouse_name,
+              isActive: isActive,
+              type: "text", // optional default
+              show: true,
+            },
+          },
+        },
+        { new: true }
+      );
+
+      updates.push(insertedDoc);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Attributes updated successfully",
+      data: updates,
+    });
+
+  } catch (error: any) {
+    console.error("PUT error:", error);
+
+    return NextResponse.json(
+      {
+        success: false,
+        message: error.message || "Internal Server Error",
+      },
+      { status: 500 }
+    );
+  }
+}

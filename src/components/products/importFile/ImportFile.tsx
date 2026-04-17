@@ -132,8 +132,7 @@ export default function ImportFile({isOpen,onClose}:Props) {
               }))
             );
           }
-         console.log("insertedCount",insertedCount)
-         console.log("updatedCount",updatedCount)
+       
          
           setProgress(Math.min(100, Math.round(((index + chunk.length) / totalRows) * 100)));
           setSummary({

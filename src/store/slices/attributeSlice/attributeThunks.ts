@@ -1,5 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AttributeType } from './attributeType';
+import { IWareHouseInAtributeUpdate } from '@/components/warehouse/WareHouseType';
 
 const API_URL = '/api/admin/attributeSet';
 
@@ -55,7 +56,7 @@ export const updateAttribute = createAsyncThunk<AttributeType, { id: string; dat
   'attribute/update',
   async ({ id, data }, { rejectWithValue }) => {
     try {
-      const response = await fetch(`${API_URL}/${id}`, {
+      const response = await fetch(`${API_URL}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -82,6 +83,38 @@ export const deleteAttribute = createAsyncThunk<string, string, { rejectValue: s
       return id;
     } catch (error: any) {
       return rejectWithValue(error.message || 'An error occurred while deleting the attribute');
+    }
+  }
+);
+
+
+export const updateWarehouseAttribute = createAsyncThunk<
+  AttributeType,
+  Partial<IWareHouseInAtributeUpdate[]>,
+  { rejectValue: string }
+>(
+  'attribute/updateWarehouseAttribute',
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await fetch(`${API_URL}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        return rejectWithValue(responseData?.message || 'Failed to update warehouse attribute');
+      }
+
+      return responseData as AttributeType;
+    } catch (error: any) {
+      return rejectWithValue(
+        error.message || 'An error occurred while updating the warehouse attribute'
+      );
     }
   }
 );

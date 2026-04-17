@@ -193,7 +193,7 @@ export function AccountsWorkspace({
           {filteredUsers.map((user) => {
 
             const manager = allManager.find((manager) => manager.manager_id === user.manager_id);
-            console.log("manager--", manager)
+      
             return (
               <tr key={user.id}>
                 <td className="px-4 py-4">

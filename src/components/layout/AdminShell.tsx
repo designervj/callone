@@ -353,6 +353,10 @@ export function AdminShell({children, user}: AdminShellProps) {
                          <p className="text-sm font-bold text-foreground">{user.name}</p>
                          <p className="text-xs text-muted">{user.email}</p>
                       </div>
+                      <div className="p-3">
+                         <p className="text-sm font-bold text-foreground">Setting</p>
+                       
+                      </div>
                       <div className="mt-2 border-t border-border pt-2">
                         <button
                           onClick={() => signOut({callbackUrl: "/login"})}

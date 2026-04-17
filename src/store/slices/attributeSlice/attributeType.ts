@@ -5,6 +5,7 @@ export interface AttributeField {
   options?: any[]; // Adjust this to string[] or a specific object type if options are structured
   hint?: string;
   show?: boolean;
+  isActive?: boolean;
 }
 
 export interface AttributeType {

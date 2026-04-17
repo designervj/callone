@@ -4,9 +4,10 @@ import { SectionCard } from '../admin/SectionCard'
 import { useDispatch, useSelector } from 'react-redux'
 import { AppDispatch, RootState } from '@/store'
 import { createWarehouse, updateWarehouse } from '@/store/slices/wareHouse/wareHouseThunk'
-import { IBrand, IWarehouse } from '@/components/warehouse/WareHouseType'
+import { IBrand, IWarehouse, IWareHouseInAtributeUpdate } from '@/components/warehouse/WareHouseType'
 import { Check, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
+import { updateWarehouseAttribute } from '@/store/slices/attributeSlice/attributeThunks'
 
 type Props = {
     onCancel: () => void
@@ -15,7 +16,20 @@ const WareHouseForm = ({ onCancel }: Props) => {
     const dispatch = useDispatch<AppDispatch>()
     const { isLoading } = useSelector((state: RootState) => state.warehouse)
     const { currentWareHouse } = useSelector((state: RootState) => state.warehouse)
-    const [formValues, setFormValues] = useState<IWarehouse>({
+     const {allAttribute} = useSelector((state: RootState) => state.attribute)
+   
+
+     const [updateAttribute,setUpdateAttribute] = useState<IWareHouseInAtributeUpdate[]>([])
+   
+   // update the update attribute
+
+//    useEffect(()=>{
+//     if(currentWareHouse?._id){
+//         setUpdateAttribute(currentWareHouse.brands)
+//     }
+//    },[currentWareHouse])
+   
+     const [formValues, setFormValues] = useState<IWarehouse>({
         _id: "",
         name: "",
         code: "",
@@ -50,8 +64,25 @@ const WareHouseForm = ({ onCancel }: Props) => {
     const [selectedBrands, setSelectedBrands] = useState<IBrand[]>([])
 
     const handleToggleBrand = (brand: IBrand) => {
+  
+    
         setSelectedBrands(prev => {
             const isSelected = prev.find(b => b._id === brand._id)
+            
+            const data: IWareHouseInAtributeUpdate = {
+                brand_name: brand.name,
+                isActive: !isSelected,
+                warehouse_name: formValues.name,
+                warehouse_code: formValues.code
+            }
+
+            setUpdateAttribute(prevAttr => {
+                const filtered = prevAttr.filter(item => 
+                    !(item.warehouse_code === data.warehouse_code && item.brand_name === data.brand_name)
+                );
+                return [...filtered, data];
+            });
+
             if (isSelected) {
                 return prev.filter(b => b._id !== brand._id)
             } else {
@@ -60,9 +91,11 @@ const WareHouseForm = ({ onCancel }: Props) => {
         })
     }
 
+
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   e.preventDefault();
-
+   
   try {
     const payload = {
       code: formValues.code,
@@ -81,15 +114,17 @@ const WareHouseForm = ({ onCancel }: Props) => {
           data: payload,
         })
       ).unwrap();
-      console.log("response", response);
-      if(response.success){
+   
+      if(response){
+        updateWareHouseAttribute()
         toast.success("Warehouse updated successfully");
       }
     } else {
       // 🔥 CREATE
       const response = await dispatch(createWarehouse(payload)).unwrap();
-      console.log("response", response);
-      if(response.success){
+     
+      if(response){
+         updateWareHouseAttribute()
         toast.success("Warehouse created successfully");
       }
     }
@@ -100,6 +135,23 @@ const WareHouseForm = ({ onCancel }: Props) => {
   }
 };
 
+
+
+const updateWareHouseAttribute = async () => {
+    if(updateAttribute.length === 0){
+        toast.error("Please select at least one brand");
+        return;
+    }
+    try {
+        const response = await dispatch(updateWarehouseAttribute(updateAttribute)).unwrap();
+     
+        if(response){
+           toast.success("Warehouse attribute updated successfully");
+        }
+    } catch (error) {
+        console.error("Submit error:", error);
+    }
+}
     return (
         <SectionCard title="Create Warehouse">
             <form onSubmit={handleSubmit} className="grid gap-6 lg:grid-cols-2">
@@ -199,7 +251,7 @@ const WareHouseForm = ({ onCancel }: Props) => {
                     </button>}
                     <button
                         type="button"
-                        onClick={() => onCancel}
+                        onClick={onCancel}
                         className="flex items-center gap-2 rounded-2xl px-8 py-3 text-sm font-semibold transition-opacity hover:opacity-90 disabled:opacity-50"
                     >
                         Cancel

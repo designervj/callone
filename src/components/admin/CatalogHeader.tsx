@@ -4,7 +4,10 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Search, SlidersHorizontal, ArrowDownUp, ChevronsUpDown, X, RefreshCcw, Check, LayoutGrid, Layers } from "lucide-react";
 import Link from "next/link";
-
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
+import ExcelJS from "exceljs";
+import { saveAs } from "file-saver";
 const SORT_OPTIONS = [
   { value: "latest", label: "Latest updated" },
   { value: "name-asc", label: "Name A-Z" },
@@ -116,6 +119,62 @@ export function CatalogHeader({
   appliedFilters,
   clearAllFilters,
 }: CatalogHeaderProps) {
+const {currentAttribute} = useSelector((state:RootState) => state.attribute);
+ const handleDownloadSample = async () => {
+    if (!currentAttribute?.attributes) return;
+
+    // ✅ Filter active attributes
+    const activeAttributes = currentAttribute.attributes.filter(
+      (attr) => attr.isActive !== false
+    );
+
+    // ✅ Extract column keys
+    const columns = activeAttributes.map((attr) => attr.key || "");
+
+    // ✅ Create workbook
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet("Sample");
+
+    // ✅ Add header row
+    sheet.addRow(columns);
+
+    // ✅ Generate sample data (based on type)
+    const generateSampleValue = (attr: any, index: number) => {
+      switch (attr.type) {
+        case "number":
+          return index * 10 + 10;
+        case "text":
+        default:
+          return `${attr.key}_${index + 1}`;
+      }
+    };
+
+    // ✅ Add 3 sample rows
+    for (let i = 0; i < 3; i++) {
+      const row = activeAttributes.map((attr) =>
+        generateSampleValue(attr, i)
+      );
+      sheet.addRow(row);
+    }
+
+    // ✅ Auto width (optional but nice)
+    sheet.columns.forEach((col: any) => {
+      col.width = 20;
+    });
+
+    // ✅ Generate file
+    const buffer = await workbook.xlsx.writeBuffer();
+
+    // ✅ Download
+    const blob = new Blob([buffer], {
+      type:
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    });
+
+    saveAs(blob, `${currentAttribute.key || "sample"}_products.xlsx`);
+  };
+    console.log(currentAttribute);
+  
   return (
     <section className="premium-card overflow-hidden rounded-[28px]">
       <div className="grid gap-3 border-b border-white/8 px-4 py-5 xl:grid-cols-[minmax(0,1fr)_auto] xl:items-end">
@@ -135,6 +194,12 @@ export function CatalogHeader({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <button
+              onClick={handleDownloadSample}
+              className="rounded-2xl border border-white/8 bg-white/[0.03] px-4 py-2.5 text-sm font-semibold text-foreground/76 transition hover:border-white/18 hover:bg-white/[0.06]"
+            >
+              Sample Download
+            </button>
           {isSourceReadonly ? (
             <Link
               href={importHref}

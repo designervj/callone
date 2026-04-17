@@ -26,8 +26,7 @@ const UpdateBrandAttribute = () => {
              brandCode){
             const brand=allBrand.find((brand)=>brand.slug===brandCode)
              const attributeset=allAttribute.find((attributeSet)=>attributeSet.key===brandCode)
-            console.log("brand",brand)
-            console.log("attributeset",attributeset)
+        
            if(brand){
             dispatch(setCurrentBrand(brand))
            }
