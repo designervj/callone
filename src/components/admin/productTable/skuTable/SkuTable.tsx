@@ -1,11 +1,10 @@
 'use client';
 
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
-import { useDispatch, useSelector } from "react-redux";
-import { AppDispatch, RootState } from "@/store";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 import { Minus, Package2, Pencil, Plus, Trash2, Box, ShieldCheck } from "lucide-react";
-import { setCurrentAttribute } from "@/store/slices/attributeSlice/attributeSlice";
 import { ProductImage } from "../../ProductImage";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
@@ -45,19 +44,14 @@ export function SkuTable({
   appliedFilters,
   clearAllFilters
 }: SkuTableProps) {
-  // Pull data from Redux to show "data on redux" as requested
-
-
+  const { currentAttribute } = useSelector((state: RootState) => state.attribute);
   const { travismathew } = useSelector((state: RootState) => state.travisMathew);
   const { ogio } = useSelector((state: RootState) => state.ogio);
   const { hardgoods } = useSelector((state: RootState) => state.hardgoods);
   const { softgoods } = useSelector((state: RootState) => state.softgoods);
-  const { currentAttribute, allAttribute } = useSelector((state: RootState) => state.attribute);
   const { items } = useSelector((state: RootState) => state.cart);
-  const dispatch = useDispatch<AppDispatch>()
-
-  const [selectedData, setSelectedData] = useState<CartItem[]>([]);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+  const {allWareHouse}= useSelector((state:RootState)=>state.warehouse)
 
   const toggleRow = (id: string) => {
     const newExpandedRows = new Set(expandedRows);
@@ -69,52 +63,38 @@ export function SkuTable({
     setExpandedRows(newExpandedRows);
   };
 
-  // update the current attaribute 
-  useEffect(() => {
-    if (allAttribute && allAttribute.length > 0 && visibleRows && visibleRows.length > 0) {
-      const currentBrand = visibleRows[0].brand.name;
-      const foundAttribute = allAttribute.find((attr) => attr.name?.toLowerCase() === currentBrand?.toLowerCase());
-      if (foundAttribute) {
-        dispatch(setCurrentAttribute(foundAttribute));
-      }
-    }
-  }, [visibleRows, allAttribute, dispatch])
-
   const activeAttributes = currentAttribute?.attributes?.filter(attr => attr.show) || [];
-  // Function to get brand-specific data from Redux if available
-  const currentdata = useMemo(() => {
-    if (currentAttribute?.name === "Travis Mathew") {
-      return travismathew;
-    } else if (currentAttribute?.name === "Ogio") {
-      return ogio;
-    } else if (currentAttribute?.name === "Callaway Hardgoods") {
-      return hardgoods;
-    } else if (currentAttribute?.name === "Callaway Softgoods") {
-      return softgoods;
-    }
-    return [];
-  }, [currentAttribute, travismathew, ogio, hardgoods, softgoods]);
-
-
+  const allData =
+    currentAttribute?.name === "Travis Mathew"
+      ? travismathew
+      : currentAttribute?.name === "Ogio"
+        ? ogio
+        : currentAttribute?.name === "Callaway Hardgoods"
+          ? hardgoods
+          : currentAttribute?.name === "Callaway Softgoods"
+            ? softgoods
+            : [];
 
   return (
     <table className="min-w-full border-separate border-spacing-0 text-left">
       <thead>
-        <tr className="bg-[#111111] text-white">
+        <tr className=" text-white">
           <StickyHeading className="w-14 px-6 py-5">
             <input
               type="checkbox"
               aria-label="Select visible products"
               checked={allVisibleSelected}
               onChange={() => {
-                const data = currentdata || [];
+                const visibleRowIds = visibleRows
+                  .map((row: any) => String(row.rowKey ?? row.id ?? row?._id?.$oid ?? row?._id ?? row.sku ?? ""))
+                  .filter(Boolean);
                 if (allVisibleSelected) {
                   setSelectedIds((current) =>
-                    current.filter((id) => !data.some((row: any) => (row.id || row._id || row.rowKey) === id))
+                    current.filter((id) => !visibleRowIds.includes(id))
                   );
                 } else {
                   setSelectedIds((current) =>
-                    Array.from(new Set([...current, ...data.map((row: any) => (row.id || row._id || row.rowKey))]))
+                    Array.from(new Set([...current, ...visibleRowIds]))
                   );
                 }
               }}
@@ -142,9 +122,9 @@ export function SkuTable({
         </tr>
       </thead>
       <tbody className="divide-y divide-border/20">
-        {currentdata && currentdata.length ? (
-          currentdata.map((row: any) => {
-            const rowId = row.id || row._id || row.rowKey || row.sku;
+        {visibleRows && visibleRows.length ? (
+          visibleRows.map((row: any) => {
+            const rowId = String(row.rowKey ?? row.id ?? row?._id?.$oid ?? row?._id ?? row.sku ?? "");
             const isSelected = selectedIds.includes(rowId);
 
             const displayStock = Number(row.stock_90 || 0) || Number(row.stock_88 || 0) || Number(row.availableStock || 0) || Number(row.variantStock || 0) || 0;
@@ -399,7 +379,7 @@ export function SkuTable({
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="truncate font-semibold text-foreground">{row.sku}</p>
-                              <span className="rounded-full border border-white/8 bg-[#111111] px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground/72">
+                              <span className="rounded-full border border-white/8 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground/72">
                                 {row.sku}
                               </span>
                             </div>
@@ -525,7 +505,7 @@ export function SkuTable({
                               <ExtensionTable
                                 parentRow={row}
                                 variationSkus={row.variation_sku}
-                                allData={currentdata}
+                                allData={allData}
                                 items={items}
                               />
                           </div>
@@ -584,4 +564,3 @@ function StickyHeading({
     </th>
   );
 }
-

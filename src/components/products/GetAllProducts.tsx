@@ -1,27 +1,56 @@
 "use client"
 
-import GetAllTravisMethew from "./travismethew/GetAllTravisMethew"
-import GetAllBrands from "../brands/GetAllBrands"
-import GetAllAtributeSet from "../attributeSet/GetAllAtributeSet"
-import GetAllOgio from "./Ogio/GetAllOgio"
-import GetAllHardGood from "./HardGood/GetAllHardGood"
-import GetAllRoleBasedUser from "../auth/GetAllRoleBasedUser"
-import GetAllOrders from "../order/GetAllOrders"
-import GetAllSoftGood from "./callaway-softgoods/GetAllSoftGood"
+import { Suspense, lazy } from "react"
 
+// Lazy load all components for code splitting
+const GetAllAtributeSet = lazy(() => import("../attributeSet/GetAllAtributeSet"))
+const GetAllBrands = lazy(() => import("../brands/GetAllBrands"))
+const GetAllTravisMethew = lazy(() => import("./travismethew/GetAllTravisMethew"))
+const GetAllOgio = lazy(() => import("./Ogio/GetAllOgio"))
+const GetAllHardGood = lazy(() => import("./HardGood/GetAllHardGood"))
+const GetAllRoleBasedUser = lazy(() => import("../auth/GetAllRoleBasedUser"))
+const GetAllOrders = lazy(() => import("../order/GetAllOrders"))
+const GetAllSoftGood = lazy(() => import("./callaway-softgoods/GetAllSoftGood"))
+const GetAllWareHouse = lazy(() => import("../warehouse/GetAllWareHouse"))
+
+const LoadingFallback = () => <div className="p-4"></div>
 
 const GetAllProducts = () => {
    
     return (
         <>
-        <GetAllAtributeSet/>
-        <GetAllBrands/>
-        <GetAllTravisMethew/>
-        <GetAllOgio/>
-        <GetAllHardGood/>
-        <GetAllRoleBasedUser/>
-        <GetAllOrders/>
-        <GetAllSoftGood/>
+            {/* Configuration & Master Data */}
+            <Suspense >
+                <GetAllAtributeSet/>
+            </Suspense>
+            <Suspense>
+                <GetAllBrands/>
+            </Suspense>
+
+            {/* Products */}
+            <Suspense >
+                <GetAllTravisMethew/>
+            </Suspense>
+            <Suspense >
+                <GetAllOgio/>
+            </Suspense>
+            <Suspense >
+                <GetAllHardGood/>
+            </Suspense>
+            <Suspense >
+                <GetAllSoftGood/>
+            </Suspense>
+
+            {/* Admin & Operations */}
+            <Suspense>
+                <GetAllRoleBasedUser/>
+            </Suspense>
+            <Suspense>
+                <GetAllOrders/>
+            </Suspense>
+            <Suspense>
+                <GetAllWareHouse/>
+            </Suspense>
         </>
     )
 }

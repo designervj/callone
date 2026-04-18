@@ -124,7 +124,7 @@ export const PremiumSelect: React.FC<PremiumSelectProps> = ({
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 8, scale: 0.98 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-0 right-0 z-[100] mt-2 w-60 overflow-hidden rounded-2xl border border-white/8 bg-[#111111] shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl"
+            className="absolute left-0 right-0 z-[100] mt-2 w-60 overflow-hidden rounded-2xl border border-white/8 shadow-[0_20px_60px_rgba(0,0,0,0.45)] backdrop-blur-xl"
           >
             {searchable && (
               <div className="border-b border-white/[0.05] p-3">

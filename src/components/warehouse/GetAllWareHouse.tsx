@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { getAllWarehouses } from '@/store/slices/wareHouse/wareHouseThunk'
 import { AppDispatch, RootState } from '@/store'

@@ -146,7 +146,7 @@ export const CartTable: React.FC<CartTableProps> = ({
      <div className="overflow-hidden rounded-[32px] border border-white/8 bg-[color:var(--surface)] shadow-[0_10px_30px_rgba(0,0,0,0.4)]">
       <table className="w-full text-left border-collapse">
         <thead>
-          <tr className="bg-[#111111] text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/62">
+          <tr className=" text-[10px] font-semibold uppercase tracking-[0.18em] text-foreground/62">
             <th className="px-6 py-4">S.No</th>
             <th className="px-6 py-4">Product</th>
             <th className="px-6 py-4">Brand</th>
@@ -303,7 +303,7 @@ export const CartTable: React.FC<CartTableProps> = ({
 
       {/* Footer / Summary Section */}
       <div className="flex flex-wrap items-start justify-between gap-8 bg-[#0b0b0b] p-8">
-        <div className="flex items-center gap-4 rounded-[24px] border border-white/8 bg-[#111111] p-4 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
+        <div className="flex items-center gap-4 rounded-[24px] border border-white/8 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
           <div className="space-y-1">
             <span className="block text-[10px] font-bold uppercase tracking-wider text-foreground/62">Discount Mode</span>
             <select

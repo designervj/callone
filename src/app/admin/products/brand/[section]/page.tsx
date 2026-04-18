@@ -74,10 +74,10 @@ export default function ProductSectionPage({
 
   return (
     <>
-      <GetAllSoftGood />
+      {/* <GetAllSoftGood />
       <GetAllHardGood />
       <GetAllOgio />
-      <GetAllTravisMethew />
+      <GetAllTravisMethew /> */}
 
     
         <>

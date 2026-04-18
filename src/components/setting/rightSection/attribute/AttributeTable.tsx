@@ -4,10 +4,12 @@ import { RootState } from "@/store";
 import { useSelector } from "react-redux";
 import { SectionCard } from "@/components/admin/SectionCard";
 import { DataTable } from "@/components/admin/DataTable";
+import { useState } from "react";
+import AttributeForm from "./AttributeForm";
 
 const AttributeTable = () => {
   const { allAttribute } = useSelector((state: RootState) => state.attribute);
-
+  const [isAddAttribute, setIsAddAttribute] = useState(false);
   const handleEdit = (item: any) => {
     console.log("Edit:", item);
   };
@@ -16,11 +18,21 @@ const AttributeTable = () => {
     console.log("Delete:", id);
   };
 
+
+  const handleAddAttribute = () => {
+    setIsAddAttribute(true);
+  }
   return (
     <SectionCard
       title="Attribute sets"
       description="Configure which attributes appear across products and worksheets."
     >
+
+      <button 
+      onClick={handleAddAttribute}
+       className="text-sm font-semibold text-primary">
+        Add Attribute
+      </button>
       <DataTable
         headers={[
           "Name",
@@ -73,6 +85,13 @@ const AttributeTable = () => {
           </tr>
         )}
       </DataTable>
+
+      {isAddAttribute && (
+        <AttributeForm
+        isOpen={isAddAttribute}
+          onClose={() => setIsAddAttribute(false)}
+        />
+      )}
     </SectionCard>
   );
 };
