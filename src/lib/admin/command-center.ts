@@ -67,17 +67,17 @@ export const ADMIN_NAV_ITEMS: AdminCommandItem[] = [
   },
   ...(aiAdminEnabled
     ? [
-        {
-          id: "ai-admin",
-          label: "AI Admin",
-          description: "Split-pane workspace preview for AI-guided admin operations.",
-          href: "/admin/ai",
-          icon: LayoutDashboard,
-          group: "Navigate",
-          keywords: ["ai admin", "workspace", "preview", "chat", "operations"],
-          roles: ["super_admin", "admin", "manager", "sales_rep"],
-          heroImage: HERO_BANNERS.graphite,
-        } satisfies AdminCommandItem,
+        // {
+        //   id: "ai-admin",
+        //   label: "AI Admin",
+        //   description: "Split-pane workspace preview for AI-guided admin operations.",
+        //   href: "/admin/ai",
+        //   icon: LayoutDashboard,
+        //   group: "Navigate",
+        //   keywords: ["ai admin", "workspace", "preview", "chat", "operations"],
+        //   roles: ["super_admin", "admin", "manager", "sales_rep"],
+        //   heroImage: HERO_BANNERS.graphite,
+        // } satisfies AdminCommandItem,
       ]
     : []),
   {
