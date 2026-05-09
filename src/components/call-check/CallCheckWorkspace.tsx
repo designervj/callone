@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState, memo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { AgGridReact } from "ag-grid-react";
 import { AllCommunityModule, ColDef, CellValueChangedEvent, ModuleRegistry, ValueFormatterParams } from "ag-grid-community";
@@ -77,7 +77,7 @@ function isMeaningfulSheetRow(row: unknown) {
   return false;
 }
 
-export function CallCheckWorkspace({
+export const CallCheckWorkspace = memo(function CallCheckWorkspace({
   initialDatasets,
   initialDatasetSlug = null,
 }: CallCheckWorkspaceProps) {
@@ -847,15 +847,14 @@ export function CallCheckWorkspace({
     setProgress(0);
     setProgressLabel('Preparing Travis Mathew Sheet import...');
 
-    const chunkSize = 100;
-    const rowsToSave = rowData.filter((row) => isMeaningfulSheetRow(row) && Boolean(getTravisSheetKey(row)));
-    const totalRows = rowsToSave.length;
+    const chunkSize = 200;
+    const totalRows = rowData.length;
     let insertedCount = 0;
     let updatedCount = 0;
     let failedCount = 0;
     const rowErrors: ImportIssue[] = [];
 
-    const mappedData = rowsToSave.map((item: any) => pickTravisSheetFields(item));
+    const mappedData = rowData.map((item) => pickTravisSheetFields(item));
 
     const runImport = async () => {
       try {
@@ -867,7 +866,6 @@ export function CallCheckWorkspace({
 
           const action = await dispatch(createTravisSheet(chunk));
           const result = action.payload as any;
-
           const chunkSummary = result?.summary as ImportSummary | undefined;
 
           if (chunkSummary) {
@@ -1197,4 +1195,4 @@ export function CallCheckWorkspace({
       </div>
     </>
   );
-}
+});

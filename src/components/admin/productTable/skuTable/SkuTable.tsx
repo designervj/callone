@@ -78,13 +78,19 @@ export function SkuTable({
     return warehouseAttributes;
   }, [allWareHouse, currentAttribute]);
   
-  const brandWareHouseKeys = useMemo(() => brandwareHouse.map(wh => wh.key), [brandwareHouse]);
 
-  const activeAttributes = currentAttribute?.attributes?.filter(attr => 
-    attr.show && !brandWareHouseKeys.includes(attr.key)
-  ) || [];
+ 
+  const allWareHouseKeys = useMemo(() => brandwareHouse.filter(wh => wh.isActive), [brandwareHouse]);
 
-  const displayAttributes = useMemo(() => [...activeAttributes, ...brandwareHouse], [activeAttributes, brandwareHouse]);
+  const brandWareHouseKeys = useMemo(() => brandwareHouse.filter(wh => wh.isActive).map(wh => wh.key), [brandwareHouse]);
+
+  const activeAttributes = useMemo(() => {
+    return currentAttribute?.attributes?.filter(attr => 
+      attr.show && !brandwareHouse.some(wh => wh.key === attr.key)
+    ) || [];
+  }, [currentAttribute, brandwareHouse]);
+
+  const displayAttributes = useMemo(() => [...activeAttributes, ...allWareHouseKeys], [activeAttributes, allWareHouseKeys]);
 
   const toggleRow = (id: string) => {
     const newExpandedRows = new Set(expandedRows);
@@ -158,7 +164,7 @@ export function SkuTable({
             const rowId = String(row.rowKey ?? row.id ?? row?._id?.$oid ?? row?._id ?? row.sku ?? "");
             const isSelected = selectedIds.includes(rowId);
 
-            const displayStock = Number(row.stock_90 || 0) || Number(row.stock_88 || 0) || Number(row.availableStock || 0) || Number(row.variantStock || 0) || 0;
+            const displayStock = Number(row.variantStock || row.availableStock || 0);
             const displayFamily = row.family || row.line || null;
 
             return (
@@ -296,14 +302,16 @@ export function SkuTable({
                         const warehouseCode = key.toLowerCase().replace("stock_", "");
                         const qtyKey = `qty${warehouseCode}`;
                         const stockKey = key; // Using the attribute key itself
-
+                         const stockValue = row[key];
+                        
+                       
                         return (
                           <td key={key} className="border-b border-border/60 px-4 py-4 align-top">
                             <SkuQuantityInput
                               row={row}
                               qty={qtyKey}
                               value={items?.find(item => item?.sku === row.sku)?.[qtyKey] || 0}
-                              maxStock={Number(row[stockKey]) || 0}
+                              maxStock={Number(stockValue) || 0}
                             />
                           </td>
                         );

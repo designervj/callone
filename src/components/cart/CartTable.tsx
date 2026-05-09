@@ -302,7 +302,7 @@ export const CartTable: React.FC<CartTableProps> = ({
       </table>
 
       {/* Footer / Summary Section */}
-      <div className="flex flex-wrap items-start justify-between gap-8 bg-[#0b0b0b] p-8">
+      <div className="flex flex-wrap items-start justify-between gap-8  p-8">
         <div className="flex items-center gap-4 rounded-[24px] border border-white/8 p-4 shadow-[0_8px_30px_rgba(0,0,0,0.45)]">
           <div className="space-y-1">
             <span className="block text-[10px] font-bold uppercase tracking-wider text-foreground/62">Discount Mode</span>
@@ -310,7 +310,7 @@ export const CartTable: React.FC<CartTableProps> = ({
               value={discountType}
               disabled={isDisabled}
               onChange={(e) => onSetDiscount(e.target.value as any, discountValue)}
-              className="rounded-lg border-none bg-white/[0.05] px-3 py-1.5 text-xs font-bold text-foreground outline-none disabled:cursor-not-allowed"
+              className="rounded-lg border-none  px-3 py-1.5 text-xs font-bold text-foreground outline-none disabled:cursor-not-allowed"
             >
               <option value="inclusive">Inclusive</option>
               <option value="exclusive">Exclusive</option>
@@ -324,7 +324,7 @@ export const CartTable: React.FC<CartTableProps> = ({
               value={discountValue}
               disabled={isDisabled}
               onChange={(e)=>handleDiscountvalue(discountType as any, parseInt(e.target.value) || 0)}
-              className="w-12 rounded-lg bg-white/[0.05] px-2 py-1.5 text-center text-sm font-bold text-foreground outline-none disabled:cursor-not-allowed"
+              className="w-12 rounded-lg px-2 py-1.5 text-center text-sm font-bold text-foreground outline-none disabled:cursor-not-allowed"
             />
             <span className="text-xs font-bold text-foreground/62">%</span>
           </div>

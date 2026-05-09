@@ -4,7 +4,7 @@ import Link from "next/link";
 import { OrderModel } from "@/store/slices/order/OrderType";
 import { createOrder, updateOrder } from "@/store/slices/order/orderThunks";
 import { AppDispatch, RootState } from "@/store";
-import React, { useDeferredValue, useEffect, useMemo, useRef, useState } from "react";
+import React, { useDeferredValue, useEffect, useMemo, useRef, useState, memo } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
@@ -52,7 +52,7 @@ function statusClasses(status: string) {
 
 
 
-export function ProductCatalogWorkspace({
+export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
   // products,
   title = "Products",
   description = "Manage your product catalog, update pricing, verify stock levels, and organize variants across all brands.",
@@ -102,6 +102,34 @@ export function ProductCatalogWorkspace({
   const { travismathew: travis, isLoading: isLoadingTravis } = useSelector(
     (state: RootState) => state.travisMathew
   );
+  const { currentAttribute } = useSelector((state: RootState) => state.attribute);
+  const { allWareHouse } = useSelector((state: RootState) => state.warehouse);
+
+  const brandwareHouse = useMemo(() => {
+    const warehouseAttributes: any[] = [];
+    if (
+      currentAttribute?.name &&
+      allWareHouse.length &&
+      currentAttribute.attributes &&
+      currentAttribute.attributes.length
+    ) {
+      allWareHouse.forEach((item: any) => {
+        const warehouseCode = item.code?.toLowerCase();
+        const filterData = currentAttribute?.attributes?.find(
+          (attr: any) => {
+            const attrKey = attr.key?.toLowerCase();
+            return attrKey === warehouseCode || attrKey === `stock_${warehouseCode}`;
+          }
+        );
+        if (filterData) {
+          warehouseAttributes.push(filterData);
+        }
+      });
+    }
+    return warehouseAttributes;
+  }, [allWareHouse, currentAttribute]);
+
+  const brandWareHouseKeys = useMemo(() => brandwareHouse.filter(wh => wh.isActive).map(wh => wh.key), [brandwareHouse]);
   const pathName = usePathname()
   const section = pathName.split("/")[4]
   const isLoading = useMemo(() => {
@@ -129,8 +157,8 @@ export function ProductCatalogWorkspace({
 
     if (!rawData || rawData.length === 0) return [];
 
-    return transformRawRecords(config, rawData);
-  }, [section, softgoods, hardgoods, ogio, travis]);
+    return transformRawRecords(config, rawData, brandWareHouseKeys);
+  }, [section, softgoods, hardgoods, ogio, travis, brandWareHouseKeys]);
   const showWorkspace = products.length > 0 || isLoading;
 
   useEffect(() => {
@@ -326,6 +354,7 @@ export function ProductCatalogWorkspace({
   const normalizedRows = viewMode === "sku"
     ? sortedProducts.flatMap(p => p.variants.map(v => ({
       ...p,
+      ...v,
       sku: v.sku,
       variantTitle: v.title,
       variantStock: v.availableStock,
@@ -754,4 +783,4 @@ export function ProductCatalogWorkspace({
       />
     </>
   );
-}
+});

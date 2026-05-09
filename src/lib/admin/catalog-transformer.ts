@@ -223,7 +223,11 @@ export const RAW_CATALOG_CONFIGS: RawCatalogConfig[] = [
   },
 ];
 
-export function transformRawRecords(config: RawCatalogConfig, rows: Record<string, unknown>[]): ProductCatalogRecord[] {
+export function transformRawRecords(
+  config: RawCatalogConfig,
+  rows: Record<string, unknown>[],
+  warehouseKeys: string[] = []
+): ProductCatalogRecord[] {
   const groupedRows = new Map<string, Record<string, unknown>[]>();
 
   for (const row of rows) {
@@ -233,62 +237,77 @@ export function transformRawRecords(config: RawCatalogConfig, rows: Record<strin
     groupedRows.set(key, existing);
   }
 
-  return Array.from(groupedRows.values()).map<ProductCatalogRecord>((group) => {
-    const baseSku = config.buildBaseSku(group) || cleanText(group[0]?.sku) || "UNKNOWN";
-    const variantGroups = config.variantGroups
-      .map((groupConfig) => ({
-        key: groupConfig.key,
-        label: groupConfig.label,
-        values: collectDisplayValues(group, groupConfig.field),
-      }))
-      .filter((groupConfig) => groupConfig.values.length > 0);
-    const extraGroups = config.extraAttributeGroups
-      .map((groupConfig) => ({
-        key: groupConfig.key,
-        label: groupConfig.label,
-        values: collectDisplayValues(group, groupConfig.field),
-      }))
-      .filter((groupConfig) => groupConfig.values.length > 0);
+  return Array.from(groupedRows.values())
+    .map<ProductCatalogRecord>((group) => {
+      const baseSku = config.buildBaseSku(group) || cleanText(group[0]?.sku) || "UNKNOWN";
+      const variantGroups = config.variantGroups
+        .map((groupConfig) => ({
+          key: groupConfig.key,
+          label: groupConfig.label,
+          values: collectDisplayValues(group, groupConfig.field),
+        }))
+        .filter((groupConfig) => groupConfig.values.length > 0);
+      const extraGroups = config.extraAttributeGroups
+        .map((groupConfig) => ({
+          key: groupConfig.key,
+          label: groupConfig.label,
+          values: collectDisplayValues(group, groupConfig.field),
+        }))
+        .filter((groupConfig) => groupConfig.values.length > 0);
 
-    return {
-      id: `${config.collectionName}:${baseSku}:${config.buildSubcategory(group) || "general"}`,
-      name: config.buildName(group),
-      slug: "",
-      baseSku,
-      brand: config.brand,
-      category: config.buildCategory(group),
-      subcategory: config.buildSubcategory(group),
-      productType: config.defaultProductType,
-      status: "active",
-      availableStock: sumAvailableStock(group, config.stockFields),
-      variantCount: group.length,
-      variantSkus: group.map((row: Record<string, unknown>) => cleanText(row.sku)).filter(Boolean),
-      variantTitles: group.map((row: Record<string, unknown>) => buildVariantTitle(row, config.variantGroups)),
-      variants: group.map((row: Record<string, unknown>) => ({
-        id: `${config.collectionName}:variant:${cleanText(row.sku)}`,
-        sku: cleanText(row.sku),
-        title: buildVariantTitle(row, config.variantGroups),
-        optionValues: Object.fromEntries(
-          config.variantGroups
-            .map((groupConfig) => {
-              const value = row[groupConfig.field];
-              return isMeaningfulValue(value)
-                ? [groupConfig.key, labelCase(cleanText(value))]
-                : null;
-            })
-            .filter((entry): entry is [string, string] => Array.isArray(entry))
+      const warehouseStocks = Object.fromEntries(
+        warehouseKeys.map((key) => [
+          key,
+          group.reduce((total, row) => total + toNumber(row[key]), 0),
+        ])
+      );
+
+      const effectiveStockFields = warehouseKeys.length > 0 ? warehouseKeys : config.stockFields;
+
+      return {
+        id: `${config.collectionName}:${baseSku}:${config.buildSubcategory(group) || "general"}`,
+        name: config.buildName(group),
+        slug: "",
+        baseSku,
+        mrp:toNumber(group[0]?.mrp),
+        brand: config.brand,
+        category: config.buildCategory(group),
+        subcategory: config.buildSubcategory(group),
+        productType: config.defaultProductType,
+        status: "active",
+        availableStock: sumAvailableStock(group, effectiveStockFields),
+        variantCount: group.length,
+        variantSkus: group.map((row: Record<string, unknown>) => cleanText(row.sku)).filter(Boolean),
+        variantTitles: group.map((row: Record<string, unknown>) =>
+          buildVariantTitle(row, config.variantGroups)
         ),
-        availableStock: config.stockFields.reduce(
-          (total, field) => total + Math.max(0, toNumber(row[field])),
-          0
-        ),
-      })),
-      attributeGroups: [...variantGroups, ...extraGroups],
-      updatedAt: selectUpdatedAt(group),
-      primary_url: (group[0]?.primary_url || group[0]?.primary_image_url) as string,
-      sku: (group[0]?.sku) as string,
-    };
-  }).sort((a, b) => {
+        variants: group.map((row: Record<string, unknown>) => ({
+          id: `${config.collectionName}:variant:${cleanText(row.sku)}`,
+          sku: cleanText(row.sku),
+          title: buildVariantTitle(row, config.variantGroups),
+          optionValues: Object.fromEntries(
+            config.variantGroups
+              .map((groupConfig) => {
+                const value = row[groupConfig.field];
+                return isMeaningfulValue(value)
+                  ? [groupConfig.key, labelCase(cleanText(value))]
+                  : null;
+              })
+              .filter((entry): entry is [string, string] => Array.isArray(entry))
+          ),
+          availableStock: effectiveStockFields.reduce(
+            (total, field) => total + Math.max(0, toNumber(row[field])),
+            0
+          ),
+          ...Object.fromEntries(warehouseKeys.map((key) => [key, toNumber(row[key])])),
+        })),
+        attributeGroups: [...variantGroups, ...extraGroups],
+        updatedAt: selectUpdatedAt(group),
+        primary_url: (group[0]?.primary_url || group[0]?.primary_image_url) as string,
+        sku: group[0]?.sku as string,
+        ...warehouseStocks,
+      };
+    }).sort((a, b) => {
     const aHasImage = a.primary_url && a.primary_url.length > 0;
     const bHasImage = b.primary_url && b.primary_url.length > 0;
     if (aHasImage && !bHasImage) return -1;

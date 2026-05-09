@@ -1,6 +1,6 @@
 "use client"
 
-import { Suspense, lazy } from "react"
+import { Suspense, lazy, memo } from "react"
 
 // Lazy load all components for code splitting
 const GetAllAtributeSet = lazy(() => import("../attributeSet/GetAllAtributeSet"))
@@ -13,9 +13,9 @@ const GetAllOrders = lazy(() => import("../order/GetAllOrders"))
 const GetAllSoftGood = lazy(() => import("./callaway-softgoods/GetAllSoftGood"))
 const GetAllWareHouse = lazy(() => import("../warehouse/GetAllWareHouse"))
 
-const LoadingFallback = () => <div className="p-4"></div>
 
-const GetAllProducts = () => {
+
+const GetAllProducts = memo(() => {
    
     return (
         <>
@@ -53,6 +53,6 @@ const GetAllProducts = () => {
             </Suspense>
         </>
     )
-}
+});
 
-export default GetAllProducts
+export default GetAllProducts;
