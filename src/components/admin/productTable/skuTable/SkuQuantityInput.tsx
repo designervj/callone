@@ -26,7 +26,12 @@ export function SkuQuantityInput({
   const [inputvalue, setInputValue] = useState(value);
 
   const { currentBrand } = useSelector((state: RootState) => state.brand);
+  // console.log("row---->",row)
   
+  // console.log("maxStock---->",maxStock)
+  // console.log("value---->",value)
+  // console.log("inputvalue---->",inputvalue)
+
   // Sync from prop if Redux updates
   useEffect(() => {
     setInputValue(value);

@@ -14,7 +14,7 @@ import { RootState } from "@/store";
 import { ProductImage } from "@/components/admin/ProductImage";
 import { ITravisMethewSheetItem } from "@/store/slices/sheet/travismethew/TravisMethewSheetType";
 import { usePathname } from "next/navigation";
-import { useMemo, useState, useCallback, startTransition, useEffect } from "react";
+import { useMemo, useState, useCallback, startTransition, useEffect, memo } from "react";
 import { PremiumSelect } from "@/components/ui/PremiumSelect";
 import {
   ColumnFilterData,
@@ -25,8 +25,6 @@ import {
 import { convertOffsetToTimes } from "framer-motion";
 
 type SheetColumnKey = keyof ITravisMethewSheetItem | "index";
-
-
 
 function formatSheetValue(key: SheetColumnKey, value: unknown) {
   if (key === "index") {
@@ -94,7 +92,7 @@ function getBaseSku(sku: unknown): string {
   return s;
 }
 
-export default function TravisMEthewSheetTable() {
+const TravisMEthewSheetTable = memo(function TravisMEthewSheetTable() {
   const { allTravisSheet, isLoading, error } = useSelector((state: RootState) => state.travisSheet);
   const { allAttribute } = useSelector((state: RootState) => state.attribute);
 
@@ -603,5 +601,6 @@ const hasActiveFilters = useMemo(() => {
       )}
     </section>
   );
-}
+});
 
+export default TravisMEthewSheetTable;

@@ -63,7 +63,7 @@ export const CartStepper: React.FC<CartStepperProps> = ({
                   }}
                   className={clsx(
                     "flex h-[40px] w-[40px] items-center justify-center rounded-full transition-all duration-500",
-                    (isCompleted || isActive) ? 'text-background shadow-xl' : 'text-foreground/62 bg-white/[0.08]'
+                    (isCompleted || isActive) ? 'text-black shadow-xl' : 'text-foreground/62 bg-red'
                   )}
                 >
                   {isCompleted ? (
@@ -77,14 +77,14 @@ export const CartStepper: React.FC<CartStepperProps> = ({
                 <div className="absolute -bottom-10 flex flex-col items-center whitespace-nowrap">
                   <span className={clsx(
                     "text-[10px] font-black uppercase tracking-[0.2em] transition-colors duration-500",
-                    isActive ? 'text-white' : 'text-foreground/20'
+                    isActive ? 'text' : 'text-foreground/20'
                   )}>
                     {step.label}
                   </span>
                   {isActive && (
                     <motion.div 
                       layoutId="pulsar"
-                      className="mt-2 h-1 w-1 rounded-full bg-white"
+                      className="mt-2 h-1 w-1 rounded-full"
                       animate={{ scale: [1, 2, 1], opacity: [0.5, 1, 0.5] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     />

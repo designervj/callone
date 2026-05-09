@@ -15,11 +15,6 @@ import { HardgoodCatalogWorkspace } from "@/components/products/callaway-hardgoo
 import { SoftgoodCatalogWorkspace } from "@/components/products/callaway-softgoods/SoftgoodCatalogWorkspace";
 import { TravisCatalogWorkspace } from "@/components/products/travismethew/TravisCatalogWorkspace";
 
-import GetAllSoftGood from "@/components/products/callaway-softgoods/GetAllSoftGood";
-import GetAllHardGood from "@/components/products/HardGood/GetAllHardGood";
-import GetAllOgio from "@/components/products/Ogio/GetAllOgio";
-import GetAllTravisMethew from "@/components/products/travismethew/GetAllTravisMethew";
-
 export default function ProductSectionPage({
   params,
 }: {
