@@ -243,7 +243,7 @@ export function AiAdminShell({ children, user }: AiAdminShellProps) {
                 </button>
                 <button
                   type="button"
-                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  onClick={() => signOut({ callbackUrl: "/login?loggedOut=true" })}
                   className="flex w-full items-center gap-3 border-t border-border px-4 py-3 text-sm font-semibold text-foreground transition hover:bg-surface-muted"
                 >
                   <LogOut size={16} />

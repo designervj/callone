@@ -383,10 +383,9 @@ const hasActiveFilters = useMemo(() => {
             Showing rows from the <span className="font-medium text-foreground">sheet_travismethew</span> collection.
           </p>
 
-
-
         </div>
-        {columnFilters && Object.keys(columnFilters).length > 0 && <div className="flex items-center gap-3">
+        {columnFilters &&
+         Object.keys(columnFilters).length > 0 && <div className="flex items-center gap-3">
           {Object.keys(columnFilters).map((key) => {
             const filter = columnFilters[key];
             return (

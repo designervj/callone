@@ -24,6 +24,7 @@ export function LoginForm({
   const [mounted, setMounted] = useState(false);
   const [autoLoginAttempted, setAutoLoginAttempted] = useState(false);
   const searchParams = useSearchParams();
+  const loggedOut = searchParams.get("loggedOut") === "true";
   const callbackUrl = searchParams.get("callbackUrl") || "/admin";
   const postLoginUrl = callbackUrl.startsWith("/launch")
     ? callbackUrl
@@ -34,7 +35,7 @@ export function LoginForm({
   }, []);
 
   useEffect(() => {
-    if (!mounted || !autoLoginEnabled || autoLoginAttempted) {
+    if (!mounted || !autoLoginEnabled || autoLoginAttempted || loggedOut) {
       return;
     }
 
@@ -53,7 +54,7 @@ export function LoginForm({
 
       window.location.href = postLoginUrl;
     });
-  }, [autoLoginAttempted, autoLoginEnabled, email, mounted, postLoginUrl, startTransition]);
+  }, [autoLoginAttempted, autoLoginEnabled, email, mounted, postLoginUrl, startTransition, loggedOut]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -62,7 +63,7 @@ export function LoginForm({
     startTransition(async () => {
       const response = await signIn("credentials", {
         email,
-        password: autoLoginEnabled ? "__dev_auto_login__" : password,
+        password: password,
         redirect: false,
       });
       
@@ -154,7 +155,7 @@ export function LoginForm({
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(event) => setPassword(event.target.value)}
-              disabled={autoLoginEnabled}
+              // disabled={autoLoginEnabled}
               className="w-full rounded-2xl border border-border bg-[color:var(--control-bg)] py-3 pl-10 pr-12 text-sm font-medium tracking-wide text-foreground placeholder:text-foreground/18 transition-all outline-none focus:border-[color:var(--primary)] focus:bg-[color:var(--control-bg-hover)]"
               placeholder={autoLoginEnabled ? "Password bypassed in development" : defaultPasswordHint}
               required={!autoLoginEnabled}

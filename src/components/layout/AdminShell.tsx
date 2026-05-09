@@ -360,7 +360,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                       </div>
                       <div className="mt-2 border-t border-border pt-2">
                         <button
-                          onClick={() => signOut({callbackUrl: "/login"})}
+                          onClick={() => signOut({callbackUrl: "/login?loggedOut=true"})}
                           className="flex w-full items-center gap-3 rounded-xl px-3 py-2 text-sm font-bold text-foreground transition hover:bg-surface-muted"
                         >
                           <LogOut size={16} />
