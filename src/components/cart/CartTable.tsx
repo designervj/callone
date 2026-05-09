@@ -342,7 +342,7 @@ export const CartTable: React.FC<CartTableProps> = ({
           <div className="h-[1px] bg-white/10" />
           <div className="flex items-center justify-between">
             <span className="text-sm font-bold text-foreground">Total Net Bill:</span>
-            <span className="text-xl font-black text-white">₹{finalTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            <span className="text-xl font-black text-black">₹{finalTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
           </div>
         </div>
       </div>
