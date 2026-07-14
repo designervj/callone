@@ -7,13 +7,15 @@ export type DataTableHeader = string | {
 type DataTableProps = {
   headers: DataTableHeader[];
   children: React.ReactNode;
+  containerClassName?: string;
+  isCompact?: boolean;
 };
 
-export function DataTable({headers, children}: DataTableProps) {
+export function DataTable({headers, children, containerClassName, isCompact}: DataTableProps) {
   return (
-    <div className="overflow-clip rounded-2xl border border-border/15 bg-surface shadow-sm">
-      <div className="w-full max-h-[calc(100vh-250px)] overflow-auto">
-        <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
+    <div className="overflow-clip rounded-2xl border border-border/15 bg-surface shadow-sm flex flex-col min-h-0 flex-1">
+      <div className={containerClassName || "w-full max-h-[calc(100vh-250px)] overflow-auto"}>
+        <table className={`min-w-full border-separate border-spacing-0 text-left text-sm ${isCompact ? "is-compact" : ""}`}>
           <thead>
             <tr>
               {headers.map((item, index) => {
@@ -23,12 +25,12 @@ export function DataTable({headers, children}: DataTableProps) {
                 return (
                   <th
                     key={`${label}-${index}`}
-                    className="sticky top-0 z-20 whitespace-nowrap border-b border-border bg-surface-muted/95 px-5 py-4 text-[10px] font-bold uppercase tracking-wider text-muted backdrop-blur-sm"
+                    className="sticky top-0 z-20 whitespace-nowrap border-b border-zinc-800 bg-zinc-900 px-5 py-4 text-xs font-bold uppercase tracking-wider text-zinc-100"
                   >
                     <div className="flex flex-col gap-2">
-                      <span>{label}</span>
+                      {!renderFilter && <span>{label}</span>}
                       {renderFilter && (
-                        <div className="mt-1 flex items-center gap-1.5 font-normal normal-case tracking-normal">
+                        <div className="flex items-center gap-1.5 font-normal normal-case tracking-normal">
                           {renderFilter(label)}
                         </div>
                       )}

@@ -53,15 +53,15 @@ export function ProductImage({ brandName, rowData, alt = "Product Image", classN
 
   if (!displaySrc || error) {
     return (
-      <div className={`flex items-center justify-center rounded-2xl bg-card text-foreground/20 ${className}`}>
-        <Package2 className="h-5 w-5 text-foreground" />
+      <div className={`flex items-center justify-center rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 text-zinc-400 ${className}`}>
+        <Package2 className="h-5 w-5" />
       </div>
     );
   }
 
   return (
     <div
-      className={`group relative cursor-pointer overflow-hidden rounded-2xl bg-card shadow-sm ring-1 ring-border/5 transition-all hover:ring-2 hover:ring-primary/50 ${className}`}
+      className={`group relative cursor-pointer overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 shadow-sm transition-all hover:border-zinc-400 dark:hover:border-zinc-600 ${className}`}
       onClick={(e) => {
         if (onClick) {
           e.stopPropagation();
@@ -69,15 +69,13 @@ export function ProductImage({ brandName, rowData, alt = "Product Image", classN
         }
       }}
     >
-      <Image
+      <img
         src={displaySrc}
         alt={alt}
-        fill
-        className="object-cover transition-transform duration-500 group-hover:scale-110"
+        className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
         onError={() => setError(true)}
-        sizes="(max-width: 768px) 44px, 44px"
       />
-      <div className="absolute inset-0 bg-background/0 transition-colors group-hover:bg-background/10" />
+      <div className="absolute inset-0 bg-black/0 transition-colors group-hover:bg-black/5" />
     </div>
   );
 }

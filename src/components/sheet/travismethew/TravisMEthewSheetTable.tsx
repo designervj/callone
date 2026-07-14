@@ -6,7 +6,11 @@ import {
   ChevronLeft, 
   ChevronRight, 
   ChevronsLeft, 
-  ChevronsRight 
+  ChevronsRight,
+  Image as ImageIcon,
+  ImageOff,
+  Maximize,
+  Minimize
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { DataTable } from "@/components/admin/DataTable";
@@ -98,6 +102,18 @@ const TravisMEthewSheetTable = memo(function TravisMEthewSheetTable() {
 
   const { travismathew } = useSelector((state: RootState) => state.travisMathew)
   const [columnFilters, setColumnFilters] = useState<Record<string, ColumnFilterData>>({});
+  const [showImage, setShowImage] = useState(true);
+  const [isFullScreen, setIsFullScreen] = useState(false);
+
+  // Hide header + hero when fullscreen table is active
+  useEffect(() => {
+    if (isFullScreen) {
+      document.body.classList.add('sheet-fullscreen');
+    } else {
+      document.body.classList.remove('sheet-fullscreen');
+    }
+    return () => document.body.classList.remove('sheet-fullscreen');
+  }, [isFullScreen]);
   const [selectedKeys, setSelectedKeys] = useState<Set<string>>(new Set());
   const [sorting, setSorting] = useState<{
     key: string | null;
@@ -320,7 +336,7 @@ const hasActiveFilters = useMemo(() => {
         key: "selection" as any
       },
       { label: "#", key: "index" as SheetColumnKey },
-      { label: "Image", key: "image" as any },
+      ...(showImage ? [{ label: "Image", key: "image" as any }] : []),
       ...rawCols
     ];
 
@@ -344,43 +360,43 @@ const hasActiveFilters = useMemo(() => {
         ) : (
           col.label
         ),
-        renderFilter: (label: React.ReactNode) => {
-          if (col.key === "index" || col.key === "selection" || col.key === "image") return null;
-
-          const uniqueValues = uniqueValuesByColumn[col.key as string] || [];
-
-          return (
-            <div className="flex items-center gap-1.5 pt-1">
-              <SelectionFilter
-                columnKey={col.key}
-                uniqueValues={uniqueValues}
-                currentFilter={columnFilters[col.key] || { selection: '(All)', operator: 'contains', searchValue: '' }}
-                onFilterChange={handleFilterChange}
-              />
-              <FloatingFilterPopup
-                columnKey={col.key}
-                currentFilter={columnFilters[col.key] || { selection: '(All)', operator: 'contains', searchValue: '' }}
-                onFilterChange={handleFilterChange}
-              />
-            </div>
-          );
-        }
-      })
-    }
-    );
-  }, [currentAttribute, allTravisSheet, columnFilters, handleFilterChange, selectedKeys, sortedRows, handleToggleAll]);
+        ...(isSortable ? {
+          renderFilter: (label: React.ReactNode) => {
+            const uniqueValues = uniqueValuesByColumn[col.key as string] || [];
+            return (
+              <div className="flex items-center gap-1.5 pt-1">
+                <SelectionFilter
+                  columnKey={col.key}
+                  uniqueValues={uniqueValues}
+                  currentFilter={columnFilters[col.key] || { selection: [], operator: 'contains', searchValue: '' }}
+                  onFilterChange={handleFilterChange}
+                  columnLabel={String(col.label)}
+                />
+                <FloatingFilterPopup
+                  columnKey={col.key}
+                  currentFilter={columnFilters[col.key] || { selection: [], operator: 'contains', searchValue: '' }}
+                  onFilterChange={handleFilterChange}
+                />
+              </div>
+            );
+          }
+        } : {})
+      });
+    });
+  }, [currentAttribute, allTravisSheet, columnFilters, handleFilterChange, selectedKeys, sortedRows, handleToggleAll, showImage]);
 
 
 
   return (
-    <section className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3 rounded-[24px] border border-border/60 bg-[color:var(--surface)] px-4 py-3">
+    <section className={isFullScreen ? 'fixed inset-0 z-[2000] bg-white p-2.5 flex flex-col h-screen overflow-hidden gap-1.5' : 'space-y-3'}>
+      <div className={`flex flex-wrap items-center justify-between gap-3 border border-border/60 bg-[color:var(--surface)] px-4 ${isFullScreen ? 'py-1 rounded-xl' : 'py-3 rounded-[24px]'}`}>
         <div>
           <h2 className="text-base font-semibold text-foreground">Travis Mathew Sheet</h2>
-          <p className="mt-1 text-sm text-foreground/56">
-            Showing rows from the <span className="font-medium text-foreground">sheet_travismethew</span> collection.
-          </p>
-
+          {!isFullScreen && (
+            <p className="mt-1 text-sm text-foreground/56">
+              Showing rows from the <span className="font-medium text-foreground">sheet_travismethew</span> collection.
+            </p>
+          )}
         </div>
         {columnFilters &&
          Object.keys(columnFilters).length > 0 && <div className="flex items-center gap-3">
@@ -394,7 +410,7 @@ const hasActiveFilters = useMemo(() => {
             );
           })}
         </div>}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           {hasActiveFilters && (
             <button
               onClick={handleClearFilters}
@@ -416,15 +432,43 @@ const hasActiveFilters = useMemo(() => {
               </span>
             )}
           </div>
+
+          <button
+            onClick={() => setShowImage(!showImage)}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-all duration-200 ${
+              showImage
+                ? "border-blue-500/30 bg-blue-500 text-white hover:bg-blue-600"
+                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+            }`}
+          >
+            {showImage ? <ImageIcon className="h-3 w-3" /> : <ImageOff className="h-3 w-3" />}
+            {showImage ? "Hide Img" : "Show Img"}
+          </button>
+          <button
+            onClick={() => setIsFullScreen(!isFullScreen)}
+            className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider transition-all duration-200 ${
+              isFullScreen
+                ? "border-blue-500/30 bg-blue-500 text-white hover:bg-blue-600"
+                : "border-gray-300 bg-white text-gray-700 hover:bg-gray-50 shadow-sm"
+            }`}
+          >
+            {isFullScreen ? <Minimize className="h-3 w-3" /> : <Maximize className="h-3 w-3" />}
+            {isFullScreen ? "Exit" : "Full"}
+          </button>
         </div>
       </div>
+
       {error ? (
         <div className="rounded-[20px] border border-red-500/20 bg-red-500/10 px-4 py-3 text-sm text-red-200">
           {error}
         </div>
       ) : null}
 
-      <DataTable headers={columns}>
+      <DataTable 
+        headers={columns} 
+        containerClassName={isFullScreen ? "w-full flex-1 overflow-auto" : "w-full max-h-[calc(100vh-250px)] overflow-auto"}
+        isCompact={isFullScreen}
+      >
         {isLoading && paginatedRows.length === 0 ? (
           <tr>
             <td colSpan={columns.length} className="px-6 py-14 text-center">
@@ -530,11 +574,15 @@ const hasActiveFilters = useMemo(() => {
 
       {/* Pagination Controls */}
       {sortedRows.length > 0 && (
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-[24px] border border-border/60 bg-[color:var(--surface)] px-6 py-4 shadow-sm">
+        <div className={`flex flex-wrap items-center justify-between gap-4 border border-border/60 bg-[color:var(--surface)] shadow-sm ${
+          isFullScreen 
+            ? 'rounded-[12px] px-4 py-1 gap-2 text-[11px]' 
+            : 'rounded-[24px] px-6 py-4'
+        }`}>
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-medium text-foreground/56">Rows per page:</span>
-              <div className="w-24">
+              <span className={`font-medium text-foreground/56 ${isFullScreen ? 'text-[11px]' : 'text-xs'}`}>Rows per page:</span>
+              <div className={isFullScreen ? "w-20" : "w-24"}>
                 <PremiumSelect
                   value={String(pageSize)}
                   onChange={(val) => {
@@ -547,35 +595,35 @@ const hasActiveFilters = useMemo(() => {
                     { value: "100", label: "100" },
                     { value: "200", label: "200" },
                   ]}
-                  triggerClassName="h-9 px-3"
+                  triggerClassName={isFullScreen ? "h-7 px-2 text-[11px]" : "h-9 px-3"}
                 />
               </div>
             </div>
-            <span className="text-xs font-medium text-foreground/56">
+            <span className={`font-medium text-foreground/56 ${isFullScreen ? 'text-[11px]' : 'text-xs'}`}>
               Showing {Math.min((currentPage - 1) * pageSize + 1, sortedRows.length)} to {Math.min(currentPage * pageSize, sortedRows.length)} of {sortedRows.length} rows
             </span>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <button
               onClick={() => setCurrentPage(1)}
               disabled={currentPage === 1}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30"
+              className={`flex items-center justify-center rounded-lg border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30 ${isFullScreen ? 'h-7 w-7' : 'h-9 w-9'}`}
               title="First Page"
             >
-              <ChevronsLeft className="h-4 w-4" />
+              <ChevronsLeft className={isFullScreen ? "h-3.5 w-3.5" : "h-4 w-4"} />
             </button>
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30"
+              className={`flex items-center justify-center rounded-lg border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30 ${isFullScreen ? 'h-7 w-7' : 'h-9 w-9'}`}
               title="Previous Page"
             >
-              <ChevronLeft className="h-4 w-4" />
+              <ChevronLeft className={isFullScreen ? "h-3.5 w-3.5" : "h-4 w-4"} />
             </button>
             
-            <div className="flex items-center px-4">
-              <span className="text-xs font-bold text-foreground">
+            <div className={`flex items-center ${isFullScreen ? 'px-2' : 'px-4'}`}>
+              <span className={`font-bold text-foreground ${isFullScreen ? 'text-[11px]' : 'text-xs'}`}>
                 Page {currentPage} of {totalPages || 1}
               </span>
             </div>
@@ -583,18 +631,18 @@ const hasActiveFilters = useMemo(() => {
             <button
               onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30"
+              className={`flex items-center justify-center rounded-lg border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30 ${isFullScreen ? 'h-7 w-7' : 'h-9 w-9'}`}
               title="Next Page"
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className={isFullScreen ? "h-3.5 w-3.5" : "h-4 w-4"} />
             </button>
             <button
               onClick={() => setCurrentPage(totalPages)}
               disabled={currentPage === totalPages || totalPages === 0}
-              className="flex h-9 w-9 items-center justify-center rounded-xl border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30"
+              className={`flex items-center justify-center rounded-lg border border-border/40 bg-card/5 text-foreground/60 transition-colors hover:bg-card/10 disabled:opacity-30 ${isFullScreen ? 'h-7 w-7' : 'h-9 w-9'}`}
               title="Last Page"
             >
-              <ChevronsRight className="h-4 w-4" />
+              <ChevronsRight className={isFullScreen ? "h-3.5 w-3.5" : "h-4 w-4"} />
             </button>
           </div>
         </div>

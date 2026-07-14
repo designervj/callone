@@ -8,6 +8,7 @@ import { Minus, Package2, Pencil, Plus, Trash2, Box, ShieldCheck } from "lucide-
 import { ProductImage } from "../../ProductImage";
 import clsx from "clsx";
 import { motion, AnimatePresence } from "framer-motion";
+import { SelectionFilter, FloatingFilterPopup, ColumnFilterData } from "../../../sheet/travismethew/ColumnFilters";
 
 import { CartItem } from "@/store/slices/cart/cartSlice";
 import { ExtensionTable } from "./ExtensionTable";
@@ -26,8 +27,14 @@ interface SkuTableProps {
   skuQuantities: Record<string, CartItem>;
   setSkuQuantities: React.Dispatch<React.SetStateAction<Record<string, CartItem>>>;
   onOpenPreview: (images: string[], index: number) => void;
-    appliedFilters: any[];
+  appliedFilters: any[];
   clearAllFilters: () => void;
+  showImage?: boolean;
+  isCompact?: boolean;
+  attributeFilters?: Record<string, string[]>;
+  setAttributeFilters?: React.Dispatch<React.SetStateAction<Record<string, string[]>>>;
+  columnTextFilters?: Record<string, { operator: string; searchValue: string }>;
+  setColumnTextFilters?: React.Dispatch<React.SetStateAction<Record<string, { operator: string; searchValue: string }>>>;
 }
 
 export function SkuTable({
@@ -43,7 +50,13 @@ export function SkuTable({
   setSkuQuantities,
   onOpenPreview,
   appliedFilters,
-  clearAllFilters
+  clearAllFilters,
+  showImage = true,
+  isCompact = false,
+  attributeFilters,
+  setAttributeFilters,
+  columnTextFilters,
+  setColumnTextFilters,
 }: SkuTableProps) {
   const { currentAttribute } = useSelector((state: RootState) => state.attribute);
   const { travismathew } = useSelector((state: RootState) => state.travisMathew);
@@ -101,6 +114,59 @@ export function SkuTable({
     }
     setExpandedRows(newExpandedRows);
   };
+
+  const renderHeaderFilter = (key: string, label: string, uniqueValues: string[]) => {
+    const currentSel = attributeFilters?.[key] || [];
+    const textFilter = columnTextFilters?.[key] || { operator: "contains", searchValue: "" };
+    
+    return (
+      <div className="flex items-center gap-1.5 pt-1">
+        <SelectionFilter
+          columnKey={key}
+          uniqueValues={uniqueValues}
+          currentFilter={{
+            selection: currentSel,
+            operator: textFilter.operator as any,
+            searchValue: textFilter.searchValue
+          }}
+          onFilterChange={(columnKey, data) => {
+            if (data.selection !== undefined) {
+              handleFilterChange(columnKey, data);
+            }
+            if (data.operator !== undefined || data.searchValue !== undefined) {
+              setColumnTextFilters?.(prev => ({
+                ...prev,
+                [columnKey]: {
+                  operator: data.operator ?? prev[columnKey]?.operator ?? "contains",
+                  searchValue: data.searchValue ?? prev[columnKey]?.searchValue ?? ""
+                }
+              }));
+            }
+          }}
+          columnLabel={label}
+        />
+        <FloatingFilterPopup
+          columnKey={key}
+          currentFilter={{
+            selection: currentSel,
+            operator: textFilter.operator as any,
+            searchValue: textFilter.searchValue
+          }}
+          onFilterChange={(columnKey, data) => {
+            if (data.operator !== undefined || data.searchValue !== undefined) {
+              setColumnTextFilters?.(prev => ({
+                ...prev,
+                [columnKey]: {
+                  operator: data.operator ?? prev[columnKey]?.operator ?? "contains",
+                  searchValue: data.searchValue ?? prev[columnKey]?.searchValue ?? ""
+                }
+              }));
+            }
+          }}
+        />
+      </div>
+    );
+  };
   const allData =
     currentAttribute?.name === "Travis Mathew"
       ? travismathew
@@ -111,12 +177,105 @@ export function SkuTable({
           : currentAttribute?.name === "Callaway Softgoods"
             ? softgoods
             : [];
+  const uniqueValuesByAttribute = useMemo(() => {
+    const result: Record<string, string[]> = {};
+    if (!allData || !allData.length) return result;
 
+    displayAttributes.forEach((attr) => {
+      const key = attr.key || "";
+      const set = new Set<string>();
+
+      allData.forEach((row: any) => {
+        const attributeGroup = row.attributeGroups?.find((g: any) => g.key === key);
+        let val = row[key] !== undefined && row[key] !== null 
+          ? row[key] 
+          : (attributeGroup ? attributeGroup.values?.join(", ") : null);
+
+        if (val !== undefined && val !== null) {
+          val.toString().split(',').forEach((v: string) => {
+            const trimmed = v.trim();
+            if (trimmed) set.add(trimmed);
+          });
+        }
+      });
+
+      result[key] = Array.from(set).sort();
+    });
+
+    return result;
+  }, [allData, displayAttributes]);
+
+  const uniqueValuesForTravis = useMemo(() => {
+    const result: Record<string, string[]> = {
+      sku: [],
+      description: [],
+      category: [],
+      season: [],
+      style: [],
+      color: [],
+      size: []
+    };
+    if (!allData || !allData.length) return result;
+
+    const skuSet = new Set<string>();
+    const descSet = new Set<string>();
+    const catSet = new Set<string>();
+    const seasonSet = new Set<string>();
+    const styleSet = new Set<string>();
+    const colorSet = new Set<string>();
+    const sizeSet = new Set<string>();
+
+    allData.forEach((row: any) => {
+      if (row.sku) skuSet.add(row.sku);
+      if (row.name) descSet.add(row.name);
+      if (row.category) catSet.add(row.category);
+      if (row.season) seasonSet.add(row.season);
+      if (row.style_code || row.baseSku) styleSet.add(row.style_code || row.baseSku);
+      if (row.color) colorSet.add(row.color);
+      if (row.size) sizeSet.add(row.size);
+    });
+
+    result.sku = Array.from(skuSet).sort();
+    result.description = Array.from(descSet).sort();
+    result.category = Array.from(catSet).sort();
+    result.season = Array.from(seasonSet).sort();
+    result.style = Array.from(styleSet).sort();
+    result.color = Array.from(colorSet).sort();
+    result.size = Array.from(sizeSet).sort();
+
+    return result;
+  }, [allData]);
+
+  const handleFilterChange = (key: string, data: Partial<ColumnFilterData>) => {
+    if (data.selection !== undefined && setAttributeFilters) {
+      setAttributeFilters((current) => {
+        const selections = current[key] || [];
+        const selectionItem = data.selection as any;
+
+        let newSelections: string[];
+        if (selectionItem === null || selectionItem === undefined || (Array.isArray(selectionItem) && selectionItem.length === 0)) {
+          newSelections = [];
+        } else {
+          newSelections = selections.includes(selectionItem)
+            ? selections.filter((item) => item !== selectionItem)
+            : [...selections, selectionItem];
+        }
+
+        const next = { ...current };
+        if (newSelections.length > 0) {
+          next[key] = newSelections;
+        } else {
+          delete next[key];
+        }
+        return next;
+      });
+    }
+  };
   return (
-    <table className="min-w-full border-separate border-spacing-0 text-left">
+    <table className={clsx("min-w-full border-separate border-spacing-0 text-left", isCompact && "is-compact")}>
       <thead>
         <tr className=" text-white">
-          <StickyHeading className="w-14 px-6 py-5">
+          <StickyHeading className="w-14 px-4 py-3">
             <input
               type="checkbox"
               aria-label="Select visible products"
@@ -138,24 +297,69 @@ export function SkuTable({
               className="h-4 w-4 rounded border-white/20 bg-transparent accent-primary"
             />
           </StickyHeading>
-          <StickyHeading className="w-14 px-6 py-5">{" "}</StickyHeading>
-          {displayAttributes.length > 0 ? (
-            displayAttributes.map((attr) => (
-              <StickyHeading key={attr.key} className="min-w-[150px] px-6 py-5">
-                {attr.label}
+          <StickyHeading className="w-14 px-4 py-3">{" "}</StickyHeading>
+          {showImage && (
+            <StickyHeading className="min-w-[80px] px-4 py-3">IMAGE</StickyHeading>
+          )}
+          {currentAttribute?.name === "Travis Mathew" ? (
+            <>
+              {/* SKU Header */}
+              <StickyHeading className="min-w-[160px] px-4 py-3">
+                {renderHeaderFilter("sku", "SKU", uniqueValuesForTravis.sku)}
               </StickyHeading>
-            ))
+              {/* Description Header */}
+              <StickyHeading className="min-w-[210px] px-4 py-3">
+                {renderHeaderFilter("description", "Description", uniqueValuesForTravis.description)}
+              </StickyHeading>
+              {/* Category Header */}
+              <StickyHeading className="min-w-[160px] px-4 py-3">
+                {renderHeaderFilter("category", "Category", uniqueValuesForTravis.category)}
+              </StickyHeading>
+              {/* Season Header */}
+              <StickyHeading className="min-w-[110px] px-4 py-3">
+                {renderHeaderFilter("Season", "SSN", uniqueValuesForTravis.season)}
+              </StickyHeading>
+              {/* Style Header */}
+              <StickyHeading className="min-w-[120px] px-4 py-3">
+                {renderHeaderFilter("Style Code", "Style", uniqueValuesForTravis.style)}
+              </StickyHeading>
+              {/* Color Header */}
+              <StickyHeading className="min-w-[140px] px-4 py-3">
+                {renderHeaderFilter("Color", "Color", uniqueValuesForTravis.color)}
+              </StickyHeading>
+              {/* Size Header */}
+              <StickyHeading className="min-w-[100px] px-4 py-3">
+                {renderHeaderFilter("Size", "Size", uniqueValuesForTravis.size)}
+              </StickyHeading>
+              {/* Quantities & Pricing Headers */}
+              <StickyHeading className="min-w-[100px] px-4 py-3">Qty88</StickyHeading>
+              <StickyHeading className="min-w-[100px] px-4 py-3">Qty90</StickyHeading>
+              <StickyHeading className="min-w-[80px] px-4 py-3">Qty</StickyHeading>
+              <StickyHeading className="min-w-[100px] px-4 py-3">MRP</StickyHeading>
+              <StickyHeading className="min-w-[110px] px-4 py-3 text-right">Amt.</StickyHeading>
+            </>
+          ) : displayAttributes.length > 0 ? (
+            displayAttributes.map((attr) => {
+              const key = attr.key || "";
+              const uniqueValues = uniqueValuesByAttribute[key] || [];
+              return (
+                <StickyHeading key={key} className="min-w-[160px] px-4 py-3">
+                  {renderHeaderFilter(key, String(attr.label), uniqueValues)}
+                </StickyHeading>
+              );
+            })
           ) : (
             <>
-              <StickyHeading className="min-w-[320px] px-6 py-5">Product SKU</StickyHeading>
-              <StickyHeading className="min-w-[150px] px-6 py-5">Brand</StickyHeading>
-              <StickyHeading className="min-w-[180px] px-6 py-5">Category</StickyHeading>
-              <StickyHeading className="min-w-[260px] px-6 py-5">Attributes</StickyHeading>
-              <StickyHeading className="min-w-[140px] px-6 py-5">Inventory</StickyHeading>
-              <StickyHeading className="min-w-[130px] px-6 py-5">Status</StickyHeading>
+              {showImage && <StickyHeading className="min-w-[80px] px-4 py-3">IMAGE</StickyHeading>}
+              <StickyHeading className="min-w-[320px] px-4 py-3">Product SKU</StickyHeading>
+              <StickyHeading className="min-w-[150px] px-4 py-3">Brand</StickyHeading>
+              <StickyHeading className="min-w-[180px] px-4 py-3">Category</StickyHeading>
+              <StickyHeading className="min-w-[260px] px-4 py-3">Attributes</StickyHeading>
+              <StickyHeading className="min-w-[140px] px-4 py-3">Inventory</StickyHeading>
+              <StickyHeading className="min-w-[130px] px-4 py-3">Status</StickyHeading>
             </>
           )}
-          <StickyHeading className="min-w-[120px] px-6 py-5 text-right">Actions</StickyHeading>
+          <StickyHeading className="min-w-[120px] px-4 py-3 text-right">Actions</StickyHeading>
         </tr>
       </thead>
       <tbody className="divide-y divide-border/20">
@@ -167,6 +371,15 @@ export function SkuTable({
             const displayStock = Number(row.variantStock || row.availableStock || 0);
             const displayFamily = row.family || row.line || null;
 
+            const varSkus = row.variantSkus && row.variantSkus.length > 0
+              ? row.variantSkus
+              : (row.variation_sku
+                ? (typeof row.variation_sku === 'string'
+                  ? row.variation_sku.split(',').map((s: string) => s.trim())
+                  : row.variation_sku)
+                : []);
+            const hasVariants = varSkus.length > 0;
+
             return (
               <React.Fragment key={rowId}>
                 <tr className={clsx(
@@ -174,97 +387,162 @@ export function SkuTable({
                   isSelected ? "bg-white/[0.04]" : "",
                   expandedRows.has(rowId) ? "bg-white/[0.04]" : ""
                 )}>
-                  <td className="px-6 py-5 align-top">
-                    <input
-                      type="checkbox"
-                      aria-label={`Select item`}
-                      checked={isSelected}
-                      onChange={() =>
-                        setSelectedIds((current) =>
-                          current.includes(rowId)
-                            ? current.filter((id) => id !== rowId)
-                            : [...current, rowId]
-                        )
-                      }
-                      className="mt-1 h-4 w-4 rounded border-border/40 accent-white"
-                    />
+                  <td className="px-4 py-3 align-middle border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                    <div className="flex justify-center">
+                      <input
+                        type="checkbox"
+                        aria-label={`Select item`}
+                        checked={isSelected}
+                        onChange={() =>
+                          setSelectedIds((current) =>
+                            current.includes(rowId)
+                              ? current.filter((id) => id !== rowId)
+                              : [...current, rowId]
+                          )
+                        }
+                        className="mt-1 h-4 w-4 rounded border-border/40 accent-white"
+                      />
+                    </div>
                   </td>
-                  <td className="px-6 py-5 align-top">
-                    {row.variation_sku && row.variation_sku.length > 0 && (
-                      <button
-                        onClick={() => toggleRow(rowId)}
-                        className={clsx(
-                          "flex h-7 w-7 items-center justify-center rounded-lg border transition-all duration-500 active:scale-90",
-                          expandedRows.has(rowId) 
-                            ? "border-white bg-white text-background shadow-[0_0_15px_rgba(255,255,255,0.22)]" 
-                            : "border-border/40 bg-foreground/[0.03] text-foreground/62 hover:border-foreground/20 hover:text-foreground"
-                        )}
-                      >
-                        {expandedRows.has(rowId) ? (
-                          <Minus size={14} strokeWidth={3} />
-                        ) : (
-                          <Plus size={14} strokeWidth={3} />
-                        )}
-                      </button>
+                  <td className="px-4 py-3 align-middle border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                    {hasVariants && (
+                      <div className="flex justify-center">
+                        <button
+                          onClick={() => toggleRow(rowId)}
+                          className={clsx(
+                            "flex h-7 w-7 items-center justify-center rounded-lg border transition-all duration-500 active:scale-90",
+                            expandedRows.has(rowId) 
+                              ? "border-zinc-800 bg-zinc-900 text-zinc-100 shadow-sm" 
+                              : "border-border/40 bg-foreground/[0.03] text-foreground/62 hover:border-foreground/20 hover:text-foreground"
+                          )}
+                        >
+                          {expandedRows.has(rowId) ? (
+                            <Minus size={14} strokeWidth={3} />
+                          ) : (
+                            <Plus size={14} strokeWidth={3} />
+                          )}
+                        </button>
+                      </div>
                     )}
                   </td>
-                  {displayAttributes.length > 0 ? (
+                  {showImage && (
+                    <td className="px-4 py-3 align-middle border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                      <div className="flex justify-center">
+                        <ProductImage
+                          brandName={currentAttribute?.name??""}
+                          rowData={row}
+                          alt={row.name}
+                          className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-border/20 transition-transform hover:scale-105 cursor-pointer"
+                          onClick={() => {
+                            const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+                            const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
+                            const skuValue = row.sku || row.baseSku;
+
+                            const resolveUrl = (url: string) => {
+                              if (!url) return '';
+                              if (url.startsWith('http') || url.startsWith('/')) return url;
+
+                              if (currentAttribute?.name === "Travis Mathew") {
+                                const fam = skuValue?.replace(/_[^_]*$/, '') || '';
+                                return `${s3_url}/${fam}/${url}`;
+                              } else if (currentAttribute?.name === "Ogio") {
+                                return `${s3_url_ogio}/${skuValue}/${url}`;
+                              }
+                              return url.startsWith('/') ? url : `/${url}`;
+                            };
+
+                            const primary = resolveUrl(row.primary_url || row.primary_image_url);
+                            const gallery = row.gallery_images_url
+                              ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim()))
+                              : [];
+
+                            onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+                          }}
+                        />
+                      </div>
+                    </td>
+                  )}
+                  {currentAttribute?.name === "Travis Mathew" ? (
+                    <>
+                      {/* SKU */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">{row.sku}</span>
+                      </td>
+                      {/* Description */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">{row.name || row.description}</span>
+                      </td>
+                      {/* Category */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">{row.category}</span>
+                      </td>
+                      {/* SSN */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">{row.season}</span>
+                      </td>
+                      {/* Style */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">{row.style_code || row.baseSku || "Standard"}</span>
+                      </td>
+                      {/* Color */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">{row.color}</span>
+                      </td>
+                      {/* Size */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground uppercase tracking-tight">
+                          {(() => {
+                            if (row.size && row.size.toUpperCase() !== "OS") return row.size;
+                            const parts = (row.sku || "").split("_");
+                            const extracted = parts.length >= 3 ? parts[parts.length - 1] : "";
+                            return extracted.toUpperCase() === "OS" ? "" : extracted;
+                          })()}
+                        </span>
+                      </td>
+                      {/* Qty88 input */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <div className="w-[74px]">
+                          <SkuQuantityInput
+                            row={row}
+                            qty="qty88"
+                            value={items?.find(item => item?.sku === row.sku)?.qty88 || 0}
+                            maxStock={Number(row.stock_88) || 0}
+                          />
+                        </div>
+                      </td>
+                      {/* Qty90 input */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <div className="w-[74px]">
+                          <SkuQuantityInput
+                            row={row}
+                            qty="qty90"
+                            value={items?.find(item => item?.sku === row.sku)?.qty90 || 0}
+                            maxStock={Number(row.stock_90) || 0}
+                          />
+                        </div>
+                      </td>
+                      {/* Qty total */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground">{((items?.find(item => item?.sku === row.sku)?.qty88 || 0) + (items?.find(item => item?.sku === row.sku)?.qty90 || 0))}</span>
+                      </td>
+                      {/* MRP */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground">₹{Number(row.amount || row.mrp || 0).toLocaleString()}</span>
+                      </td>
+                      {/* Amount */}
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                        <span className="text-sm font-semibold text-foreground">₹{(((items?.find(item => item?.sku === row.sku)?.qty88 || 0) + (items?.find(item => item?.sku === row.sku)?.qty90 || 0)) * Number(row.amount || row.mrp || 0)).toLocaleString()}</span>
+                      </td>
+                    </>
+                  ) : displayAttributes.length > 0 ? (
                     displayAttributes.map((attr) => {
                       const key = attr.key || "";
 
                       if (key === "sku") {
                         return (
-                          <td key={key} className="px-6 py-5 align-top">
-                            <div className="flex gap-4">
-                              <div className="relative shrink-0">
-                                <ProductImage
-                                  brandName={currentAttribute?.name??""}
-                                  rowData={row}
-                                  alt={row.name}
-                                  className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-border/20 transition-transform hover:scale-105 cursor-pointer"
-                                  onClick={() => {
-                                  const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
-                                  const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
-                                  const skuValue = row.sku || row.baseSku;
-
-                                  const resolveUrl = (url: string) => {
-                                    if (!url) return '';
-                                    if (url.startsWith('http') || url.startsWith('/')) return url;
-
-                                    if (currentAttribute?.name === "Travis Mathew") {
-                                      const fam = skuValue?.replace(/_[^_]*$/, '') || '';
-                                      return `${s3_url}/${fam}/${url}`;
-                                    } else if (currentAttribute?.name === "Ogio") {
-                                      return `${s3_url_ogio}/${skuValue}/${url}`;
-                                    }
-                                    return url.startsWith('/') ? url : `/${url}`;
-                                  };
-
-                                  const primary = resolveUrl(row.primary_url || row.primary_image_url);
-                                  const gallery = row.gallery_images_url
-                                    ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim()))
-                                    : [];
-
-                                  onOpenPreview([primary, ...gallery].filter(Boolean), 0);
-                                }}
-                                />
-                              </div>
-                              <div className="min-w-0">
-                                <div className="flex flex-wrap items-center gap-2">
-                                  <p className="truncate font-semibold text-foreground">{row.sku}</p>
-                                  <span className="rounded-full border border-white/8 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-foreground/72">
-                                    {row.sku}
-                                  </span>
-                                </div>
-                                <p className="mt-1 text-xs text-foreground/72">
-                                  {/* {row.name} · {row.subcategory || row.family || "Softgoods"} */}
-                                </p>
-                                {row.baseSku && (
-                                  <p className="mt-2 line-clamp-1 text-xs text-foreground/62 italic">
-                                    {row.baseSku} · {row.variantTitle || "Standard Variant"}
-                                  </p>
-                                )}
-                              </div>
+                          <td key={key} className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
+                            <div className="min-w-0">
+                              <p className="truncate font-semibold text-foreground">{row.sku}</p>
                             </div>
                           </td>
                         );
@@ -272,7 +550,7 @@ export function SkuTable({
 
                       if (key === "status") {
                         return (
-                          <td key={key} className="px-6 py-5 align-top">
+                          <td key={key} className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                             <span className={clsx(
                               "inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em]",
                               statusClasses(row.status)
@@ -285,7 +563,7 @@ export function SkuTable({
 
                       if (key === "availableStock" || key === "stock" || key === "variantStock") {
                         return (
-                          <td key={key} className="px-6 py-5 align-top">
+                          <td key={key} className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                             <div className="space-y-1">
                               <p className="font-semibold text-foreground">{displayStock}</p>
                               <p className="text-xs text-foreground/52">
@@ -306,7 +584,7 @@ export function SkuTable({
                         
                        
                         return (
-                          <td key={key} className="border-b border-border/60 px-4 py-4 align-top">
+                          <td key={key} className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                             <SkuQuantityInput
                               row={row}
                               qty={qtyKey}
@@ -327,7 +605,7 @@ export function SkuTable({
                       }
 
                       return (
-                        <td key={key} className="px-6 py-5 align-top">
+                        <td key={key} className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                           <div className="flex flex-wrap gap-2">
                             {val !== undefined && val !== null ? (
                                ["description", "category", "season", "style_code", "color", "style code"].includes(key.toLowerCase()) ? (
@@ -349,39 +627,41 @@ export function SkuTable({
                     })
                   ) : (
                     <>
-                      <td className="px-6 py-5 align-top">
+                      <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                         <div className="flex gap-4">
-                          <ProductImage
-                            brandName={currentAttribute?.name ?? ""}
-                            rowData={row}
-                            alt={row.name}
-                            className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-border/20 transition-transform hover:scale-105 cursor-pointer"
-                            onClick={() => {
-                              const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
-                              const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
-                              const skuValue = row.sku || row.baseSku;
+                          {showImage && (
+                            <ProductImage
+                              brandName={currentAttribute?.name ?? ""}
+                              rowData={row}
+                              alt={row.name}
+                              className="h-12 w-12 rounded-xl object-cover shadow-sm ring-1 ring-border/20 transition-transform hover:scale-105 cursor-pointer"
+                              onClick={() => {
+                                const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+                                const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
+                                const skuValue = row.sku || row.baseSku;
 
-                              const resolveUrl = (url: string) => {
-                                if (!url) return '';
-                                if (url.startsWith('http') || url.startsWith('/')) return url;
+                                const resolveUrl = (url: string) => {
+                                  if (!url) return '';
+                                  if (url.startsWith('http') || url.startsWith('/')) return url;
 
-                                if (currentAttribute?.name === "Travis Mathew") {
-                                  const fam = skuValue?.replace(/_[^_]*$/, '') || '';
-                                  return `${s3_url}/${fam}/${url}`;
-                                } else if (currentAttribute?.name === "Ogio") {
-                                  return `${s3_url_ogio}/${skuValue}/${url}`;
-                                }
-                                return url.startsWith('/') ? url : `/${url}`;
-                              };
+                                  if (currentAttribute?.name === "Travis Mathew") {
+                                    const fam = skuValue?.replace(/_[^_]*$/, '') || '';
+                                    return `${s3_url}/${fam}/${url}`;
+                                  } else if (currentAttribute?.name === "Ogio") {
+                                    return `${s3_url_ogio}/${skuValue}/${url}`;
+                                  }
+                                  return url.startsWith('/') ? url : `/${url}`;
+                                };
 
-                              const primary = resolveUrl(row.primary_url || row.primary_image_url);
-                              const gallery = row.gallery_images_url
-                                ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim()))
-                                : [];
+                                const primary = resolveUrl(row.primary_url || row.primary_image_url);
+                                const gallery = row.gallery_images_url
+                                  ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim()))
+                                  : [];
 
-                              onOpenPreview([primary, ...gallery].filter(Boolean), 0);
-                            }}
-                          />
+                                onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+                              }}
+                            />
+                          )}
                           <div className="min-w-0">
                             <div className="flex flex-wrap items-center gap-2">
                               <p className="truncate font-semibold text-foreground">{row.sku}</p>
@@ -400,18 +680,18 @@ export function SkuTable({
                           </div>
                         </div>
                       </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                           <div className="flex flex-col gap-1">
                             <span className="font-semibold text-foreground/80">{row.brand?.name || "Private"}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                           <div className="flex flex-col">
                             <span className="font-semibold text-foreground uppercase tracking-tight">{row.category || "General"}</span>
                             <span className="text-xs text-foreground/62">{displayFamily || row.subcategory || "N/A"}</span>
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                           <div className="flex flex-wrap gap-2">
                             {row.attributeGroups?.length ? (
                               row.attributeGroups.slice(0, 3).map((group: any) => {
@@ -439,7 +719,7 @@ export function SkuTable({
                             )}
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                           <div className="space-y-1">
                             <p className="font-semibold text-foreground">{displayStock}</p>
                             <p className="text-xs text-foreground/52">
@@ -447,7 +727,7 @@ export function SkuTable({
                             </p>
                           </div>
                         </td>
-                        <td className="px-6 py-5 align-top">
+                        <td className="px-4 py-3 align-top border-b border-r border-zinc-200/50 dark:border-zinc-800/50">
                           <span className={clsx(
                              "inline-flex rounded-full border px-2.5 py-1 text-xs font-semibold uppercase tracking-[0.14em]",
                              statusClasses(row.status)
@@ -457,7 +737,7 @@ export function SkuTable({
                         </td>
                     </>
                   )}
-                  <td className="px-6 py-5 align-top text-right">
+                  <td className="px-4 py-3 align-top text-right border-b border-zinc-200/50 dark:border-zinc-800/50">
                     <div className="flex items-center justify-end gap-1.5">
                       <div className="group/action relative">
                         <Link
@@ -493,9 +773,9 @@ export function SkuTable({
                   </td>
                 </tr>
                 <AnimatePresence>
-                  {expandedRows.has(rowId) && row.variation_sku && (
+                  {expandedRows.has(rowId) && hasVariants && (
                     <tr>
-                      <td colSpan={100} className="bg-foreground/[0.01] p-0">
+                      <td colSpan={100} className="bg-foreground/[0.01] p-0 bg-[#f9f9f9]">
                         <motion.div
                           initial={{ height: 0, opacity: 0 }}
                           animate={{ height: "auto", opacity: 1 }}
@@ -503,14 +783,10 @@ export function SkuTable({
                           transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
                           className="overflow-hidden"
                         >
-                          <div className="mx-6 mb-6 mt-2 rounded-[24px] border border-white/8 bg-white/[0.03] p-8 shadow-inner backdrop-blur-xl">
-                              <div className="mb-4 flex items-center justify-between border-b border-border/10 pb-4">
-                                 <h4 className="text-[10px] font-semibold uppercase tracking-[0.4em] text-foreground/72 italic">Variant Extension Suite</h4>
-                                 <div className="h-1.5 w-1.5 animate-pulse rounded-full bg-white" />
-                              </div>
+                          <div className="mx-4 mb-4 mt-2 p-1 ">
                               <ExtensionTable
                                 parentRow={row}
-                                variationSkus={row.variation_sku}
+                                variationSkus={varSkus}
                                 allData={allData}
                                 items={items}
                               />
@@ -555,7 +831,7 @@ function StickyHeading({
   return (
     <th
       className={clsx(
-        "bg-[#111] text-white shadow-[0_1px_0_rgba(255,255,255,0.08)]",
+        "bg-zinc-900 text-zinc-100 border-b border-r border-zinc-800 font-bold uppercase tracking-wider text-xs px-5 py-4",
         className
       )}
       style={{
@@ -564,7 +840,7 @@ function StickyHeading({
         zIndex: 20,
       }}
     >
-      <div className="text-[11px] font-semibold uppercase tracking-[0.16em] text-white/82">
+      <div>
         {children}
       </div>
     </th>

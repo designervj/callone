@@ -99,13 +99,24 @@ export default function AdminDashboardPage() {
     <div className="space-y-8 pb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 ">
       <section className="space-y-6">
         <div className="flex flex-wrap items-end justify-between gap-6 px-1 pt-2">
-          <div className="space-y-1">
-            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white dark:drop-shadow-md">
-              Live intelligence
-            </p>
-            <h1 className="text-4xl font-black tracking-tight text-white dark:drop-shadow-md">
-              Performance Matrix
-            </h1>
+          <div className="flex flex-col gap-3">
+            {/* Breadcrumbs */}
+            <nav className="flex items-center gap-1.5 text-xs font-medium text-white/60">
+              <span className="flex items-center gap-1 text-white/90 font-semibold">
+                🏠 Home
+              </span>
+              <span className="text-white/30">›</span>
+              <span className="text-white/90 font-semibold">Dashboard</span>
+            </nav>
+            {/* Title */}
+            <div className="space-y-1.5 bg-black/40 backdrop-blur-md px-6 py-4 rounded-3xl border border-white/10 shadow-lg">
+              <p className="text-[11px] font-black uppercase tracking-[0.3em] text-white/70">
+                Live intelligence
+              </p>
+              <h1 className="text-4xl font-black tracking-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.5)]">
+                Performance Matrix
+              </h1>
+            </div>
           </div>
         </div>
 
@@ -140,33 +151,34 @@ export default function AdminDashboardPage() {
                 label="Travis Mathew"
                 value={String(brandCatalog.find((b: any) => b.label?.toLowerCase().includes("travis"))?.products || 0)}
                 detail="Active products in TM catalog."
-                accent="var(--accent-blue)"
+                isPrimary
                 image={"https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/tm_thum_23fdeb8c29.png"}
                 isLoading={loading || isPending}
+                href="/admin/products/brand/travis-mathew"
               />
               <InsightMetricCard
                 label="Ogio"
                 value={String(brandCatalog.find((b: any) => b.label?.toLowerCase().includes("ogio"))?.products || 0)}
                 detail="Available premium backpacks."
-                accent="var(--accent-yellow)"
                 image="https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/ogio_favicon_ac591c347e_8de0fee6f4.png"
                 isLoading={loading || isPending}
+                href="/admin/products/brand/ogio"
               />
               <InsightMetricCard
                 label="Callaway Soft"
                 value={String(brandCatalog.find((b: any) => b.label?.toLowerCase().includes("softgoods"))?.products || 0)}
                 detail="Active softgoods items."
-                accent="var(--accent-green)"
                 image="https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/icon_callway_f25555115b.png"
                 isLoading={loading || isPending}
+                href="/admin/products/brand/callaway-softgoods"
               />
               <InsightMetricCard
                 label="Callaway Hard"
                 value={String(brandCatalog.find((b: any) => b.label?.toLowerCase().includes("hardgoods"))?.products || 0)}
                 detail="High performance equipment."
-                accent="var(--accent-pink)"
                 image="https://callawaytech.s3.ap-south-1.amazonaws.com/omsimages/uploads/icon_callway_f25555115b.png"
                 isLoading={loading || isPending}
+                href="/admin/products/brand/callaway-hardgoods"
               />
             </div>
 
@@ -176,40 +188,50 @@ export default function AdminDashboardPage() {
                 value={money.format(headlineMetrics.totalRevenue || 0)}
                 detail={`${headlineMetrics.totalOrders || 0} live orders.`}
                 accent="var(--accent-blue)"
+                valueColor="#2563EB"
                 icon={CreditCard}
                 isLoading={loading || isPending}
+                href="/admin/orders"
               />
               <InsightMetricCard
                 label="Active items"
                 value={String(headlineMetrics.activeProducts || 0)}
                 detail="Total sellable catalog."
                 accent="var(--accent-green)"
+                valueColor="#059669"
                 icon={ShoppingBag}
                 isLoading={loading || isPending}
+                href="/admin/products"
               />
               <InsightMetricCard
                 label="Total stock"
                 value={String(headlineMetrics.availableUnits || 0)}
                 detail="Units in fulfillment hubs."
                 accent="var(--accent-yellow)"
+                valueColor="#D97706"
                 icon={Warehouse}
                 isLoading={loading || isPending}
+                href="/admin/products"
               />
               <InsightMetricCard
                 label="Approvals"
                 value={String(headlineMetrics.pendingApprovals || 0)}
                 detail="Orders awaiting review."
                 accent="var(--accent-pink)"
+                valueColor="#E11D48"
                 icon={ClipboardCheck}
                 isLoading={loading || isPending}
+                href="/admin/orders"
               />
               <InsightMetricCard
                 label="Avg ticket"
                 value={money.format(headlineMetrics.averageOrderValue || 0)}
                 detail="Value per active order."
                 accent="var(--accent-grey)"
+                valueColor="#374151"
                 icon={TrendingUp}
                 isLoading={loading || isPending}
+                href="/admin/orders"
               />
             </div>
 

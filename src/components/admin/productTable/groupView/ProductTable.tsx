@@ -17,6 +17,8 @@ interface ProductTableProps {
   deletingId: string;
   statusClasses: (status: string) => string;
   onOpenPreview: (images: string[], index: number) => void;
+  showImage?: boolean;
+  isCompact?: boolean;
 }
 
 export function ProductTable({
@@ -29,12 +31,14 @@ export function ProductTable({
   deletingId,
   statusClasses,
   onOpenPreview,
+  showImage = true,
+  isCompact = false,
 }: ProductTableProps) {
   const { items } = useSelector((state: RootState) => state.cart);
 
 
   return (
-    <table className="min-w-full border-separate border-spacing-0 text-left text-sm">
+    <table className={`min-w-full border-separate border-spacing-0 text-left text-sm ${isCompact ? "is-compact" : ""}`}>
       <thead>
         <tr className="bg-background text-foreground">
           <StickyHeading className="w-12 px-4 py-3">
@@ -90,38 +94,40 @@ export function ProductTable({
                 </td>
                 <td className="border-b border-border/60 px-4 py-4 align-top">
                   <div className="flex gap-3">
-                    <ProductImage
-                      brandName={row.brand.name}
-                      rowData={row}
-                      alt={row.name}
-                      className="h-11 w-11 shrink-0"
-                      onClick={() => {
-                        const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
-                        const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
-                        const skuValue = row.sku || row.baseSku;
+                    {showImage && (
+                      <ProductImage
+                        brandName={row.brand.name}
+                        rowData={row}
+                        alt={row.name}
+                        className="h-11 w-11 shrink-0"
+                        onClick={() => {
+                          const s3_url = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/TRAVIS-Images`;
+                          const s3_url_ogio = `https://callaways3bucketcc001-prod.s3.ap-south-1.amazonaws.com/public/productimg/OGIO-Images`;
+                          const skuValue = row.sku || row.baseSku;
 
-                        const resolveUrl = (url: string) => {
-                          if (!url) return '';
-                          if (url.startsWith('http') || url.startsWith('/')) return url;
+                          const resolveUrl = (url: string) => {
+                            if (!url) return '';
+                            if (url.startsWith('http') || url.startsWith('/')) return url;
 
-                          if (row.brand.name === "Travis Mathew") {
-                            // In Group View, baseSku is the family identifier
-                            const fam = row.sku ? skuValue?.replace(/_[^_]*$/, '') : skuValue;
-                            return `${s3_url}/${fam}/${url}`;
-                          } else if (row.brand.name === "Ogio") {
-                            return `${s3_url_ogio}/${skuValue}/${url}`;
-                          }
-                          return url.startsWith('/') ? url : `/${url}`;
-                        };
+                            if (row.brand.name === "Travis Mathew") {
+                              // In Group View, baseSku is the family identifier
+                              const fam = row.sku ? skuValue?.replace(/_[^_]*$/, '') : skuValue;
+                              return `${s3_url}/${fam}/${url}`;
+                            } else if (row.brand.name === "Ogio") {
+                              return `${s3_url_ogio}/${skuValue}/${url}`;
+                            }
+                            return url.startsWith('/') ? url : `/${url}`;
+                          };
 
-                        const primary = resolveUrl(row.primary_url || row.primary_image_url);
-                        const gallery = row.gallery_images_url
-                          ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim()))
-                          : [];
+                          const primary = resolveUrl(row.primary_url || row.primary_image_url);
+                          const gallery = row.gallery_images_url
+                            ? row.gallery_images_url.split(',').map((url: string) => resolveUrl(url.trim()))
+                            : [];
 
-                        onOpenPreview([primary, ...gallery].filter(Boolean), 0);
-                      }}
-                    />
+                          onOpenPreview([primary, ...gallery].filter(Boolean), 0);
+                        }}
+                      />
+                    )}
                     <div className="min-w-0">
                       <div className="flex flex-wrap items-center gap-2">
                         <p className="truncate font-semibold text-foreground">{row.name}</p>

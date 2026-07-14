@@ -116,7 +116,7 @@ export function AdminShell({children, user}: AdminShellProps) {
     pathname.startsWith("/admin/cart");
 
   const shellWidthClass = isWideWorkspace ? "max-w-full px-12" : "max-w-[1280px]";
-  const contentLiftClass = isWideWorkspace ? "-mt-28 " : "-mt-16";
+  const contentLiftClass = isWideWorkspace ? "-mt-48" : "-mt-40";
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
@@ -203,7 +203,7 @@ export function AdminShell({children, user}: AdminShellProps) {
                     alt="Callaway"
                     width={80}
                     height={44}
-                    className="h-auto w-full object-contain dark:invert-0 invert transition-all"
+                    className="h-auto w-full object-contain transition-all"
                     priority
                   />
                 </div>
@@ -433,7 +433,7 @@ export function AdminShell({children, user}: AdminShellProps) {
         </AnimatePresence>
 
         <div className="relative">
-          <div className="relative h-[240px] overflow-hidden bg-background">
+          <div className="relative h-[340px] overflow-hidden bg-background">
             <AnimatePresence mode="wait">
               <motion.div
                 key={activeHeroSlide.id}
@@ -441,18 +441,14 @@ export function AdminShell({children, user}: AdminShellProps) {
                 animate={{opacity: 1}}
                 exit={{opacity: 0}}
                 transition={{duration: 0.8}}
-                className="absolute inset-0 dark:opacity-100 opacity-20 grayscale dark:grayscale-0 transition-opacity"
+                className="absolute inset-0 transition-opacity"
                 style={{
                   backgroundImage: `url(${activeHeroSlide.image})`,
                   backgroundSize: "cover",
                   backgroundPosition: "center 25%",
-                  filter: "contrast(1.05)",
                 }}
               />
             </AnimatePresence>
-            {/* Soft Overlay */}
-            {/* <div className="absolute inset-0 bg-gradient-to-r from-background via-background/95 to-background/20 dark:from-background dark:via-background/70 dark:to-transparent" /> */}
-            {/* <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-background via-background/80 to-transparent" /> */}
           </div>
 
           <main className={clsx("relative z-10 px-4 pb-20 sm:px-5", contentLiftClass)}>

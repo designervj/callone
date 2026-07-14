@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import type {BreakdownItem, BrandCatalogInsight, LeaderboardItem, TrendPoint} from "@/lib/admin/insights";
 import { Grid2x2 } from "lucide-react";
 
@@ -35,6 +36,9 @@ export function InsightMetricCard({
   image,
   accent,
   isLoading,
+  href,
+  isPrimary,
+  valueColor,
 }: {
   label: string;
   value: string;
@@ -43,19 +47,18 @@ export function InsightMetricCard({
   image?: string;
   accent?: string;
   isLoading?: boolean;
+  href?: string;
+  isPrimary?: boolean;
+  valueColor?: string;
 }) {
-  // Use dark text for all colored (pastel) cards as per user reference
-  const textClass = accent ? "" : "text-foreground";
-  const mutedClass = accent ? "" : "text-muted";
+  // isPrimary = solid blue card with white text (like first reference card)
+  // accent = pastel card with dark text
+  // neither = plain white card
+  const textClass = isPrimary ? "text-white" : accent ? "text-gray-800" : "text-foreground";
+  const mutedClass = isPrimary ? "text-white/70" : accent ? "text-gray-500" : "text-muted";
 
-  return (
-    <div 
-      className="group premium-card p-6 relative overflow-hidden"
-      style={{
-        // backgroundColor: accent || "var(--premium-card-bg)",
-        backgroundImage: accent ? 'none' : undefined,
-      }}
-    >
+  const content = (
+    <>
       <div className="flex items-start justify-between relative z-10">
         <div className="space-y-1.5">
           <p className={`text-[11px] font-bold uppercase tracking-[0.16em] ${mutedClass}`}>
@@ -64,22 +67,32 @@ export function InsightMetricCard({
           {isLoading ? (
             <div className="h-9 w-24 animate-pulse rounded-lg bg-black/10 mt-1" />
           ) : (
-            <p className={`text-3xl font-black tracking-tight  font-semibold ${textClass} sm:text-4xl`}>
+            <p 
+              className={`text-xl font-black tracking-tight font-semibold sm:text-3xl ${!valueColor ? textClass : ""}`}
+              style={valueColor ? { color: valueColor } : undefined}
+            >
               {value}
             </p>
           )}
         </div>
         {(Icon || image || isLoading) && (
           <div 
-            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border border-black/5 transition duration-500 group-hover:scale-110 bg-white/40"
+            className="flex h-11 w-11 items-center justify-center overflow-hidden rounded-xl border transition duration-500 group-hover:scale-110"
             style={{ 
-              color: accent ? "rgba(0,0,0,0.8)" : "var(--foreground)"
+              backgroundColor: isPrimary ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.05)",
+              borderColor: isPrimary ? "rgba(255,255,255,0.2)" : "rgba(0,0,0,0.05)",
+              color: isPrimary ? "rgba(255,255,255,0.9)" : accent ? "rgba(0,0,0,0.6)" : "var(--foreground)"
             }}
           >
             {isLoading ? (
                <div className="h-5 w-5 animate-pulse rounded bg-black/10" />
             ) : image ? (
-              <img src={image} alt={label} className="h-full w-full object-contain p-2" />
+              <img 
+                src={image} 
+                alt={label} 
+                className="h-full w-full object-contain p-2"
+                style={isPrimary ? { filter: "brightness(0) invert(1)" } : undefined}
+              />
             ) : Icon ? (
               <Icon size={20} strokeWidth={2.5} />
             ) : null}
@@ -91,6 +104,31 @@ export function InsightMetricCard({
       ) : (
         <p className={`mt-4 text-xs font-medium leading-relaxed opacity-80 relative z-10 ${mutedClass}`}>{detail}</p>
       )}
+    </>
+  );
+
+  if (href) {
+    return (
+      <Link 
+        href={href}
+        className="group premium-card p-6 relative overflow-hidden block transition-all duration-300 hover:scale-[1.02] hover:shadow-md cursor-pointer"
+        style={{
+          backgroundColor: isPrimary ? "#2563EB" : accent || "var(--premium-card-bg)",
+        }}
+      >
+        {content}
+      </Link>
+    );
+  }
+
+  return (
+    <div 
+      className="group premium-card p-6 relative overflow-hidden"
+      style={{
+        backgroundColor: isPrimary ? "#2563EB" : accent || "var(--premium-card-bg)",
+      }}
+    >
+      {content}
     </div>
   );
 }

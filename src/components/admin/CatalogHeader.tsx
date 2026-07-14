@@ -177,6 +177,8 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
     saveAs(blob, `${currentAttribute.key || "sample"}_products.xlsx`);
   };
     console.log(currentAttribute);
+
+    
   
   return (
     <section className="premium-card overflow-hidden rounded-[28px]">
@@ -254,13 +256,13 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
     />
   </label>
 
-  <div className="flex items-center gap-1 rounded-[22px] border border-border/30 bg-surface-muted/30 p-1.5 shadow-sm">
+  <div className="flex items-center gap-1 rounded-[22px] border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 p-1 shadow-sm">
     <button
       onClick={() => setViewMode("product")}
-      className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold ${
+      className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold transition-all duration-200 ${
         viewMode === "product"
-          ? "bg-surface shadow-sm text-foreground"
-          : "text-foreground/60 hover:bg-surface/50"
+          ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-sm"
+          : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
       }`}
     >
       <LayoutGrid className="h-4 w-4" />
@@ -269,10 +271,10 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
 
     <button
       onClick={() => setViewMode("sku")}
-      className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold ${
+      className={`flex items-center gap-2 rounded-[18px] px-4 py-2 text-sm font-semibold transition-all duration-200 ${
         viewMode === "sku"
-          ? "bg-surface shadow-sm text-foreground"
-          : "text-foreground/60 hover:bg-surface/50"
+          ? "bg-zinc-900 text-white dark:bg-white dark:text-zinc-900 shadow-sm"
+          : "text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white"
       }`}
     >
       <Layers className="h-4 w-4" />
@@ -282,36 +284,53 @@ const {currentAttribute} = useSelector((state:RootState) => state.attribute);
 
   <button
     onClick={() => setFilterPanelOpen((c: boolean) => !c)}
-    className="inline-flex items-center gap-2 rounded-[20px] border border-border/30 bg-surface-muted/50 px-4 py-3 text-sm font-semibold text-foreground/80 transition hover:border-border/60 hover:bg-surface-muted"
+    className={`inline-flex items-center gap-2 rounded-[20px] border px-4 py-3 text-sm font-semibold transition ${
+      filterPanelOpen || activeFilterCount > 0
+        ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+        : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-300 dark:hover:border-zinc-600"
+    }`}
   >
     <SlidersHorizontal className="h-4 w-4" />
-    Filters
+    <span>Filters</span>
+    {activeFilterCount > 0 && (
+      <span className={`inline-flex items-center justify-center rounded-full h-5 px-1.5 text-[10px] font-bold ${
+        filterPanelOpen || activeFilterCount > 0
+          ? "bg-white text-zinc-900 dark:bg-zinc-900 dark:text-white"
+          : "bg-zinc-200 text-zinc-800 dark:bg-zinc-800 dark:text-zinc-200"
+      }`}>
+        {activeFilterCount}
+      </span>
+    )}
   </button>
 
-  <label className="inline-flex items-center gap-3 rounded-[20px] border border-border/30 bg-surface-muted/50 px-4 py-3 text-sm font-semibold text-foreground/80 transition hover:border-border/60 hover:bg-surface-muted">
+  <label className={`inline-flex items-center gap-3 rounded-[20px] border px-4 py-3 text-sm font-semibold transition ${
+    sortBy !== "latest"
+      ? "border-zinc-900 bg-zinc-900 text-white dark:border-white dark:bg-white dark:text-zinc-900"
+      : "border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-900/50 dark:text-zinc-300 dark:hover:border-zinc-600"
+  }`}>
     <ArrowDownUp className="h-4 w-4" />
     <select
       value={sortBy}
       onChange={(event) => setSortBy(event.target.value)}
-      className="appearance-none border-none bg-transparent p-0 pr-2 text-sm text-foreground outline-none cursor-pointer focus:ring-0"
+      className="appearance-none border-none bg-transparent p-0 pr-2 text-sm outline-none cursor-pointer focus:ring-0 text-current"
     >
       {SORT_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value} className="bg-surface text-foreground">
+        <option key={option.value} value={option.value} className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
           {option.label}
         </option>
       ))}
     </select>
   </label>
 
-  <label className="inline-flex items-center gap-3 rounded-[20px] border border-border/30 bg-surface-muted/50 px-4 py-3 text-sm font-semibold text-foreground/80 transition hover:border-border/60 hover:bg-surface-muted">
+  <label className="inline-flex items-center gap-3 rounded-[20px] border border-zinc-200 bg-zinc-50 dark:border-zinc-800 dark:bg-zinc-900/50 px-4 py-3 text-sm font-semibold text-zinc-700 dark:text-zinc-300 transition hover:border-zinc-400 dark:hover:border-zinc-600">
     <ChevronsUpDown className="h-4 w-4" />
     <select
       value={pageSize}
       onChange={(event) => setPageSize(Number(event.target.value))}
-      className="appearance-none border-none bg-transparent p-0 pr-2 text-sm text-foreground outline-none cursor-pointer focus:ring-0"
+      className="appearance-none border-none bg-transparent p-0 pr-2 text-sm text-foreground outline-none cursor-pointer focus:ring-0 text-current"
     >
       {PAGE_SIZE_OPTIONS.map((value) => (
-        <option key={value} value={value} className="bg-surface text-foreground">
+        <option key={value} value={value} className="bg-white text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100">
           {value} / page
         </option>
       ))}
@@ -467,7 +486,13 @@ function FilterGroup({
   const [expanded, setExpanded] = React.useState(false);
   const [hasOverflow, setHasOverflow] = React.useState(false);
   const [collapsedMaxHeight, setCollapsedMaxHeight] = React.useState(40);
+  const [searchQuery, setSearchQuery] = React.useState("");
   const selectedValuesKey = React.useMemo(() => selectedValues.join("\u0000"), [selectedValues]);
+
+  const filteredValues = React.useMemo(() => {
+    if (!searchQuery) return values;
+    return values.filter(v => v.toLowerCase().includes(searchQuery.toLowerCase()));
+  }, [values, searchQuery]);
 
   const recompute = React.useCallback(() => {
     const el = chipsRef.current;
@@ -488,7 +513,7 @@ function FilterGroup({
   React.useEffect(() => {
     const raf = requestAnimationFrame(recompute);
     return () => cancelAnimationFrame(raf);
-  }, [recompute, values.length, selectedValuesKey]);
+  }, [recompute, filteredValues.length, selectedValuesKey]);
 
   React.useEffect(() => {
     const el = chipsRef.current;
@@ -506,15 +531,30 @@ function FilterGroup({
   return (
     <div className="rounded-[22px] border border-white/8 bg-[color:var(--surface)] p-3">
       <div className="mb-3 flex items-center justify-between gap-3">
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/46">
-          {title}
-        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-foreground/46">
+            {title} 
+          </p> 
+          {title.toLowerCase() === "color" && (
+            <div className="relative w-48 shrink-0">
+              <input
+                type="text"
+                className="block w-full rounded-full border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 py-1 pl-8 pr-3 text-xs outline-none placeholder:text-zinc-400 focus:border-zinc-400 dark:focus:border-zinc-600 transition"
+                placeholder="Search color..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-400" />
+            </div>
+          )}
+        </div>
+         
         {hasOverflow ? (
           <button
             type="button"
             onClick={() => setExpanded((curr) => !curr)}
             aria-expanded={expanded}
-            className="inline-flex items-center rounded-full border border-border/30 bg-surface-muted/50 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-foreground/70 transition hover:border-border/60 hover:bg-surface-muted hover:text-foreground"
+            className="inline-flex items-center rounded-full border border-zinc-200 bg-zinc-900 dark:border-zinc-800 dark:bg-zinc-800 px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-100 dark:text-zinc-300 transition hover:bg--200 dark:hover:bg-zinc-700 shadow-sm"
           >
             {expanded ? "Show less" : "Show more"}
           </button>
@@ -526,24 +566,28 @@ function FilterGroup({
         className={`flex flex-wrap gap-2 ${expanded ? "" : "overflow-hidden"}`}
         style={expanded ? undefined : { maxHeight: collapsedMaxHeight }}
       >
-        {values.map((value) => {
-          const selected = selectedValues.includes(value);
+        {filteredValues.length === 0 ? (
+          <p className="text-xs text-zinc-400 py-1">No colors found</p>
+        ) : (
+          filteredValues.map((value) => {
+            const selected = selectedValues.includes(value);
 
-          return (
-            <button
-              key={value}
-              onClick={() => onToggle(value)}
-              className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
-                selected
-                  ? "border-border/60 bg-surface-muted shadow-sm text-foreground"
-                  : "border-border/30 bg-surface-muted/30 text-foreground/60 hover:text-foreground hover:bg-surface-muted"
-              }`}
-            >
-              {selected ? <Check className="h-3.5 w-3.5" /> : null}
-              {value}
-            </button>
-          );
-        })}
+            return (
+              <button
+                key={value}
+                onClick={() => onToggle(value)}
+                className={`inline-flex items-center gap-2 rounded-full border px-3 py-1.5 text-xs font-semibold transition ${
+                  selected
+                    ? "border-border/60 bg-surface-muted shadow-sm text-foreground"
+                    : "border-border/30 bg-surface-muted/30 text-foreground/60 hover:text-foreground hover:bg-surface-muted"
+                }`}
+              >
+                {selected ? <Check className="h-3.5 w-3.5" /> : null}
+                {value}
+              </button>
+            );
+          })
+        )}
       </div>
     </div>
   );

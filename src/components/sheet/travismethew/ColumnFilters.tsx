@@ -30,9 +30,10 @@ interface FilterProps {
   uniqueValues: string[];
   currentFilter: ColumnFilterData;
   onFilterChange: (key: string, data: Partial<ColumnFilterData>) => void;
+  columnLabel: string;
 }
 
-export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilterChange }: FilterProps) {
+export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilterChange, columnLabel }: FilterProps) {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,7 +54,7 @@ export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilt
 
   // Generate the label for the button
   const getButtonLabel = () => {
-    if (selections.length === 0) return '(All)';
+    if (selections.length === 0) return columnLabel;
     if (selections.length === 1) return selections[0] || '(Empty)';
     return `${selections.length} Selected`;
   };
@@ -63,14 +64,14 @@ export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilt
       <button
         onClick={() => setIsOpen(!isOpen)}
         className={clsx(
-          "flex min-w-[110px] items-center justify-between gap-2 rounded px-2 py-1.5 text-[11px] font-medium transition-all",
+          "flex min-w-[110px] items-center justify-between gap-2 rounded px-2 py-1.5 text-xs font-semibold transition-all",
           isActive 
-            ? " text-foreground ring-1 ring-primary/40 shadow-sm" 
-            : "bg-surface-elevated text-foreground hover:bg-surface-strong/20 border border-border/40"
+            ? "bg-white/15 text-white shadow-sm" 
+            : "bg-transparent text-zinc-300 hover:bg-white/10"
         )}
       >
         <span className="truncate">{getButtonLabel()}</span>
-        <ChevronDown size={12} className={clsx('shrink-0 transition-transform', isOpen && 'rotate-180')} />
+        <ChevronDown size={12} className={clsx('shrink-0 transition-transform opacity-60', isOpen && 'rotate-180')} />
       </button>
 
       <AnimatePresence>
@@ -79,17 +80,17 @@ export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilt
             initial={{ opacity: 0, y: 4 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 4 }}
-            className="absolute left-0 top-full z-[100] mt-1 max-h-72 w-56 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl flex flex-col"
+            className="absolute left-0 top-full z-[100] mt-1 max-h-72 w-56 overflow-hidden rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-zinc-100 shadow-2xl flex flex-col"
           >
-            <div className="p-1 border-b border-border/40 bg-foreground/[0.02]">
+            <div className="p-1 border-b border-zinc-100 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50">
               <button
                 onClick={() => onFilterChange(columnKey, { selection: [] })}
                 className={clsx(
-                  "flex w-full items-center justify-between rounded px-2 py-2 text-left text-[11px] font-semibold hover:bg-foreground/5 transition-colors",
-                  selections.length === 0 ? "text-primary" : "text-foreground/60"
+                  "flex w-full items-center justify-between rounded px-2 py-2 text-left text-xs font-semibold hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors",
+                  selections.length === 0 ? "text-blue-600 dark:text-blue-400" : "text-zinc-500 dark:text-zinc-400"
                 )}
               >
-                <span>Select All</span>
+                <span>{columnLabel}</span>
                 {selections.length === 0 && <Check size={14} strokeWidth={3} />}
               </button>
             </div>
@@ -105,16 +106,16 @@ export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilt
                       onFilterChange(columnKey, { selection: val as any });
                     }}
                     className={clsx(
-                      "flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-[11px] hover:bg-foreground/5 transition-colors group",
-                      isSelected ? "text-primary bg-primary/5" : "text-foreground/60"
+                      "flex w-full items-center justify-between rounded px-2 py-1.5 text-left text-xs hover:bg-zinc-100 dark:hover:bg-zinc-800/50 transition-colors group",
+                      isSelected ? "text-blue-600 dark:text-blue-400 bg-blue-50/50 dark:bg-blue-950/20" : "text-zinc-700 dark:text-zinc-300"
                     )}
                   >
                     <div className="flex items-center gap-2 truncate">
                       <div className={clsx(
                         "h-3 w-3 rounded-[3px] border flex items-center justify-center transition-colors",
-                        isSelected ? "bg-primary border-primary" : "border-border group-hover:border-foreground/40"
+                        isSelected ? "bg-blue-600 border-blue-600" : "border-zinc-300 dark:border-zinc-700 group-hover:border-zinc-400"
                       )}>
-                        {isSelected && <Check size={10} className="text-foreground" strokeWidth={4} />}
+                        {isSelected && <Check size={10} className="text-white" strokeWidth={4} />}
                       </div>
                       <span className="truncate">{val || '(Empty)'}</span>
                     </div>
@@ -131,7 +132,7 @@ export function SelectionFilter({ columnKey, uniqueValues, currentFilter, onFilt
 
 // FloatingFilterPopup remains largely the same, but ensure it interacts correctly 
 // with the parent logic that clears selections when searching.
-export function FloatingFilterPopup({ columnKey, currentFilter, onFilterChange }: Omit<FilterProps, 'uniqueValues'>) {
+export function FloatingFilterPopup({ columnKey, currentFilter, onFilterChange }: Omit<FilterProps, 'uniqueValues' | 'columnLabel'>) {
   const [isOpen, setIsOpen] = useState(false);
   const [tempOperator, setTempOperator] = useState<FilterOperator>(currentFilter.operator);
   const [tempValue, setTempValue] = useState(currentFilter.searchValue);
@@ -171,11 +172,11 @@ export function FloatingFilterPopup({ columnKey, currentFilter, onFilterChange }
         className={clsx(
           "flex h-7 w-7 items-center justify-center rounded-md transition-all",
           isActive 
-            ? "bg-primary text-foreground shadow-sm ring-1 ring-primary/40" 
-            : "text-foreground/40 hover:bg-foreground/5 border border-border/20"
+            ? "bg-white/20 text-white shadow-sm" 
+            : "text-zinc-400 hover:bg-white/10 hover:text-white"
         )}
       >
-        <Filter size={14} />
+        <Filter size={12} />
       </button>
 
       <AnimatePresence>
@@ -188,7 +189,7 @@ export function FloatingFilterPopup({ columnKey, currentFilter, onFilterChange }
           >
             <div className="space-y-4">
               <div>
-                <label className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-foreground/40">Operation</label>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-foreground">Operation</label>
                 <select
                   value={tempOperator}
                   onChange={(e) => setTempOperator(e.target.value as FilterOperator)}
@@ -201,9 +202,9 @@ export function FloatingFilterPopup({ columnKey, currentFilter, onFilterChange }
               </div>
 
               <div>
-                <label className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-foreground/40">Value</label>
+                <label className="mb-2 block text-[10px] font-bold uppercase tracking-wider text-foreground">Value</label>
                 <div className="relative">
-                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/20" />
+                  <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground" />
                   <input
                     autoFocus
                     value={tempValue}
@@ -218,13 +219,13 @@ export function FloatingFilterPopup({ columnKey, currentFilter, onFilterChange }
               <div className="flex items-center justify-end gap-2 pt-2">
                 <button
                   onClick={handleReset}
-                  className="rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground/40 hover:bg-card/5 hover:text-foreground"
+                  className="rounded-lg px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground hover:bg-card/5 hover:text-foreground"
                 >
                   Reset
                 </button>
                 <button
                   onClick={handleApply}
-                  className="rounded-lg bg-primary px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-foreground transition-opacity hover:opacity-90"
+                  className="rounded-lg bg-primary px-4 py-1.5 text-[11px] font-bold uppercase tracking-wider text-white dark:text-zinc-400 transition-opacity hover:opacity-90"
                 >
                   Apply
                 </button>

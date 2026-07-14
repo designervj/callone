@@ -30,25 +30,25 @@
     --surface-foreground: #0B0B0B;
     --surface-muted-foreground: #6B7280;
     
-    /* Header - Light Mode (White bg, Dark fg) */
-    --header-bg: #FFFFFF;
-    --header-fg: #0B0B0B;
-    --header-muted: rgba(0, 0, 0, 0.6);
-    --header-border: rgba(0, 0, 0, 0.06);
-    --header-control-bg: rgba(0, 0, 0, 0.03);
-    --header-control-hover: rgba(0, 0, 0, 0.06);
-    --header-pill-bg: rgba(0, 0, 0, 0.04);
-    --header-pill-border: rgba(0, 0, 0, 0.08);
-    --header-pill-active-bg: #0B0B0B;
-    --header-pill-active-fg: #FFFFFF;
-    --header-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+    /* Header - Transparent dark overlay on hero */
+    --header-bg: rgba(0, 0, 0, 0.968);
+    --header-fg: #FFFFFF;
+    --header-muted: rgba(255, 255, 255, 0.65);
+    --header-border: rgba(255, 255, 255, 0.1);
+    --header-control-bg: rgba(255, 255, 255, 0.06);
+    --header-control-hover: rgba(255, 255, 255, 0.12);
+    --header-pill-bg: rgba(255, 255, 255, 0.08);
+    --header-pill-border: rgba(255, 255, 255, 0.12);
+    --header-pill-active-bg: #FFFFFF;
+    --header-pill-active-fg: #0B0B0B;
+    --header-shadow: none;
     
     /* Permanent Pastel Accents (Same in both themes) */
-    --accent-blue: #EEF4FF;
-    --accent-green: #ECFDF5;
-    --accent-yellow: #FFF7E6;
-    --accent-pink: #FFF1F2;
-    --accent-grey: #F3F4F6;
+    --accent-blue: #DBEAFE;
+    --accent-green: #D1FAE5;
+    --accent-yellow: #FEF3C7;
+    --accent-pink: #FFE4E6;
+    --accent-grey: #E5E7EB;
     
     --premium-card-bg: #FFFFFF;
     --premium-card-border: rgba(0, 0, 0, 0.03);
@@ -114,7 +114,7 @@ body {
 }
 
 .premium-card {
-  background: var(--premium-card-bg);
+  background-color: var(--premium-card-bg);
   border: 1px solid var(--premium-card-border);
   box-shadow: var(--premium-card-shadow);
   border-radius: 20px;
@@ -131,6 +131,8 @@ body {
   color: var(--header-fg);
   border-color: var(--header-border);
   box-shadow: var(--header-shadow);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(20px) saturate(180%);
 }
 
 .header-control {
@@ -151,3 +153,72 @@ body {
 .animate-shimmer {
   animation: shimmer 1.5s infinite;
 }
+
+/* Fullscreen sheet mode — hide header and hero, show only table */
+body.sheet-fullscreen .header-shell {
+  display: none !important;
+}
+
+body.sheet-fullscreen {
+  overflow: hidden;
+}
+
+/* Compact Table View in Full Screen */
+.is-compact th {
+  padding: 4px 6px !important;
+}
+.is-compact th,
+.is-compact th span,
+.is-compact th div {
+  font-size: 11px !important;
+}
+
+.is-compact td {
+  padding: 3px 6px !important;
+  line-height: 1.25 !important;
+}
+.is-compact td,
+.is-compact td span,
+.is-compact td p,
+.is-compact td div {
+  font-size: 12px !important;
+}
+
+.is-compact img {
+  border-radius: 4px !important;
+}
+
+.is-compact td div.h-11.w-11,
+.is-compact td div.h-12.w-12 {
+  height: 28px !important;
+  width: 28px !important;
+  border-radius: 4px !important;
+  font-size: 8px !important;
+}
+
+.is-compact td button,
+.is-compact td a {
+  height: 20px !important;
+  width: 20px !important;
+  border-radius: 4px !important;
+}
+
+.is-compact td button svg,
+.is-compact td a svg {
+  width: 10px !important;
+  height: 10px !important;
+}
+
+/* Adjust filter buttons inside th to fit small layout */
+.is-compact th button {
+  min-width: 75px !important;
+  padding: 2px 6px !important;
+  font-size: 10px !important;
+  height: auto !important;
+}
+
+.is-compact th button svg {
+  width: 10px !important;
+  height: 10px !important;
+}
+

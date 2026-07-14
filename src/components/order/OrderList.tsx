@@ -81,7 +81,7 @@ export const OrderList = () => {
   return (
     <div className="flex flex-col gap-6">
       {/* Command Hub Navigation */}
-      <div className="flex w-fit items-center rounded-2xl border border-border bg-surface-muted p-1.5 backdrop-blur-md shadow-sm">
+      <div className="flex w-fit items-center rounded-2xl border border-border bg-white p-1.5 shadow-sm">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;

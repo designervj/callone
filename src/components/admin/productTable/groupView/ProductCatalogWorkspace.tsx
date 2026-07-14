@@ -82,6 +82,7 @@ export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
   const [typeFilters, setTypeFilters] = useState<string[]>([]);
   const [categoryFilters, setCategoryFilters] = useState<string[]>([]);
   const [attributeFilters, setAttributeFilters] = useState<Record<string, string[]>>({});
+  const [columnTextFilters, setColumnTextFilters] = useState<Record<string, { operator: string; searchValue: string }>>({});
   const [skuQuantities, setSkuQuantities] = useState<Record<string, CartItem>>({});
   const [retailerModalOpen, setRetailerModalOpen] = useState(false);
   const [previewOpen, setPreviewOpen] = useState(false);
@@ -301,6 +302,63 @@ export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
       }
     }
 
+    // Apply column-level text filters (Contains, Equals, Begins with, Ends with, Blank, Not Blank)
+    for (const [key, filter] of Object.entries(columnTextFilters)) {
+      if (!filter.searchValue && filter.operator !== 'blank' && filter.operator !== 'notBlank') {
+        continue;
+      }
+
+      let val = "";
+      if (key === "sku") val = product.baseSku || "";
+      else if (key === "description") val = product.name || "";
+      else if (key === "category") val = product.category || "";
+      else if (key === "Season") {
+        const group = product.attributeGroups.find((g) => g.key.toLowerCase() === "season");
+        val = group ? group.values.join(", ") : "";
+      } else if (key === "Style Code") {
+        const group = product.attributeGroups.find((g) => g.key.toLowerCase() === "style_code" || g.key.toLowerCase() === "style code" || g.key.toLowerCase() === "style_id" || g.key.toLowerCase() === "styleid");
+        val = group ? group.values.join(", ") : product.baseSku || "";
+      } else if (key === "Color") {
+        const group = product.attributeGroups.find((g) => g.key.toLowerCase() === "color");
+        val = group ? group.values.join(", ") : "";
+      } else if (key === "Size") {
+        const group = product.attributeGroups.find((g) => g.key.toLowerCase() === "size");
+        val = group ? group.values.join(", ") : "";
+      }
+
+      val = String(val).toLowerCase();
+      const search = String(filter.searchValue).toLowerCase();
+
+      let match = true;
+      switch (filter.operator) {
+        case "contains":
+          match = val.includes(search);
+          break;
+        case "notContains":
+          match = !val.includes(search);
+          break;
+        case "equals":
+          match = val === search;
+          break;
+        case "notEquals":
+          match = val !== search;
+          break;
+        case "startsWith":
+          match = val.startsWith(search);
+          break;
+        case "endsWith":
+          match = val.endsWith(search);
+          break;
+        case "blank":
+          match = !val || val.trim() === "";
+          break;
+        case "notBlank":
+          match = !!val && val.trim() !== "";
+          break;
+      }
+      if (!match) return false;
+    }
+
     if (!deferredQuery) {
       return true;
     }
@@ -486,6 +544,7 @@ export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
     setTypeFilters([]);
     setCategoryFilters([]);
     setAttributeFilters({});
+    setColumnTextFilters({});
     setQuery("");
   }
 
@@ -676,7 +735,7 @@ export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
             </motion.div>
           )}
 
-          <CatalogTable
+           <CatalogTable
             visibleRows={visibleRows}
             viewMode={viewMode}
             selectedIds={selectedIds}
@@ -697,6 +756,10 @@ export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
             onOpenPreview={handleOpenPreview}
             appliedFilters={appliedFilters}
             clearAllFilters={clearAllFilters}
+            attributeFilters={attributeFilters}
+            setAttributeFilters={setAttributeFilters}
+            columnTextFilters={columnTextFilters}
+            setColumnTextFilters={setColumnTextFilters}
           />
         </div>
 
@@ -724,7 +787,7 @@ export const ProductCatalogWorkspace = memo(function ProductCatalogWorkspace({
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedIds([])}
-                  className="rounded-xl border border-border/10 bg-background/30 px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:bg-background/40 hover:text-foreground"
+                  className="rounded-xl border border-border/10 bg-background/30 hover:bg-zinc-900 hover:text-white px-5 py-2.5 text-xs font-bold uppercase tracking-wider text-foreground transition-all hover:bg-background/40 hover:text-foreground"
                 >
                   Clear Selection
                 </button>
